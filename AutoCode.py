@@ -10,17 +10,17 @@ prompt = PromptTemplate(
 user_actual_query = input("Describe the task you want to automate with NPM AutoCode AI:")
 
 llm = Ollama(
-    model="codeLLaMA-Instruct 7b",
+    model="codeLLaMA-Instruct:7b",
     temperature=1
 )
 
+response=llm.invoke(prompt.format(input=user_actual_query))
+
 parser=StrOutputParser()
+final_response=parser.invoke(response)
+print(final_response)
 
-chain=prompt | llm | parser
-response=chain.invoke(prompt.format(input=user_actual_query))
-print(response)
-
-cleaned_response = response.strip()
+cleaned_response = final_response.strip()
 if cleaned_response.startswith('```python'):
     cleaned_response = cleaned_response[len('```python'):]
 if cleaned_response.endswith('```'):
