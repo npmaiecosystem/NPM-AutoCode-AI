@@ -30,15 +30,16 @@ class CodeWorker(QThread):
                 template=(
                     "Hey you are helpful code assistant that writes code just write code nothing else "
                     "and maintain proper indentation. No extra explanations. "
-                    "You will be asked to generate code about a query. "
-                    "This is the query:{inpu}"
-                )
-            )
+                    "remember that whatever imports you are using install dependencies in code using subprocess beacuase user had not installed your code requirements"
+                    "Do not respond with any insturction or any other statement if you are giving any statement in english or that is not of code so give in # comment ok beacuase your code will be executed through exec() function of python so give such format code that can be executed in exec() function YOUR WHOLE RESPONSE WILL BE SENT TO exec() so do not write anything except code."
+                    "You will be asked to generate code about a task. "
+                    "This is the task:{inpu}"
+                ))
 
             user_query = self.task_text
             llm = Ollama(
-                model="llama3.2",
-                temperature=0.9
+                model="codellama:7b-instruct",
+                temperature=0.8
                 )
             parser = StrOutputParser()
 
@@ -128,3 +129,4 @@ if __name__ == "__main__":
     window = AutoCodeApp()
     window.show()
     sys.exit(app.exec())
+
