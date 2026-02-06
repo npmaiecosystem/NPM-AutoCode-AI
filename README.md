@@ -1,52 +1,54 @@
-# NPM-AutoCode-AI
-NPM AutoCode AI
+# NPM AutoCode AI
 
-Install app by clicking on this link:- https://github.com/sonuramashishnpm/NPM-AutoCode-AI/releases/download/v1.0/NPM_AutoCode_AI.zip
+## 🚀 Quick Start
+Install the app:  
+[Download Latest Release](https://github.com/sonuramashishnpm/NPM-AutoCode-AI/releases/download/v2.0/NPM_AutoCode_AI.zip)
 
-🚀 Project Overview
+1. Unzip the file.
+2. Run `NPM_AutoCode_AI.exe` (Windows) or `python main.py` (Python 3.12+).
+3. Enter your task in the input box (e.g., "Plot a sine wave").
+4. Click **Generate & Execute**.
+5. Watch logs and progress bar – AI generates, checks safety, executes, and fixes errors if needed.
 
-NPM AutoCode AI is a Python desktop application that allows users to automatically generate and execute Python code using AI. It integrates NPMAI, a custom LLM ecosystem, to understand natural language task descriptions and return clean, ready-to-run Python scripts.
+**Note:** Requires Ollama with models `codellama:7b-instruct` and `qwen2.5-coder:7b`. Run `ollama pull` for them.
 
-This project demonstrates agentic AI automation, seamless integration of LLMs, and GUI-based Python automation for end-users.
+## 📖 Project Overview
+NPM AutoCode AI is a Python desktop app for automatic code generation and execution using AI. Describe tasks in plain English, and it uses NPMAI (custom LLM tools) to create, validate, and run Python scripts safely.
 
-🧠 Features
+Built for non-technical users – turns ideas into working code without manual editing.
 
-Natural Language Code Generation: Describe your task in plain English and let AI generate Python code.
+## ✨ Features
+- **Natural Language to Code**: AI generates Python scripts from your description.
+- **Safety Check**: Scans code for risks (e.g., file deletions, remote access) before running.
+- **Auto-Debug**: If errors happen, AI fixes and retries using error logs.
+- **Live Logs & Progress**: See real-time updates in GUI.
+- **Dependency Handling**: Installs libraries via `subprocess` in code.
+- **Isolated Execution**: Runs in safe namespace to protect your system.
+- **Memory Chains**: Remembers task history for better fixes.
 
-Safe Code Execution: Runs generated code in an isolated local environment.
+## 🔄 How It Works
+1. Enter task → AI (`codellama:7b-instruct`) generates code via NPMAI Ollama.
+2. Safety AI (`qwen2.5-coder:7b`) reviews: If risky, stops with warning.
+3. Execute code in thread → If error, feed back to AI for fix → Retry loop.
+4. Success: Logs "Task Completed Successfully".
 
-Real-Time Logs: View step-by-step updates in the GUI while code is generated and executed.
+All in background (QThread) so UI stays responsive. Uses LangChain for prompts.
 
-Progress Feedback: Visual progress bar for task status.
+## 🛠️ Tech Details
+- **Language**: Python 3.12+
+- **GUI**: PySide6 (QWidget, QThread, etc.)
+- **AI**: npmai.Ollama + Memory; LangChain Core for prompts/parsers.
+- **Execution**: `exec()` in custom globals dict with error capture.
 
-Custom AI Backend: Uses npmai.Ollama to call your Render + Colab hosted LLMs — no local LLM setup required.
+## 👨‍💻 Developer
+**Sonu Kumar Ramashish** (a.k.a. Bihar Viral Boy)  
+- Age: 14 | Student | TEDx Speaker | AI & Software Developer | DevOps Enthusiast  
+- Reach: 410K+ Facebook followers  
+- Location: Kota, Rajasthan  
 
-🛠️ Technical Details
+Part of NPMAI ecosystem for AI automation tools.
 
-Language: Python 3.12+
+## 🤝 Contributing
+Fork, add features (e.g., more models), and PR. License: MIT.
 
-GUI Framework: PySide6
-
-AI/LLM Integration: NPMAI ecosystem (Ollama wrapper)
-
-Prompt Handling: LangChain Core (PromptTemplate, StrOutputParser)
-
-Concurrency: QThread for non-blocking code generation & execution
-
-Safe Execution: exec in isolated local namespace with real-time logs
-
-⚡ Key Highlights
-
-Designed and built by Sonu Kumar Ramashish, a 14-year-old AI & automation prodigy.
-
-Part of the NPMAI ecosystem, which includes AI-driven web apps and automation tools.
-
-Demonstrates full-stack AI integration: LLMs, prompt engineering, GUI, and Python execution.
-
-Highly modular: CodeWorker can be reused for other AI code-generation tasks.
-
-Developer:-
-Author: Sonu Kumar Ramashish (a.k.a. “Bihar Viral Boy”)
-Age: 14 | Student | TEDx Speaker | Tech & AI Enthusiast
-Location: Bihar / Kota, India
-Public Reach: 398K+ Facebook followers
+Star if useful! 🚀
