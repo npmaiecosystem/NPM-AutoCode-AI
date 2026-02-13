@@ -14,7 +14,7 @@ Install the app:
 
 ## Workflow:-
 
-<img src="https://i.ibb.co/GQjH4Sbg/NPM-Auto-Code-AI.png" alt="Example Screenshot" width="400" style="display: block; margin: 0 auto;">
+<img src="https://i.ibb.co/GQjH4Sbg/NPM-Auto-Code-AI.png" alt="Example Screenshot" width="400" style="display: block; margin: 0 auto; margin-left:20px">
 
 
 ## 📖 Project Overview
