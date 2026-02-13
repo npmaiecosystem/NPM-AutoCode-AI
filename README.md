@@ -14,7 +14,8 @@ Install the app:
 
 ## Workflow:-
 
-![Workflow](https://ibb.co/nMSPNJ5h)
+<img src="https://ibb.co/nMSPNJ5h" alt="Example Screenshot" width="400" style="display: block; margin: 0 auto;">
+
 
 ## 📖 Project Overview
 NPM AutoCode AI is a Python desktop app for automatic code generation and execution using AI. Describe tasks in plain English, and it uses NPMAI (custom LLM tools) to create, validate, and run Python scripts safely.
