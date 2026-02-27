@@ -12,6 +12,9 @@ Install the app:
 
 **Note:** Requires Ollama with models `codellama:7b-instruct` and `qwen2.5-coder:7b`. Run `ollama pull` for them.
 
+## To understand repo project with AI in detail with full documentation visit here:-
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/sonuramashishnpm/NPM-AutoCode-AI)
+
 ## Workflow:-
 
 <img src="https://i.ibb.co/GQjH4Sbg/NPM-Auto-Code-AI.png" alt="Example Screenshot" width="700" style="display: block; margin: 0 auto; margin-left:20px">
