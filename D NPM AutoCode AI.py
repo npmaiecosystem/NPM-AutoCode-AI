@@ -111,6 +111,7 @@ class CodeWorker(QThread):
           response=llm1.invoke(prompt)
           if response=="Yes":
             self.finished.emit("!!! SECURITY RISK !!! Review code. To bypass, click on Execute again without changing prompt")
+            memory1.save_context("LATEST_AI_RESPONSE",response)
             return
 
           error_log = self.executor(cleaned_response)
@@ -222,3 +223,4 @@ if __name__ == "__main__":
                 pass
     
     sys.exit(app.exec())
+
