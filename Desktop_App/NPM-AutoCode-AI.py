@@ -33,6 +33,7 @@ class CodeWorker(QThread):
         return error_log
 
     def run(self):
+      tried=0
       self.log.emit("npmai is doing your requested task")
       memory=Memory("coder0-generator")
       memory1=Memory("safety_checker")
@@ -72,6 +73,11 @@ class CodeWorker(QThread):
         
       
       while True:
+        if tried==15:
+          self.log.emit("!!! Debugging Limit reached please enter prompt again with more clarity and simplicity this will help A.I in understanding your task.")
+          self.finished.emit("!!! Debugging Limit Crossed !!!")
+          return 
+
         history1=memory1.load_memory_variables()
         if "AI: " in history1:
           last_safety_decision= history1.split("AI: ")[-1].strip()
@@ -110,8 +116,9 @@ class CodeWorker(QThread):
            
           response=llm1.invoke(prompt)
           if response=="Yes":
-            self.finished.emit("!!! SECURITY RISK !!! Review code. To bypass, click on Execute again without changing prompt")
+            self.finished.emit("!!! SECURITY RISK !!! We cannot execute this code beacuause it can harm your system.")
             memory1.save_context("Latest_AI_Response",response)
+            memory1.clear_memory()
             return
 
           error_log = self.executor(cleaned_response)
@@ -142,6 +149,8 @@ class CodeWorker(QThread):
           """)
 
           final_response1=parser.parse(response1)
+ 
+          tried+=1
 
           cleaned_response = final_response1.strip()
           if cleaned_response.startswith("```python"):
@@ -154,6 +163,7 @@ class CodeWorker(QThread):
           if cleaned_response.endswith("```"):
             cleaned_response = cleaned_response[:-len("```")]
             memory.save_context(error_log,cleaned_response)
+
 
 
 # =======================
