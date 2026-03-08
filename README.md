@@ -2,7 +2,7 @@
 
 ## 🚀 Quick Start
 Install the app:  
-[Download Latest Release](https://github.com/sonuramashishnpm/NPM-AutoCode-AI/releases/download/v2.0/NPM_AutoCode_AI.zip)
+[Download Latest Release](https://github.com/sonuramashishnpm/NPM-AutoCode-AI/releases/download/v2.2/NPM_AutoCode_AI.zip)
 
 1. Unzip the file.
 2. Run `NPM_AutoCode_AI.exe` (Windows) or `python main.py` (Python 3.12+).
