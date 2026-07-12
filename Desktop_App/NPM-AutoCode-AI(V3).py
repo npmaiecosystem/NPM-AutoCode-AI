@@ -1,6 +1,7 @@
 """
 NPMAI Agent Desktop — v4 (npmai_agents edition)
 
+THIS IS NOT YET DEPLOYED.
 Here it is about Desktop APP.
 """
 import sys, os, math, random, threading
