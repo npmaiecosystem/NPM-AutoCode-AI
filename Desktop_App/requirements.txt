@@ -3,4 +3,4 @@ langchain
 langchain-core
 langchain-community
 npmai
-npmai-agents
+npmai-agents==1.0.2
