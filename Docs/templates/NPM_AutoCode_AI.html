@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>NPM Agent — NPMAI Ecosystem</title>
+<title>NPM-AutoCode-AI — v3 · NPMAI Ecosystem</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -29,7 +29,7 @@ body{
 ::-webkit-scrollbar-track{background:var(--void);}
 ::-webkit-scrollbar-thumb{background:var(--mint);border-radius:2px;}
 
-/* ── CUSTOM CURSOR ── */
+/* ── CUSTOM CURSOR (unchanged) ── */
 #cursor{
   position:fixed;width:12px;height:12px;border-radius:50%;
   background:var(--mint);pointer-events:none;z-index:9999;
@@ -44,35 +44,35 @@ body{
   transition:transform 0.12s cubic-bezier(0.23,1,0.32,1),width 0.4s,height 0.4s,opacity 0.3s;
 }
 body:hover #cursor{opacity:1;}
+@media(hover:none){ #cursor,#cursor-ring{display:none;} body{cursor:auto;} }
 
-/* ── THREE.JS CANVAS ── */
+/* ── THREE.JS CANVAS (unchanged) ── */
 #three-canvas{
   position:fixed;top:0;left:0;width:100%;height:100%;
   z-index:0;pointer-events:none;
 }
 
-/* ── NOISE OVERLAY ── */
+/* ── NOISE OVERLAY (unchanged) ── */
 body::after{
   content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
   opacity:0.03;
 }
 
-/* ── LAYOUT ── */
 .wrap{position:relative;z-index:2;}
 
 /* ── NAV ── */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;
-  padding:20px 6vw;
+  padding:18px 6vw;
   background:rgba(3,2,10,0.6);
   backdrop-filter:blur(24px);
   border-bottom:1px solid rgba(255,255,255,0.04);
 }
 .nav-logo{
-  font-family:var(--font-mono);font-size:14px;font-weight:700;
-  color:var(--mint);letter-spacing:0.08em;
+  font-family:var(--font-mono);font-size:13px;font-weight:700;
+  color:var(--mint);letter-spacing:0.04em;
   display:flex;align-items:center;gap:10px;
 }
 .nav-logo-dot{
@@ -84,10 +84,10 @@ nav{
   0%,100%{box-shadow:0 0 8px var(--mint);}
   50%{box-shadow:0 0 20px var(--mint),0 0 40px rgba(42,255,160,0.4);}
 }
-.nav-links{display:flex;gap:32px;}
+.nav-links{display:flex;gap:30px;}
 .nav-links a{
-  font-size:13px;color:var(--dim);text-decoration:none;
-  font-family:var(--font-mono);letter-spacing:0.06em;
+  font-size:12px;color:var(--dim);text-decoration:none;
+  font-family:var(--font-mono);letter-spacing:0.05em;
   transition:color 0.3s;position:relative;
 }
 .nav-links a::after{
@@ -98,8 +98,8 @@ nav{
 .nav-links a:hover::after{width:100%;}
 .nav-cta{
   background:transparent;border:1px solid rgba(42,255,160,0.4);
-  color:var(--mint);padding:10px 22px;border-radius:8px;
-  font-family:var(--font-mono);font-size:12px;letter-spacing:0.06em;
+  color:var(--mint);padding:9px 20px;border-radius:8px;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:0.05em;
   cursor:none;text-decoration:none;
   transition:all 0.3s;
   box-shadow:0 0 20px rgba(42,255,160,0.1);
@@ -109,35 +109,30 @@ nav{
   box-shadow:0 0 30px rgba(42,255,160,0.25);
 }
 
-/* ── HERO ── */
+/* ── HERO — asymmetric, version tag as the eyebrow signature ── */
 #hero{
-  min-height:100vh;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  padding:120px 6vw 80px;text-align:center;
+  min-height:100vh;display:grid;grid-template-columns:1.3fr 0.9fr;gap:40px;
+  align-items:center;
+  padding:150px 6vw 80px;
   position:relative;overflow:hidden;
 }
-.hero-eyebrow{
-  display:inline-flex;align-items:center;gap:8px;
-  font-family:var(--font-mono);font-size:11px;
-  letter-spacing:0.18em;text-transform:uppercase;color:var(--mint);
-  margin-bottom:32px;opacity:0;
-  animation:rise 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
+.hero-version-tag{
+  display:inline-flex;align-items:baseline;gap:10px;
+  font-family:var(--font-mono);
+  margin-bottom:26px;
+  opacity:0;animation:rise 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
 }
-.hero-eyebrow::before,
-.hero-eyebrow::after{
-  content:'';display:inline-block;height:1px;
-  background:linear-gradient(90deg,transparent,var(--mint));
-  width:30px;
-}
-.hero-eyebrow::after{transform:scaleX(-1);}
+.hero-version-tag .v-big{font-size:13px;color:var(--void);background:var(--mint);
+  padding:4px 10px;border-radius:5px;font-weight:700;letter-spacing:0.05em;}
+.hero-version-tag .v-txt{font-size:11px;color:var(--mid);letter-spacing:0.14em;text-transform:uppercase;}
 
 .hero-title{
-  font-size:clamp(3.2rem,8vw,6.5rem);
-  font-weight:700;line-height:1.0;letter-spacing:-0.04em;
-  margin-bottom:28px;
+  font-size:clamp(2.6rem,5.6vw,4.6rem);
+  font-weight:700;line-height:1.02;letter-spacing:-0.03em;
+  margin-bottom:24px;
   opacity:0;animation:rise 0.9s cubic-bezier(0.16,1,0.3,1) 0.5s forwards;
 }
-.hero-title .word-agent{
+.hero-title .grad{
   display:inline-block;
   background:linear-gradient(135deg,var(--mint) 0%,var(--cyan) 50%,var(--violet) 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
@@ -145,604 +140,303 @@ nav{
   filter:drop-shadow(0 0 30px rgba(42,255,160,0.3));
 }
 .hero-sub{
-  font-size:clamp(1rem,2vw,1.2rem);color:var(--mid);
-  max-width:580px;margin:0 auto 48px;line-height:1.8;
+  font-size:clamp(0.98rem,1.6vw,1.12rem);color:var(--mid);
+  max-width:520px;margin-bottom:36px;line-height:1.8;
   opacity:0;animation:rise 0.9s cubic-bezier(0.16,1,0.3,1) 0.7s forwards;
 }
 .hero-actions{
-  display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
-  margin-bottom:80px;
+  display:flex;gap:14px;flex-wrap:wrap;margin-bottom:52px;
   opacity:0;animation:rise 0.9s cubic-bezier(0.16,1,0.3,1) 0.9s forwards;
 }
 .btn-primary{
   display:inline-flex;align-items:center;gap:10px;
   background:var(--mint);color:#040210;
   font-weight:700;font-size:14px;
-  padding:15px 32px;border-radius:10px;
+  padding:15px 30px;border-radius:10px;
   text-decoration:none;cursor:none;
   transition:all 0.3s;
   box-shadow:0 0 40px rgba(42,255,160,0.35),inset 0 1px 0 rgba(255,255,255,0.2);
   font-family:var(--font-display);
 }
-.btn-primary:hover{
-  transform:translateY(-3px) scale(1.03);
-  box-shadow:0 0 60px rgba(42,255,160,0.5);
-}
+.btn-primary:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 0 60px rgba(42,255,160,0.5);}
 .btn-ghost{
   display:inline-flex;align-items:center;gap:10px;
   background:transparent;color:var(--bright);
-  font-size:14px;padding:15px 32px;border-radius:10px;
+  font-size:14px;padding:15px 28px;border-radius:10px;
   border:1px solid rgba(255,255,255,0.12);
   text-decoration:none;cursor:none;
   transition:all 0.3s;font-family:var(--font-display);
 }
-.btn-ghost:hover{
-  background:rgba(255,255,255,0.06);
-  border-color:rgba(255,255,255,0.25);
-  transform:translateY(-3px);
-}
+.btn-ghost:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.25);transform:translateY(-3px);}
 
-/* ── STATS STRIP ── */
 .stats-strip{
-  display:flex;gap:0;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
   border:1px solid rgba(255,255,255,0.08);
-  border-radius:16px;overflow:hidden;
-  max-width:700px;width:100%;margin:0 auto;
-  background:rgba(255,255,255,0.03);
-  backdrop-filter:blur(20px);
+  border-radius:16px;overflow:hidden;max-width:560px;
+  background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);
   opacity:0;animation:rise 0.9s cubic-bezier(0.16,1,0.3,1) 1.1s forwards;
 }
-.stat{
-  flex:1;padding:24px 16px;text-align:center;
-  border-right:1px solid rgba(255,255,255,0.06);
-  transition:background 0.3s;cursor:default;
-}
+.stat{padding:20px 12px;text-align:center;border-right:1px solid rgba(255,255,255,0.06);transition:background 0.3s;cursor:default;}
 .stat:last-child{border-right:none;}
 .stat:hover{background:rgba(255,255,255,0.04);}
-.stat-num{
-  font-family:var(--font-mono);font-size:1.6rem;font-weight:700;
-  color:var(--mint);margin-bottom:5px;letter-spacing:-0.02em;
-}
-.stat-lbl{font-size:11px;color:var(--dim);letter-spacing:0.06em;text-transform:uppercase;}
+.stat-num{font-family:var(--font-mono);font-size:1.4rem;font-weight:700;color:var(--mint);margin-bottom:4px;letter-spacing:-0.02em;}
+.stat-lbl{font-size:10px;color:var(--dim);letter-spacing:0.05em;text-transform:uppercase;}
 
-@keyframes rise{
-  from{opacity:0;transform:translateY(32px);}
-  to{opacity:1;transform:translateY(0);}
+/* hero right — vertical stage rail, a real signature element */
+.hero-rail{
+  opacity:0;animation:rise 0.9s cubic-bezier(0.16,1,0.3,1) 1.0s forwards;
+  border-left:1px solid rgba(255,255,255,0.08);
+  padding-left:28px;display:flex;flex-direction:column;gap:0;
 }
+.hero-rail-label{font-family:var(--font-mono);font-size:10px;color:var(--dim);
+  letter-spacing:0.16em;text-transform:uppercase;margin-bottom:18px;}
+.rail-node{display:flex;gap:14px;padding:11px 0;position:relative;}
+.rail-node::before{
+  content:'';position:absolute;left:-33px;top:16px;width:9px;height:9px;
+  border-radius:50%;background:var(--void);border:2px solid var(--mint);
+}
+.rail-node:not(:last-child)::after{
+  content:'';position:absolute;left:-29px;top:26px;width:1px;height:calc(100% + 4px);
+  background:linear-gradient(to bottom,rgba(42,255,160,0.5),rgba(42,255,160,0.05));
+}
+.rail-node b{font-size:12.5px;color:var(--bright);display:block;}
+.rail-node span{font-size:11px;color:var(--dim);}
 
-/* ── SCROLL INDICATOR ── */
+@keyframes rise{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+
 .scroll-indicator{
-  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
-  display:flex;flex-direction:column;align-items:center;gap:8px;
+  position:absolute;bottom:28px;left:6vw;
+  display:flex;align-items:center;gap:10px;
   color:var(--dim);font-family:var(--font-mono);font-size:10px;
-  letter-spacing:0.12em;text-transform:uppercase;
-  animation:float-y 3s ease-in-out infinite;
+  letter-spacing:0.1em;text-transform:uppercase;
 }
-.scroll-line{
-  width:1px;height:50px;
-  background:linear-gradient(to bottom,var(--mint),transparent);
-  animation:scroll-line 2s ease-in-out infinite;
-}
-@keyframes scroll-line{
-  0%{transform:scaleY(0);transform-origin:top;}
-  50%{transform:scaleY(1);transform-origin:top;}
-  51%{transform:scaleY(1);transform-origin:bottom;}
-  100%{transform:scaleY(0);transform-origin:bottom;}
-}
-@keyframes float-y{
-  0%,100%{transform:translateX(-50%) translateY(0);}
-  50%{transform:translateX(-50%) translateY(8px);}
-}
+.scroll-line{width:40px;height:1px;background:linear-gradient(to right,var(--mint),transparent);}
 
-/* ── SECTION BASE ── */
-section{padding:120px 6vw;position:relative;}
+section{padding:110px 6vw;position:relative;}
 .section-eyebrow{
-  font-family:var(--font-mono);font-size:10px;
-  letter-spacing:0.18em;text-transform:uppercase;
-  color:var(--mint);margin-bottom:16px;
-  display:flex;align-items:center;gap:12px;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--mint);margin-bottom:16px;display:flex;align-items:center;gap:12px;
 }
-.section-eyebrow::after{
-  content:'';flex:1;height:1px;max-width:60px;
-  background:linear-gradient(90deg,var(--mint),transparent);
-}
-h2.section-title{
-  font-size:clamp(2.2rem,4.5vw,3.5rem);font-weight:700;
-  letter-spacing:-0.04em;margin-bottom:18px;line-height:1.05;
-}
-.section-desc{font-size:16px;color:var(--mid);max-width:520px;line-height:1.8;margin-bottom:72px;}
-
-/* ── DIVIDER ── */
-.divider{
-  height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);
-  margin:0 6vw;
-}
+.section-eyebrow::after{content:'';flex:1;height:1px;max-width:60px;background:linear-gradient(90deg,var(--mint),transparent);}
+h2.section-title{font-size:clamp(2rem,4vw,3.2rem);font-weight:700;letter-spacing:-0.03em;margin-bottom:16px;line-height:1.08;}
+.section-desc{font-size:15px;color:var(--mid);max-width:540px;line-height:1.8;margin-bottom:64px;}
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);margin:0 6vw;}
 
 /* ── APP DEMO WINDOW ── */
-#demo{padding:120px 6vw;}
 .demo-center{display:flex;flex-direction:column;align-items:center;gap:0;}
-
 .app-frame{
-  width:100%;max-width:900px;
+  width:100%;max-width:920px;
   background:rgba(11,9,28,0.96);
   border:1px solid rgba(255,255,255,0.1);
   border-radius:20px;overflow:hidden;
-  box-shadow:
-    0 80px 160px rgba(0,0,0,0.8),
-    0 0 0 1px rgba(42,255,160,0.08),
-    0 0 120px rgba(42,255,160,0.06);
+  box-shadow:0 80px 160px rgba(0,0,0,0.8),0 0 0 1px rgba(42,255,160,0.08),0 0 120px rgba(42,255,160,0.06);
   transform:perspective(1200px) rotateX(3deg);
   transition:transform 0.6s cubic-bezier(0.23,1,0.32,1),box-shadow 0.6s;
   animation:frame-float 6s ease-in-out infinite;
 }
-@keyframes frame-float{
-  0%,100%{transform:perspective(1200px) rotateX(3deg) translateY(0);}
-  50%{transform:perspective(1200px) rotateX(2deg) translateY(-12px);}
-}
-.app-frame:hover{
-  transform:perspective(1200px) rotateX(0deg) translateY(-8px);
-  box-shadow:0 80px 160px rgba(0,0,0,0.7),0 0 80px rgba(42,255,160,0.12);
-  animation:none;
-}
-
-/* titlebar */
-.app-tb{
-  display:flex;align-items:center;gap:14px;
-  padding:14px 20px;background:rgba(7,5,18,0.98);
-  border-bottom:1px solid rgba(255,255,255,0.06);
-}
+@keyframes frame-float{0%,100%{transform:perspective(1200px) rotateX(3deg) translateY(0);}50%{transform:perspective(1200px) rotateX(2deg) translateY(-12px);}}
+.app-frame:hover{transform:perspective(1200px) rotateX(0deg) translateY(-8px);box-shadow:0 80px 160px rgba(0,0,0,0.7),0 0 80px rgba(42,255,160,0.12);animation:none;}
+.app-tb{display:flex;align-items:center;gap:14px;padding:14px 20px;background:rgba(7,5,18,0.98);border-bottom:1px solid rgba(255,255,255,0.06);}
 .tb-dots{display:flex;gap:7px;}
 .tb-dot{width:12px;height:12px;border-radius:50%;}
 .td-r{background:#FF5F56;} .td-y{background:#FFBD2E;} .td-g{background:#28C940;}
-.tb-title{
-  flex:1;text-align:center;font-family:var(--font-mono);
-  font-size:11px;color:var(--dim);letter-spacing:0.06em;
-}
-.tb-badge{
-  font-family:var(--font-mono);font-size:9px;padding:3px 8px;
-  border-radius:4px;background:rgba(42,255,160,0.12);
-  color:var(--mint);border:1px solid rgba(42,255,160,0.25);
-  letter-spacing:0.08em;
-}
-
-/* app body */
-.app-body{display:grid;grid-template-columns:220px 1fr;height:480px;}
-
-/* sidebar */
-.app-sidebar{
-  background:rgba(6,4,16,0.9);
-  border-right:1px solid rgba(255,255,255,0.06);
-  padding:20px 0;display:flex;flex-direction:column;
-}
-.app-sidebar-logo{padding:0 18px 16px;font-family:var(--font-mono);font-size:12px;color:var(--mint);letter-spacing:0.04em;}
+.tb-title{flex:1;text-align:center;font-family:var(--font-mono);font-size:11px;color:var(--dim);letter-spacing:0.05em;}
+.tb-badge{font-family:var(--font-mono);font-size:9px;padding:3px 8px;border-radius:4px;background:rgba(42,255,160,0.12);color:var(--mint);border:1px solid rgba(42,255,160,0.25);letter-spacing:0.06em;}
+.app-body{display:grid;grid-template-columns:210px 1fr;height:500px;}
+.app-sidebar{background:rgba(6,4,16,0.9);border-right:1px solid rgba(255,255,255,0.06);padding:20px 0;display:flex;flex-direction:column;}
+.app-sidebar-logo{padding:0 18px 16px;font-family:var(--font-mono);font-size:11px;color:var(--mint);letter-spacing:0.02em;}
 .app-sidebar-sep{height:1px;background:rgba(255,255,255,0.05);margin-bottom:10px;}
-.app-sidebar-label{
-  padding:10px 18px 6px;font-family:var(--font-mono);font-size:9px;
-  color:var(--dim);letter-spacing:0.14em;text-transform:uppercase;
-}
-.app-nav-item{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 18px;font-size:12px;color:var(--mid);
-  border-left:2px solid transparent;cursor:pointer;
-  transition:all 0.2s;
-}
-.app-nav-item.active{
-  color:var(--mint);
-  border-left-color:var(--mint);
-  background:linear-gradient(90deg,rgba(42,255,160,0.1),transparent);
-}
+.app-sidebar-label{padding:10px 18px 6px;font-family:var(--font-mono);font-size:9px;color:var(--dim);letter-spacing:0.12em;text-transform:uppercase;}
+.app-nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;font-size:12px;color:var(--mid);border-left:2px solid transparent;cursor:pointer;transition:all 0.2s;}
+.app-nav-item.active{color:var(--mint);border-left-color:var(--mint);background:linear-gradient(90deg,rgba(42,255,160,0.1),transparent);}
 .app-nav-item:hover:not(.active){color:var(--bright);background:rgba(255,255,255,0.04);}
 .app-sidebar-spacer{flex:1;}
-.app-mcp{
-  margin:0 12px 12px;padding:10px 12px;
-  background:rgba(42,255,160,0.06);
-  border:1px solid rgba(42,255,160,0.2);
-  border-radius:8px;
-  font-family:var(--font-mono);font-size:9px;color:var(--mint);
-  display:flex;align-items:center;gap:8px;
-}
-.mcp-dot-live{
-  width:6px;height:6px;border-radius:50%;background:var(--mint);
-  animation:pulse-dot 1.5s infinite;flex-shrink:0;
-}
-
-/* main content */
+.app-mcp{margin:0 12px 12px;padding:10px 12px;background:rgba(42,255,160,0.06);border:1px solid rgba(42,255,160,0.2);border-radius:8px;font-family:var(--font-mono);font-size:9px;color:var(--mint);display:flex;align-items:center;gap:8px;}
+.mcp-dot-live{width:6px;height:6px;border-radius:50%;background:var(--mint);animation:pulse-dot 1.5s infinite;flex-shrink:0;}
 .app-main{display:flex;flex-direction:column;overflow:hidden;}
-.app-chat{flex:1;overflow:hidden;padding:20px 22px;display:flex;flex-direction:column;gap:14px;}
-
-/* chat bubbles */
-.bubble{
-  display:flex;max-width:78%;
-  animation:bubble-in 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;
-}
+.app-chat{flex:1;overflow:hidden;padding:18px 22px;display:flex;flex-direction:column;gap:12px;}
+.bubble{display:flex;max-width:80%;animation:bubble-in 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;}
 @keyframes bubble-in{from{opacity:0;transform:translateY(10px) scale(0.95);}to{opacity:1;transform:translateY(0) scale(1);}}
 .bubble.user{margin-left:auto;flex-direction:row-reverse;}
-.bubble-text{
-  padding:10px 15px;border-radius:14px;
-  font-size:12px;line-height:1.6;
-}
-.bubble.agent .bubble-text{
-  background:rgba(17,16,40,0.9);border:1px solid rgba(42,255,160,0.2);
-  border-top-left-radius:3px;color:var(--bright);
-}
-.bubble.user .bubble-text{
-  background:linear-gradient(135deg,rgba(42,255,160,0.2),rgba(0,229,255,0.15));
-  border:1px solid rgba(42,255,160,0.3);border-top-right-radius:3px;color:var(--bright);
-}
+.bubble-text{padding:10px 15px;border-radius:14px;font-size:12px;line-height:1.6;}
+.bubble.agent .bubble-text{background:rgba(17,16,40,0.9);border:1px solid rgba(42,255,160,0.2);border-top-left-radius:3px;color:var(--bright);}
+.bubble.user .bubble-text{background:linear-gradient(135deg,rgba(42,255,160,0.2),rgba(0,229,255,0.15));border:1px solid rgba(42,255,160,0.3);border-top-right-radius:3px;color:var(--bright);}
 .bubble-thinking{display:flex;gap:5px;padding:12px 16px;align-items:center;}
-.think-dot{
-  width:6px;height:6px;border-radius:50%;background:var(--mint);
-  animation:think 1.2s ease-in-out infinite;
-}
-.think-dot:nth-child(2){animation-delay:0.2s;}
-.think-dot:nth-child(3){animation-delay:0.4s;}
+.think-dot{width:6px;height:6px;border-radius:50%;background:var(--mint);animation:think 1.2s ease-in-out infinite;}
+.think-dot:nth-child(2){animation-delay:0.2s;} .think-dot:nth-child(3){animation-delay:0.4s;}
 @keyframes think{0%,100%{opacity:0.3;transform:scale(0.8);}50%{opacity:1;transform:scale(1.2);}}
-
-/* log panel */
-.app-log{
-  height:110px;border-top:1px solid rgba(255,255,255,0.06);
-  padding:10px 18px;overflow:hidden;
-  background:rgba(3,2,10,0.5);
-}
-.log-header{
-  font-family:var(--font-mono);font-size:9px;color:var(--dim);
-  text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;
-  display:flex;align-items:center;gap:8px;
-}
-.log-header::before{
-  content:'';width:6px;height:6px;border-radius:50%;background:var(--mint);
-  animation:pulse-dot 1.5s infinite;
-}
-.log-line{
-  font-family:var(--font-mono);font-size:10px;
-  padding:2px 0;line-height:1.5;
-  opacity:0;animation:log-appear 0.4s ease forwards;
-}
+.app-log{height:104px;border-top:1px solid rgba(255,255,255,0.06);padding:10px 18px;overflow:hidden;background:rgba(3,2,10,0.5);}
+.log-header{font-family:var(--font-mono);font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.log-header::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--mint);animation:pulse-dot 1.5s infinite;}
+.log-line{font-family:var(--font-mono);font-size:10px;padding:2px 0;line-height:1.5;opacity:0;animation:log-appear 0.4s ease forwards;}
 @keyframes log-appear{from{opacity:0;transform:translateX(-8px);}to{opacity:1;transform:translateX(0);}}
-
-/* input bar */
-.app-input-bar{
-  padding:14px 18px;border-top:1px solid rgba(255,255,255,0.06);
-  display:flex;gap:10px;align-items:center;
-  background:rgba(7,5,18,0.6);
-}
-.app-input-field{
-  flex:1;background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.08);border-radius:10px;
-  padding:10px 14px;color:var(--bright);font-size:12px;
-  font-family:var(--font-display);
-}
-.app-run{
-  background:var(--mint);color:#040210;border:none;
-  border-radius:8px;padding:10px 18px;font-size:12px;
-  font-weight:700;cursor:pointer;font-family:var(--font-display);
-  transition:all 0.2s;
-  box-shadow:0 0 20px rgba(42,255,160,0.3);
-}
+.app-input-bar{padding:14px 18px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:10px;align-items:center;background:rgba(7,5,18,0.6);}
+.app-input-field{flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 14px;color:var(--bright);font-size:12px;font-family:var(--font-display);}
+.app-run{background:var(--mint);color:#040210;border:none;border-radius:8px;padding:10px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-display);transition:all 0.2s;box-shadow:0 0 20px rgba(42,255,160,0.3);}
 .app-run:hover{transform:scale(1.05);}
-.app-kill{
-  background:rgba(255,107,157,0.1);color:var(--rose);
-  border:1px solid rgba(255,107,157,0.3);border-radius:8px;
-  padding:10px 14px;font-size:11px;cursor:pointer;
-  font-family:var(--font-mono);
-}
-
-/* progress bar */
+.app-kill{background:rgba(255,107,157,0.1);color:var(--rose);border:1px solid rgba(255,107,157,0.3);border-radius:8px;padding:10px 14px;font-size:11px;cursor:pointer;font-family:var(--font-mono);}
 .app-prog-wrap{padding:6px 18px;background:rgba(7,5,18,0.4);}
 .app-prog-row{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:9px;color:var(--dim);margin-bottom:5px;}
 .app-prog-track{height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
-.app-prog-fill{
-  height:100%;border-radius:2px;
-  background:linear-gradient(90deg,var(--mint),var(--cyan),var(--violet));
-  width:0%;transition:width 0.8s cubic-bezier(0.4,0,0.2,1);
-  position:relative;overflow:hidden;
-}
-.app-prog-fill::after{
-  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);
-  animation:shimmer 2s infinite;
-}
+.app-prog-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--mint),var(--cyan),var(--violet));width:0%;transition:width 0.8s cubic-bezier(0.4,0,0.2,1);position:relative;overflow:hidden;}
+.app-prog-fill::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);animation:shimmer 2s infinite;}
 @keyframes shimmer{to{left:200%;}}
 
-/* ── FEATURES SECTION ── */
-#features{background:rgba(0,0,0,0.15);}
-.features-grid{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;
+/* demo chips — now a scrollable multi-row bank ("a lot of options") */
+.chip-bank{
+  display:flex;flex-wrap:wrap;gap:9px;margin-top:26px;justify-content:center;max-width:920px;
 }
-.feat-card{
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.07);
-  border-radius:20px;padding:32px 28px;
-  position:relative;overflow:hidden;
-  transition:all 0.4s cubic-bezier(0.23,1,0.32,1);
-  cursor:default;
-}
-.feat-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:var(--card-accent,linear-gradient(90deg,transparent,var(--mint),transparent));
-  transform:scaleX(0);transition:transform 0.4s;
-}
-.feat-card::after{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(42,255,160,0.05) 0%,transparent 60%);
-  opacity:0;transition:opacity 0.3s;pointer-events:none;
-}
-.feat-card:hover{
-  transform:translateY(-10px);
-  border-color:rgba(42,255,160,0.2);
-  box-shadow:0 30px 60px rgba(0,0,0,0.4),0 0 0 1px rgba(42,255,160,0.08);
-}
-.feat-card:hover::before{transform:scaleX(1);}
-.feat-card:hover::after{opacity:1;}
-.feat-icon{
-  font-size:2.2rem;margin-bottom:18px;display:block;
-  transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-}
-.feat-card:hover .feat-icon{transform:scale(1.15) rotate(-5deg);}
-.feat-card h3{font-size:17px;font-weight:600;margin-bottom:10px;letter-spacing:-0.02em;}
-.feat-card p{font-size:13px;color:var(--mid);line-height:1.75;}
-.feat-tag{
-  display:inline-block;margin-top:16px;
-  font-family:var(--font-mono);font-size:10px;
-  letter-spacing:0.08em;text-transform:uppercase;
-  padding:4px 10px;border-radius:5px;
-}
-
-/* ── TOOLS SECTION ── */
-#tools{}
-.tools-marquee-wrap{overflow:hidden;margin-bottom:20px;mask-image:linear-gradient(90deg,transparent,black 10%,black 90%,transparent);}
-.tools-marquee{
-  display:flex;gap:14px;
-  animation:marquee 28s linear infinite;
-  width:max-content;
-}
-.tools-marquee2{animation-direction:reverse;animation-duration:22s;}
-@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}  }
 .tool-chip{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:10px 18px;border-radius:30px;white-space:nowrap;
-  font-size:12px;font-weight:500;
-  border:1px solid rgba(255,255,255,0.08);
-  background:rgba(255,255,255,0.04);
-  color:var(--mid);transition:all 0.2s;flex-shrink:0;
+  display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:30px;white-space:nowrap;
+  font-size:11.5px;font-weight:500;border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);color:var(--mid);transition:all 0.2s;flex-shrink:0;cursor:pointer;
 }
 .tool-chip:hover{color:var(--bright);border-color:rgba(42,255,160,0.3);background:rgba(42,255,160,0.08);}
 
-/* ── AGENT PIPELINE ── */
+/* ── FEATURES ── */
+#features{background:rgba(0,0,0,0.15);}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;}
+.feat-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:30px 26px;position:relative;overflow:hidden;transition:all 0.4s cubic-bezier(0.23,1,0.32,1);cursor:default;}
+.feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--card-accent,linear-gradient(90deg,transparent,var(--mint),transparent));transform:scaleX(0);transition:transform 0.4s;}
+.feat-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(42,255,160,0.05) 0%,transparent 60%);opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.feat-card:hover{transform:translateY(-10px);border-color:rgba(42,255,160,0.2);box-shadow:0 30px 60px rgba(0,0,0,0.4),0 0 0 1px rgba(42,255,160,0.08);}
+.feat-card:hover::before{transform:scaleX(1);}
+.feat-card:hover::after{opacity:1;}
+.feat-icon{font-size:2.1rem;margin-bottom:16px;display:block;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+.feat-card:hover .feat-icon{transform:scale(1.15) rotate(-5deg);}
+.feat-card h3{font-size:16.5px;font-weight:600;margin-bottom:10px;letter-spacing:-0.02em;}
+.feat-card p{font-size:12.5px;color:var(--mid);line-height:1.75;}
+.feat-tag{display:inline-block;margin-top:14px;font-family:var(--font-mono);font-size:9.5px;letter-spacing:0.06em;text-transform:uppercase;padding:4px 10px;border-radius:5px;}
+
+/* ── TOOL REGISTRY marquee ── */
+.tools-marquee-wrap{overflow:hidden;margin-bottom:14px;mask-image:linear-gradient(90deg,transparent,black 10%,black 90%,transparent);}
+.tools-marquee{display:flex;gap:14px;animation:marquee 30s linear infinite;width:max-content;}
+.tools-marquee2{animation-direction:reverse;animation-duration:24s;}
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ── PIPELINE ── */
 #pipeline{background:rgba(0,0,0,0.12);}
-.pipeline{
-  display:flex;align-items:stretch;gap:0;
-  max-width:1000px;margin:0 auto;flex-wrap:wrap;
-}
-.pipe-step{
-  flex:1;min-width:140px;
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.07);
-  border-radius:16px;padding:28px 20px;
-  text-align:center;position:relative;
-  transition:all 0.4s;cursor:default;
-  margin:0 8px;
-}
-.pipe-step:hover{
-  background:rgba(255,255,255,0.06);
-  border-color:rgba(42,255,160,0.25);
-  transform:translateY(-8px);
-}
-.pipe-num{
-  font-family:var(--font-mono);font-size:11px;color:var(--dim);
-  margin-bottom:12px;letter-spacing:0.1em;
-}
-.pipe-icon{font-size:2rem;display:block;margin-bottom:10px;}
-.pipe-name{font-size:14px;font-weight:600;color:var(--bright);margin-bottom:6px;}
-.pipe-desc{font-size:11px;color:var(--mid);line-height:1.6;}
-.pipe-arrow{
-  position:absolute;right:-20px;top:50%;transform:translateY(-50%);
-  font-size:16px;color:var(--dim);z-index:1;
-}
+.pipeline{display:flex;align-items:stretch;gap:0;max-width:1080px;margin:0 auto;flex-wrap:wrap;}
+.pipe-step{flex:1;min-width:130px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:26px 16px;text-align:center;position:relative;transition:all 0.4s;cursor:default;margin:0 6px;}
+.pipe-step:hover{background:rgba(255,255,255,0.06);border-color:rgba(42,255,160,0.25);transform:translateY(-8px);}
+.pipe-num{font-family:var(--font-mono);font-size:10px;color:var(--dim);margin-bottom:10px;letter-spacing:0.1em;}
+.pipe-icon{font-size:1.8rem;display:block;margin-bottom:9px;}
+.pipe-name{font-size:13px;font-weight:600;color:var(--bright);margin-bottom:5px;}
+.pipe-desc{font-size:10.5px;color:var(--mid);line-height:1.6;}
+.pipe-arrow{position:absolute;right:-16px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--dim);z-index:1;}
 
-/* ── MCP SECTION ── */
-.mcp-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;}
-.mcp-left{}
-.mcp-code{
-  background:rgba(3,2,10,0.9);border:1px solid rgba(42,255,160,0.15);
-  border-radius:16px;overflow:hidden;
-  box-shadow:0 0 60px rgba(42,255,160,0.05);
+/* ── MCP ARCHITECTURE — signature relay diagram ── */
+#mcp-arch{background:rgba(0,0,0,0.1);}
+.relay{
+  display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;
+  max-width:980px;margin:0 auto 60px;gap:6px;
 }
-.mcp-code-header{
-  padding:12px 18px;background:rgba(255,255,255,0.03);
-  border-bottom:1px solid rgba(255,255,255,0.05);
-  display:flex;align-items:center;gap:10px;
-  font-family:var(--font-mono);font-size:11px;color:var(--dim);
+.relay-node{
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.09);
+  border-radius:16px;padding:22px 18px;text-align:center;transition:all 0.3s;
 }
-.mcp-code-header::before{
-  content:'';width:7px;height:7px;border-radius:50%;
-  background:var(--mint);box-shadow:0 0 8px var(--mint);
-  animation:pulse-dot 2s infinite;
+.relay-node:hover{border-color:rgba(42,255,160,0.3);transform:translateY(-4px);}
+.relay-node .rn-icon{font-size:1.7rem;margin-bottom:8px;display:block;}
+.relay-node .rn-title{font-size:13.5px;font-weight:700;color:var(--bright);margin-bottom:4px;}
+.relay-node .rn-sub{font-size:10.5px;color:var(--dim);font-family:var(--font-mono);}
+.relay-link{position:relative;height:2px;width:100%;min-width:36px;background:rgba(255,255,255,0.08);overflow:visible;}
+.relay-link::before{
+  content:'';position:absolute;top:50%;left:0;width:10px;height:10px;margin-top:-5px;
+  border-radius:50%;background:var(--mint);box-shadow:0 0 10px var(--mint);
+  animation:travel 2.4s linear infinite;
 }
-.mcp-code pre{
-  padding:22px;font-family:var(--font-mono);font-size:12px;
-  line-height:1.9;color:rgba(200,195,255,0.85);overflow-x:auto;
-}
-.mcp-code pre .kw{color:#c792ea;}
-.mcp-code pre .str{color:#c3e88d;}
-.mcp-code pre .cm{color:rgba(255,255,255,0.25);font-style:italic;}
-.mcp-code pre .fn{color:#82aaff;}
-.mcp-code pre .num{color:var(--mint);}
+.relay-link.rev::before{animation-direction:reverse;background:var(--cyan);box-shadow:0 0 10px var(--cyan);}
+@keyframes travel{0%{left:0;}100%{left:calc(100% - 10px);}}
+.relay-label{grid-column:1/-1;display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:9.5px;color:var(--dim);letter-spacing:0.06em;text-transform:uppercase;margin-top:10px;padding:0 6px;}
 
-.mcp-tools-list{display:flex;flex-direction:column;gap:10px;}
-.mcp-tool-row{
-  display:flex;align-items:center;gap:14px;
-  padding:14px 18px;
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.06);
-  border-radius:12px;transition:all 0.25s;cursor:default;
-}
-.mcp-tool-row:hover{border-color:rgba(42,255,160,0.2);background:rgba(42,255,160,0.04);}
-.mcp-tool-icon{font-size:18px;width:32px;text-align:center;flex-shrink:0;}
-.mcp-tool-name{font-family:var(--font-mono);font-size:11px;color:var(--mint);font-weight:700;flex-shrink:0;width:140px;}
-.mcp-tool-desc{font-size:12px;color:var(--mid);}
+.mcp-explain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;}
+.mcp-explain-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:24px 22px;transition:all 0.3s;}
+.mcp-explain-card:hover{border-color:rgba(167,139,250,0.25);transform:translateY(-4px);}
+.mcp-explain-card .mx-step{font-family:var(--font-mono);font-size:10px;color:var(--violet);letter-spacing:0.1em;margin-bottom:8px;}
+.mcp-explain-card h4{font-size:14.5px;font-weight:600;margin-bottom:8px;}
+.mcp-explain-card p{font-size:12px;color:var(--mid);line-height:1.7;}
 
-/* ── FOUNDER SECTION ── */
+/* ── FOUNDER ── */
 #founder{background:rgba(0,0,0,0.1);}
-.founder-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:60px;align-items:start;}
-.founder-left{}
-.founder-avatar-wrap{
-  position:relative;margin-bottom:28px;display:inline-block;
-}
-.founder-avatar{
-  width:180px;height:180px;border-radius:24px;
-  object-fit:cover;
-  border:2px solid rgba(167,139,250,0.4);
-  box-shadow:0 0 0 6px rgba(167,139,250,0.06),0 0 60px rgba(167,139,250,0.2);
-  animation:avatar-float 4s ease-in-out infinite;display:block;
-}
+.founder-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:56px;align-items:start;}
+.founder-avatar-wrap{position:relative;margin-bottom:26px;display:inline-block;}
+.founder-avatar{width:172px;height:172px;border-radius:24px;object-fit:cover;border:2px solid rgba(167,139,250,0.4);box-shadow:0 0 0 6px rgba(167,139,250,0.06),0 0 60px rgba(167,139,250,0.2);animation:avatar-float 4s ease-in-out infinite;display:block;}
 @keyframes avatar-float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
-.founder-avatar-ring{
-  position:absolute;inset:-12px;border-radius:30px;
-  border:1px solid rgba(167,139,250,0.15);
-  animation:ring-spin 12s linear infinite;
-}
-.founder-avatar-ring::before{
-  content:'';position:absolute;top:-3px;left:50%;
-  width:6px;height:6px;border-radius:50%;
-  background:var(--violet);margin-left:-3px;
-  box-shadow:0 0 12px var(--violet);
-}
+.founder-avatar-ring{position:absolute;inset:-12px;border-radius:30px;border:1px solid rgba(167,139,250,0.15);animation:ring-spin 12s linear infinite;}
+.founder-avatar-ring::before{content:'';position:absolute;top:-3px;left:50%;width:6px;height:6px;border-radius:50%;background:var(--violet);margin-left:-3px;box-shadow:0 0 12px var(--violet);}
 @keyframes ring-spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
-
-.founder-name{font-size:28px;font-weight:700;letter-spacing:-0.03em;margin-bottom:6px;}
-.founder-role{font-family:var(--font-mono);font-size:11px;color:var(--violet);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
+.founder-name{font-size:26px;font-weight:700;letter-spacing:-0.03em;margin-bottom:6px;}
+.founder-role{font-family:var(--font-mono);font-size:10.5px;color:var(--violet);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:16px;}
 .founder-badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;}
-.f-badge{
-  font-size:11px;padding:5px 13px;border-radius:20px;
-  border:1px solid rgba(255,255,255,0.08);color:var(--mid);
-  background:rgba(255,255,255,0.04);transition:all 0.2s;cursor:default;
-}
+.f-badge{font-size:10.5px;padding:5px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.08);color:var(--mid);background:rgba(255,255,255,0.04);transition:all 0.2s;cursor:default;}
 .f-badge:hover{border-color:rgba(167,139,250,0.3);color:var(--violet);}
 .founder-links{display:flex;gap:10px;flex-wrap:wrap;}
-.f-link{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:8px 16px;border-radius:8px;font-size:12px;
-  border:1px solid rgba(255,255,255,0.1);color:var(--mid);
-  text-decoration:none;transition:all 0.2s;background:rgba(255,255,255,0.03);
-}
+.f-link{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:8px;font-size:11.5px;border:1px solid rgba(255,255,255,0.1);color:var(--mid);text-decoration:none;transition:all 0.2s;background:rgba(255,255,255,0.03);}
 .f-link:hover{border-color:rgba(167,139,250,0.4);color:var(--bright);background:rgba(167,139,250,0.08);}
-
-.founder-right{}
-.founder-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:36px;}
-.f-stat{
-  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);
-  border-radius:14px;padding:18px;text-align:center;transition:all 0.3s;cursor:default;
-}
+.founder-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:34px;}
+.f-stat{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:17px;text-align:center;transition:all 0.3s;cursor:default;}
 .f-stat:hover{border-color:rgba(42,255,160,0.2);transform:translateY(-4px);}
-.f-stat-num{font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--mint);margin-bottom:4px;}
-.f-stat-lbl{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:0.06em;}
-
+.f-stat-num{font-family:var(--font-mono);font-size:19px;font-weight:700;color:var(--mint);margin-bottom:4px;}
+.f-stat-lbl{font-size:9.5px;color:var(--dim);text-transform:uppercase;letter-spacing:0.05em;}
 .timeline{display:flex;flex-direction:column;gap:0;}
-.tl-item{
-  display:flex;gap:18px;padding:20px 0;
-  border-bottom:1px solid rgba(255,255,255,0.04);
-  transition:all 0.2s;cursor:default;
-}
+.tl-item{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(255,255,255,0.04);transition:all 0.2s;cursor:default;}
 .tl-item:last-child{border-bottom:none;}
 .tl-item:hover{padding-left:8px;}
-.tl-dot{
-  width:34px;height:34px;border-radius:10px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  font-size:14px;background:rgba(42,255,160,0.1);
-  border:1px solid rgba(42,255,160,0.2);margin-top:2px;
-  transition:all 0.3s;
-}
+.tl-dot{width:32px;height:32px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;background:rgba(42,255,160,0.1);border:1px solid rgba(42,255,160,0.2);margin-top:2px;transition:all 0.3s;}
 .tl-item:hover .tl-dot{background:rgba(42,255,160,0.2);box-shadow:0 0 20px rgba(42,255,160,0.2);}
-.tl-age{font-family:var(--font-mono);font-size:10px;color:var(--mint);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;}
-.tl-title{font-size:14px;font-weight:600;color:var(--bright);margin-bottom:4px;}
-.tl-desc{font-size:12px;color:var(--mid);line-height:1.7;}
+.tl-age{font-family:var(--font-mono);font-size:9.5px;color:var(--mint);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:4px;}
+.tl-title{font-size:13.5px;font-weight:600;color:var(--bright);margin-bottom:3px;}
+.tl-desc{font-size:11.5px;color:var(--mid);line-height:1.7;}
 
 /* ── DOWNLOAD CTA ── */
 #download{text-align:center;}
-.cta-box{
-  max-width:700px;margin:0 auto;
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(42,255,160,0.15);
-  border-radius:28px;padding:72px 48px;
-  position:relative;overflow:hidden;
-}
-.cta-box::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--mint),var(--cyan),transparent);
-}
-.cta-box::after{
-  content:'';position:absolute;
-  width:400px;height:400px;border-radius:50%;
-  top:-100px;left:50%;transform:translateX(-50%);
-  background:radial-gradient(circle,rgba(42,255,160,0.06),transparent 70%);
-  pointer-events:none;
-}
-.cta-box h2{font-size:2.4rem;font-weight:700;letter-spacing:-0.04em;margin-bottom:16px;}
-.cta-box p{color:var(--mid);font-size:16px;margin-bottom:40px;}
-.dl-steps{display:flex;justify-content:center;gap:0;margin-bottom:40px;}
-.dl-step{padding:0 28px;text-align:center;position:relative;}
-.dl-step:not(:last-child)::after{
-  content:'→';position:absolute;right:-8px;top:12px;
-  color:var(--dim);font-size:12px;
-}
-.dl-step-n{
-  width:34px;height:34px;border-radius:50%;
-  background:rgba(42,255,160,0.12);border:1px solid rgba(42,255,160,0.3);
-  display:flex;align-items:center;justify-content:center;margin:0 auto 8px;
-  font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--mint);
-}
-.dl-step p{font-size:12px;color:var(--mid);}
-.btn-download{
-  display:inline-flex;align-items:center;gap:14px;
-  background:linear-gradient(135deg,var(--mint),var(--cyan));
-  color:#040210;font-weight:700;font-size:16px;
-  padding:20px 44px;border-radius:14px;text-decoration:none;cursor:none;
-  transition:all 0.3s;
-  box-shadow:0 0 60px rgba(42,255,160,0.3);
-}
+.cta-box{max-width:700px;margin:0 auto;background:rgba(255,255,255,0.03);border:1px solid rgba(42,255,160,0.15);border-radius:28px;padding:68px 46px;position:relative;overflow:hidden;}
+.cta-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--mint),var(--cyan),transparent);}
+.cta-box::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;top:-100px;left:50%;transform:translateX(-50%);background:radial-gradient(circle,rgba(42,255,160,0.06),transparent 70%);pointer-events:none;}
+.cta-box h2{font-size:2.2rem;font-weight:700;letter-spacing:-0.03em;margin-bottom:14px;}
+.cta-box p{color:var(--mid);font-size:15px;margin-bottom:36px;}
+.dl-steps{display:flex;justify-content:center;gap:0;margin-bottom:36px;flex-wrap:wrap;}
+.dl-step{padding:0 26px;text-align:center;position:relative;}
+.dl-step:not(:last-child)::after{content:'→';position:absolute;right:-8px;top:11px;color:var(--dim);font-size:12px;}
+.dl-step-n{width:32px;height:32px;border-radius:50%;background:rgba(42,255,160,0.12);border:1px solid rgba(42,255,160,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-family:var(--font-mono);font-size:12.5px;font-weight:700;color:var(--mint);}
+.dl-step p{font-size:11.5px;color:var(--mid);}
+.btn-download{display:inline-flex;align-items:center;gap:14px;background:linear-gradient(135deg,var(--mint),var(--cyan));color:#040210;font-weight:700;font-size:15.5px;padding:19px 42px;border-radius:14px;text-decoration:none;cursor:none;transition:all 0.3s;box-shadow:0 0 60px rgba(42,255,160,0.3);}
 .btn-download:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 0 80px rgba(42,255,160,0.45);}
-.dl-note{margin-top:20px;font-family:var(--font-mono);font-size:11px;color:var(--dim);}
+.dl-note{margin-top:18px;font-family:var(--font-mono);font-size:10.5px;color:var(--dim);}
+.dl-methodology{margin-top:10px;font-family:var(--font-mono);font-size:9.5px;color:rgba(74,70,104,0.85);max-width:480px;margin-left:auto;margin-right:auto;line-height:1.6;}
 
 /* ── FOOTER ── */
-footer{
-  padding:48px 6vw;border-top:1px solid rgba(255,255,255,0.05);
-  display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:16px;
-  background:rgba(0,0,0,0.2);
-}
-.footer-brand{font-family:var(--font-mono);font-size:13px;color:var(--mint);}
-.footer-mid{font-size:12px;color:var(--dim);}
+footer{padding:44px 6vw;border-top:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;background:rgba(0,0,0,0.2);}
+.footer-brand{font-family:var(--font-mono);font-size:12.5px;color:var(--mint);}
+.footer-mid{font-size:11.5px;color:var(--dim);}
 .footer-mid span{color:var(--mint);}
-.footer-links{display:flex;gap:24px;}
-.footer-links a{font-size:12px;color:var(--dim);text-decoration:none;transition:color 0.2s;}
+.footer-links{display:flex;gap:22px;}
+.footer-links a{font-size:11.5px;color:var(--dim);text-decoration:none;transition:color 0.2s;}
 .footer-links a:hover{color:var(--mint);}
 
-/* ── SCROLL REVEAL ── */
-.reveal{opacity:0;transform:translateY(36px);transition:opacity 0.8s cubic-bezier(0.16,1,0.3,1),transform 0.8s cubic-bezier(0.16,1,0.3,1);}
+.reveal{opacity:0;transform:translateY(34px);transition:opacity 0.8s cubic-bezier(0.16,1,0.3,1),transform 0.8s cubic-bezier(0.16,1,0.3,1);}
 .reveal.visible{opacity:1;transform:translateY(0);}
-.reveal-d1{transition-delay:0.1s;}
-.reveal-d2{transition-delay:0.2s;}
-.reveal-d3{transition-delay:0.3s;}
-.reveal-d4{transition-delay:0.4s;}
+.reveal-d1{transition-delay:0.1s;} .reveal-d2{transition-delay:0.2s;} .reveal-d3{transition-delay:0.3s;} .reveal-d4{transition-delay:0.4s;}
 
-/* ── RESPONSIVE ── */
 @media(max-width:900px){
+  #hero{grid-template-columns:1fr;padding-top:130px;}
+  .hero-rail{border-left:none;padding-left:0;border-top:1px solid rgba(255,255,255,0.08);padding-top:24px;}
   .app-body{grid-template-columns:1fr;}
   .app-sidebar{display:none;}
-  .mcp-grid{grid-template-columns:1fr;}
   .founder-grid{grid-template-columns:1fr;}
   .pipeline{gap:10px;}
   .pipe-arrow{display:none;}
   nav .nav-links{display:none;}
-  .stats-strip{flex-wrap:wrap;}
-  .stat{min-width:50%;}
+  .stats-strip{grid-template-columns:repeat(2,1fr);}
+  .relay{grid-template-columns:1fr;gap:14px;}
+  .relay-link{width:2px;height:26px;margin:0 auto;}
+  .relay-link::before{left:50%;top:0;margin-left:-5px;margin-top:0;animation:travelv 2.4s linear infinite;}
+  @keyframes travelv{0%{top:0;}100%{top:calc(100% - 10px);}}
 }
 @media(max-width:600px){
-  section{padding:80px 5vw;}
-  #demo{padding:80px 5vw;}
+  section{padding:76px 5vw;}
   .founder-stats{grid-template-columns:repeat(2,1fr);}
-  .cta-box{padding:48px 24px;}
+  .cta-box{padding:44px 22px;}
   .dl-steps{flex-wrap:wrap;}
 }
 </style>
@@ -754,76 +448,65 @@ footer{
 
 <div class="wrap">
 
-<!-- NAV -->
 <nav>
-  <div class="nav-logo">
-    <div class="nav-logo-dot"></div>
-    NPM_AGENT
-  </div>
+  <div class="nav-logo"><div class="nav-logo-dot"></div>NPM-AutoCode-AI</div>
   <div class="nav-links">
     <a href="#demo">Demo</a>
-    <a href="#features">Features</a>
-    <a href="#tools">Tools</a>
-    <a href="#pipeline">Pipeline</a>
+    <a href="#mcp-arch">MCP Architecture</a>
+    <a href="#features">Capabilities</a>
+    <a href="#tools">Tool Registry</a>
     <a href="#founder">Founder</a>
-    <a href="#download">Download</a>
   </div>
-  <a href="https://github.com/sonuramashishnpm/NPM-AutoCode-AI/releases/download/v2.2/NPM_AutoCode_AI.zip" class="nav-cta" download>GET v3.0 →</a>
+  <a href="https://github.com/npmaiecosystem/NPM-AutoCode-AI/releases/download/v3.0/NPM_AutoCode_AI.zip" class="nav-cta" download>Get v3 →</a>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
-  <div class="hero-eyebrow">NPMAI ECOSYSTEM · v3.0 · Free & Open Source</div>
-  <h1 class="hero-title">
-    The Open Source<br>
-    <span class="word-agent">Agentic AI</span><br>
-    Desktop Platform
-  </h1>
-  <p class="hero-sub">21 integrated tools. Plan → Generate → Audit → Execute → Verify. A complete agent loop that rivals Claude Code — powered by free local LLMs.</p>
-  <div class="hero-actions">
-    <a href="https://github.com/sonuramashishnpm/NPM-AutoCode-AI/releases/download/v2.2/NPM_AutoCode_AI.zip" class="btn-primary" download>
-      ↓ Download Free
-    </a>
-    <a href="#demo" class="btn-ghost">See it in action →</a>
+  <div>
+    <div class="hero-version-tag"><span class="v-big">v3</span><span class="v-txt">NPMAI Ecosystem · Free & Open Source</span></div>
+    <h1 class="hero-title">NPM-AutoCode-AI<br>turns <span class="grad">plain English</span><br>into things done.</h1>
+    <p class="hero-sub">Describe a task. It plans it, writes the code, checks the code, runs it on your machine, and confirms it actually worked — a five-role agent loop, not a chatbot pretending to be one.</p>
+    <div class="hero-actions">
+      <a href="https://github.com/npmaiecosystem/NPM-AutoCode-AI/releases/download/v3.0/NPM_AutoCode_AI.zip" class="btn-primary" download>↓ Download v3 — Free</a>
+      <a href="#demo" class="btn-ghost">Watch it think →</a>
+    </div>
+    <div class="stats-strip">
+      <div class="stat"><div class="stat-num" data-count="57000">0</div><div class="stat-lbl">Downloads</div></div>
+      <div class="stat"><div class="stat-num">100</div><div class="stat-lbl">Tools</div></div>
+      <div class="stat"><div class="stat-num">Free</div><div class="stat-lbl">Forever</div></div>
+      <div class="stat"><div class="stat-num">45+</div><div class="stat-lbl">LLMs</div></div>
+    </div>
   </div>
-  <div class="stats-strip">
-    <div class="stat"><div class="stat-num" data-count="50000">0</div><div class="stat-lbl">Downloads</div></div>
-    <div class="stat"><div class="stat-num">21</div><div class="stat-lbl">Tools</div></div>
-    <div class="stat"><div class="stat-num">Free</div><div class="stat-lbl">Forever</div></div>
-    <div class="stat"><div class="stat-num">45+</div><div class="stat-lbl">LLMs</div></div>
+  <div class="hero-rail">
+    <div class="hero-rail-label">Every task, five roles</div>
+    <div class="rail-node"><div><b>Planner</b><span>breaks your task into steps</span></div></div>
+    <div class="rail-node"><div><b>Tool Manager</b><span>picks from 100 real tools</span></div></div>
+    <div class="rail-node"><div><b>Coder</b><span>writes the Python for each step</span></div></div>
+    <div class="rail-node"><div><b>Auditor</b><span>checks it before anything runs</span></div></div>
+    <div class="rail-node"><div><b>Verifier</b><span>confirms it actually worked</span></div></div>
   </div>
-  <div class="scroll-indicator">
-    <div class="scroll-line"></div>
-    scroll
-  </div>
+  <div class="scroll-indicator"><div class="scroll-line"></div>scroll to see it run</div>
 </section>
 
 <div class="divider"></div>
 
 <!-- DEMO -->
 <section id="demo">
-  <div style="text-align:center;margin-bottom:60px;" class="reveal">
+  <div style="text-align:center;margin-bottom:56px;" class="reveal">
     <div class="section-eyebrow" style="justify-content:center;">Live Demo</div>
-    <h2 class="section-title">Watch the Agent Think</h2>
-    <p style="color:var(--mid);font-size:15px;max-width:500px;margin:0 auto;">Click a task chip to see the full pipeline in motion</p>
+    <h2 class="section-title">Pick any task. Watch it run.</h2>
+    <p style="color:var(--mid);font-size:14.5px;max-width:520px;margin:0 auto;">These are real categories from the tool registry — dev tooling, cloud, business, communication, creative, data, media, and system automation.</p>
   </div>
   <div class="demo-center reveal">
     <div class="app-frame" id="app-frame">
-      <!-- titlebar -->
       <div class="app-tb">
-        <div class="tb-dots">
-          <div class="tb-dot td-r"></div>
-          <div class="tb-dot td-y"></div>
-          <div class="tb-dot td-g"></div>
-        </div>
-        <div class="tb-title">NPM Agent — NPMAI Ecosystem v3.0</div>
-        <div class="tb-badge">MCP :7799</div>
+        <div class="tb-dots"><div class="tb-dot td-r"></div><div class="tb-dot td-y"></div><div class="tb-dot td-g"></div></div>
+        <div class="tb-title">NPM-AutoCode-AI — v3</div>
+        <div class="tb-badge">MCP LINKED</div>
       </div>
-      <!-- body -->
       <div class="app-body">
-        <!-- sidebar -->
         <div class="app-sidebar">
-          <div class="app-sidebar-logo">⚙ NPM Agent</div>
+          <div class="app-sidebar-logo">⚙ NPM-AutoCode-AI</div>
           <div class="app-sidebar-sep"></div>
           <div class="app-sidebar-label">Navigation</div>
           <div class="app-nav-item active">💬 Agent</div>
@@ -833,25 +516,17 @@ footer{
           <div class="app-nav-item">👤 Founder</div>
           <div class="app-nav-item">📖 Docs</div>
           <div class="app-sidebar-spacer"></div>
-          <div class="app-mcp">
-            <div class="mcp-dot-live"></div>
-            MCP Server Active :7799
-          </div>
+          <div class="app-mcp"><div class="mcp-dot-live"></div>MCP Link Connected</div>
         </div>
-        <!-- main -->
         <div class="app-main">
           <div class="app-prog-wrap">
             <div class="app-prog-row"><span id="demo-status">Ready</span><span id="demo-pct">0%</span></div>
             <div class="app-prog-track"><div class="app-prog-fill" id="demo-prog"></div></div>
           </div>
           <div class="app-chat" id="demo-chat">
-            <div class="bubble agent">
-              <div class="bubble-text">Hello! I'm NPM Agent. Describe any task — I'll plan it, generate secure code, and execute it on your machine. What would you like to automate?</div>
-            </div>
+            <div class="bubble agent"><div class="bubble-text">Hi! Describe any task — I'll plan it, write the code, audit it, run it, and confirm it actually worked. Pick one below to see it live.</div></div>
           </div>
-          <div class="app-log" id="demo-log">
-            <div class="log-header">Execution Logs</div>
-          </div>
+          <div class="app-log" id="demo-log"><div class="log-header">Execution Logs</div></div>
           <div class="app-input-bar">
             <input class="app-input-field" id="demo-input" type="text" placeholder="Describe your automation task…"/>
             <button class="app-run" id="demo-run-btn" onclick="runDemo()">▶ Run</button>
@@ -860,15 +535,53 @@ footer{
         </div>
       </div>
     </div>
-    <!-- chips -->
-    <div style="display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;justify-content:center;" id="demo-chips">
+    <div class="chip-bank" id="demo-chips">
       <button class="tool-chip" onclick="selectChip(0,this)">📊 Plot CSV chart</button>
       <button class="tool-chip" onclick="selectChip(1,this)">📁 Rename 100 files</button>
-      <button class="tool-chip" onclick="selectChip(2,this)">🌐 Scrape & save Excel</button>
+      <button class="tool-chip" onclick="selectChip(2,this)">🌐 Scrape → Excel</button>
       <button class="tool-chip" onclick="selectChip(3,this)">📧 Bulk email from CSV</button>
-      <button class="tool-chip" onclick="selectChip(4,this)">⭐ Create GitHub issue</button>
-      <button class="tool-chip" onclick="selectChip(5,this)">🔒 Zip & organize PDFs</button>
+      <button class="tool-chip" onclick="selectChip(4,this)">⭐ Open a GitHub issue</button>
+      <button class="tool-chip" onclick="selectChip(5,this)">🔒 Zip & sort PDFs</button>
+      <button class="tool-chip" onclick="selectChip(6,this)">☁ List S3 objects</button>
+      <button class="tool-chip" onclick="selectChip(7,this)">🐳 Rebuild a Docker image</button>
+      <button class="tool-chip" onclick="selectChip(8,this)">💳 Pull Stripe payouts</button>
+      <button class="tool-chip" onclick="selectChip(9,this)">📓 Log a Notion entry</button>
+      <button class="tool-chip" onclick="selectChip(10,this)">🎬 Compress a video</button>
+      <button class="tool-chip" onclick="selectChip(11,this)">🖼 Batch-resize photos</button>
+      <button class="tool-chip" onclick="selectChip(12,this)">🖥 Deploy via SSH</button>
+      <button class="tool-chip" onclick="selectChip(13,this)">🎙 Transcribe a voice memo</button>
     </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MCP ARCHITECTURE -->
+<section id="mcp-arch">
+  <div class="reveal">
+    <div class="section-eyebrow">MCP Architecture</div>
+    <h2 class="section-title">Connect it to Claude or Grok.<br>No API key required.</h2>
+    <p class="section-desc">NPM-AutoCode-AI hosts its own MCP endpoint. Link it once from the app, paste the link into your Claude or Grok connector settings, and the LLM you already talk to becomes the brain — planning, coding, and auditing — while this app is the hands that actually execute on your machine.</p>
+  </div>
+
+  <div class="relay reveal">
+    <div class="relay-node"><span class="rn-icon">🖥</span><div class="rn-title">Your Desktop</div><div class="rn-sub">executes locally</div></div>
+    <div class="relay-link"></div>
+    <div class="relay-node"><span class="rn-icon">🛰</span><div class="rn-title">MCP Server</div><div class="rn-sub">plan · route · verify</div></div>
+    <div class="relay-link rev"></div>
+    <div class="relay-node"><span class="rn-icon">🤖</span><div class="rn-title">Claude / Grok</div><div class="rn-sub">thinks, writes, reviews</div></div>
+  </div>
+  <div class="relay-label" style="max-width:980px;margin:-40px auto 60px;">
+    <span>Code + results flow back →</span><span>← Prompts + tasks flow out</span>
+  </div>
+
+  <div class="mcp-explain-grid reveal">
+    <div class="mcp-explain-card"><div class="mx-step">01</div><h4>Get your link, once</h4><p>Log in from the app's MCP tab. That's the only time you'll ever need to log in — everything else in the app works without an account.</p></div>
+    <div class="mcp-explain-card"><div class="mx-step">02</div><h4>Paste it into your connector</h4><p>Drop the link into Claude or Grok's custom connector settings. From then on, just talk to your normal LLM chat like always.</p></div>
+    <div class="mcp-explain-card"><div class="mx-step">03</div><h4>Ask for anything</h4><p>"Clear my Downloads folder," "email my team the report" — the LLM detects it needs a real action and calls into your link automatically.</p></div>
+    <div class="mcp-explain-card"><div class="mx-step">04</div><h4>It's audited before it runs</h4><p>Every generated script passes an Auditor review, plus a separate safety check, before it's ever sent to your desktop to execute.</p></div>
+    <div class="mcp-explain-card"><div class="mx-step">05</div><h4>Runs on your machine, not the cloud</h4><p>Execution happens locally — your files, your credentials, your machine. The MCP server only ever relays code and results.</p></div>
+    <div class="mcp-explain-card"><div class="mx-step">06</div><h4>You confirm it, not just the exit code</h4><p>A Verifier role checks the actual output against the task — not just whether the script ran without crashing.</p></div>
   </div>
 </section>
 
@@ -878,107 +591,98 @@ footer{
 <section id="features">
   <div class="reveal">
     <div class="section-eyebrow">Capabilities</div>
-    <h2 class="section-title">Built to Compete.<br>Free to Use.</h2>
-    <p class="section-desc">Everything Claude Code does — on local models, with a GUI, for everyone.</p>
+    <h2 class="section-title">Built to compete.<br>Free to use.</h2>
+    <p class="section-desc">Everything a coding agent should do — on your own machine, with a GUI, for everyone.</p>
   </div>
   <div class="features-grid">
     <div class="feat-card reveal reveal-d1" style="--card-accent:linear-gradient(90deg,transparent,var(--mint),transparent)">
-      <span class="feat-icon">🧠</span>
-      <h3>Multi-LLM Agent Pipeline</h3>
-      <p>4 separate LLMs for planning, code generation, security auditing, and verification — each with fallback chains. Not a chatbot. A real agent loop.</p>
-      <span class="feat-tag" style="background:rgba(42,255,160,0.1);color:var(--mint);border:1px solid rgba(42,255,160,0.2);">Plan → Generate → Audit → Execute → Verify</span>
+      <span class="feat-icon">🧠</span><h3>Five-Role Agent Pipeline</h3>
+      <p>Planner, Tool Manager, Coder, Auditor, and Verifier — each with its own job and its own fallback chain. Not a chatbot. A real agent loop.</p>
+      <span class="feat-tag" style="background:rgba(42,255,160,0.1);color:var(--mint);border:1px solid rgba(42,255,160,0.2);">Plan → Select → Code → Audit → Execute → Verify</span>
     </div>
     <div class="feat-card reveal reveal-d2" style="--card-accent:linear-gradient(90deg,transparent,var(--violet),transparent)">
-      <span class="feat-icon">🔒</span>
-      <h3>Dual-LLM Security Audit</h3>
-      <p>Every generated script is reviewed by qwen2.5-coder:7b (fallback: falcon:7b) before any execution. 5 risk categories checked. Kill button always available.</p>
+      <span class="feat-icon">🔒</span><h3>Independent Security Audit</h3>
+      <p>Every generated script is reviewed by a separate Auditor role before execution, plus a second non-LLM safety check that can't be talked around.</p>
       <span class="feat-tag" style="background:rgba(167,139,250,0.1);color:var(--violet);border:1px solid rgba(167,139,250,0.2);">Security First</span>
     </div>
     <div class="feat-card reveal reveal-d3" style="--card-accent:linear-gradient(90deg,transparent,var(--cyan),transparent)">
-      <span class="feat-icon">🔄</span>
-      <h3>Auto-Debug Loop (12 retries)</h3>
-      <p>Execution fails? The agent captures the error, sends it back to CodeLlama, and rewrites or patches the code. Partial progress is preserved between retries.</p>
+      <span class="feat-icon">🔄</span><h3>Auto-Debug Loop (12 retries)</h3>
+      <p>Execution fails? The agent captures the error, feeds it back to the Coder, and retries with the prior attempt as context — up to 12 times per step.</p>
       <span class="feat-tag" style="background:rgba(0,229,255,0.1);color:var(--cyan);border:1px solid rgba(0,229,255,0.2);">Self-Healing</span>
     </div>
     <div class="feat-card reveal reveal-d1" style="--card-accent:linear-gradient(90deg,transparent,var(--amber),transparent)">
-      <span class="feat-icon">📁</span>
-      <h3>File System Awareness</h3>
-      <p>On startup, the agent scans Desktop, Downloads, Documents, Pictures, Videos, Music. Knows your files before you type. No paths needed.</p>
+      <span class="feat-icon">📁</span><h3>Workspace Awareness</h3>
+      <p>On first run, the agent scans Desktop, Downloads, Documents, Pictures, Videos, and Music — it knows your files before you type a path.</p>
       <span class="feat-tag" style="background:rgba(255,179,71,0.1);color:var(--amber);border:1px solid rgba(255,179,71,0.2);">Workspace Scanner</span>
     </div>
     <div class="feat-card reveal reveal-d2" style="--card-accent:linear-gradient(90deg,transparent,var(--rose),transparent)">
-      <span class="feat-icon">🔌</span>
-      <h3>Embedded MCP Server</h3>
-      <p>Start a TCP MCP server from the sidebar. 50+ tool endpoints exposed. Connect from Claude Desktop or any MCP client. Power your other projects.</p>
-      <span class="feat-tag" style="background:rgba(255,107,157,0.1);color:var(--rose);border:1px solid rgba(255,107,157,0.2);">MCP Protocol</span>
+      <span class="feat-icon">🔗</span><h3>MCP Link, Not an API Key</h3>
+      <p>Connect Claude or Grok directly from the sidebar. Login happens once, only for this — everything else in the app stays account-free.</p>
+      <span class="feat-tag" style="background:rgba(255,107,157,0.1);color:var(--rose);border:1px solid rgba(255,107,157,0.2);">Bring Your Own LLM</span>
     </div>
     <div class="feat-card reveal reveal-d3" style="--card-accent:linear-gradient(90deg,transparent,var(--sky),transparent)">
-      <span class="feat-icon">🎤</span>
-      <h3>Voice Input + subprocess</h3>
-      <p>Speak your task. Code runs as a real child process — not exec(). Streams stdout live. Kill any script instantly. Real isolation, real safety.</p>
-      <span class="feat-tag" style="background:rgba(56,189,248,0.1);color:var(--sky);border:1px solid rgba(56,189,248,0.2);">Voice + Isolation</span>
+      <span class="feat-icon">▶</span><h3>Real Subprocess Execution</h3>
+      <p>Code runs as an actual child process — not exec(). Output streams live to the log panel. Kill any script instantly, mid-run.</p>
+      <span class="feat-tag" style="background:rgba(56,189,248,0.1);color:var(--sky);border:1px solid rgba(56,189,248,0.2);">Real Isolation</span>
     </div>
   </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- TOOLS MARQUEE -->
+<!-- TOOL REGISTRY -->
 <section id="tools">
-  <div style="text-align:center;margin-bottom:56px;" class="reveal">
+  <div style="text-align:center;margin-bottom:52px;" class="reveal">
     <div class="section-eyebrow" style="justify-content:center;">Tool Registry</div>
-    <h2 class="section-title">21 Integrated Tools</h2>
-    <p style="color:var(--mid);font-size:15px;max-width:500px;margin:0 auto;">All tools available to the agent automatically. No configuration needed. Just describe your task.</p>
+    <h2 class="section-title">100 Tools. Zero Setup.</h2>
+    <p style="color:var(--mid);font-size:14.5px;max-width:520px;margin:0 auto;">Every tool below is available automatically. Just describe the task — the agent picks what it needs.</p>
   </div>
   <div class="tools-marquee-wrap">
     <div class="tools-marquee">
-      <span class="tool-chip">📧 EmailTool · Gmail SMTP/IMAP · Bulk CSV</span>
-      <span class="tool-chip">📁 FileTool · Rename · Zip · Organize</span>
-      <span class="tool-chip">📄 PDFTool · Merge · Split · Extract</span>
-      <span class="tool-chip">🌐 WebTool · Scrape · Playwright · API</span>
-      <span class="tool-chip">📊 SpreadsheetTool · CSV · Excel · Sheets</span>
-      <span class="tool-chip">⭐ GitHubTool · Issues · Push · Clone</span>
-      <span class="tool-chip">💬 SlackTool · Messages · Upload · Read</span>
-      <span class="tool-chip">🎮 DiscordTool · Webhooks · Embeds</span>
-      <span class="tool-chip">📱 WhatsAppTool · Instant Messages</span>
-      <span class="tool-chip">📓 NotionTool · Pages · Databases</span>
-      <!-- duplicate for infinite scroll -->
-      <span class="tool-chip">📧 EmailTool · Gmail SMTP/IMAP · Bulk CSV</span>
-      <span class="tool-chip">📁 FileTool · Rename · Zip · Organize</span>
-      <span class="tool-chip">📄 PDFTool · Merge · Split · Extract</span>
-      <span class="tool-chip">🌐 WebTool · Scrape · Playwright · API</span>
-      <span class="tool-chip">📊 SpreadsheetTool · CSV · Excel · Sheets</span>
-      <span class="tool-chip">⭐ GitHubTool · Issues · Push · Clone</span>
-      <span class="tool-chip">💬 SlackTool · Messages · Upload · Read</span>
-      <span class="tool-chip">🎮 DiscordTool · Webhooks · Embeds</span>
-      <span class="tool-chip">📱 WhatsAppTool · Instant Messages</span>
-      <span class="tool-chip">📓 NotionTool · Pages · Databases</span>
+      <span class="tool-chip">🌱 GitTool · commit · branch · rebase</span>
+      <span class="tool-chip">⭐ GitHubTool · issues · PRs · releases</span>
+      <span class="tool-chip">🦊 GitLabTool · pipelines · merge requests</span>
+      <span class="tool-chip">🐳 DockerTool · build · compose · registry</span>
+      <span class="tool-chip">☁ AWSS3Tool · buckets · presigned URLs</span>
+      <span class="tool-chip">💳 StripeTool · payments · invoices · payouts</span>
+      <span class="tool-chip">📧 SMTPAdvancedTool · HTML email · attachments</span>
+      <span class="tool-chip">📓 NotionAdvancedTool · pages · databases</span>
+      <span class="tool-chip">🎥 ZoomTool · meetings · recordings</span>
+      <span class="tool-chip">📞 TwilioTool · SMS · voice · WhatsApp</span>
+      <span class="tool-chip">🌱 GitTool · commit · branch · rebase</span>
+      <span class="tool-chip">⭐ GitHubTool · issues · PRs · releases</span>
+      <span class="tool-chip">🦊 GitLabTool · pipelines · merge requests</span>
+      <span class="tool-chip">🐳 DockerTool · build · compose · registry</span>
+      <span class="tool-chip">☁ AWSS3Tool · buckets · presigned URLs</span>
+      <span class="tool-chip">💳 StripeTool · payments · invoices · payouts</span>
+      <span class="tool-chip">📧 SMTPAdvancedTool · HTML email · attachments</span>
+      <span class="tool-chip">📓 NotionAdvancedTool · pages · databases</span>
+      <span class="tool-chip">🎥 ZoomTool · meetings · recordings</span>
+      <span class="tool-chip">📞 TwilioTool · SMS · voice · WhatsApp</span>
     </div>
   </div>
-  <div class="tools-marquee-wrap" style="margin-top:14px;">
+  <div class="tools-marquee-wrap">
     <div class="tools-marquee tools-marquee2">
-      <span class="tool-chip">🐦 TwitterTool · Tweets · Timeline</span>
-      <span class="tool-chip">🖥 SystemTool · Shell · Clipboard · Screenshot</span>
-      <span class="tool-chip">🖼 ImageTool · Resize · OCR · Compress</span>
-      <span class="tool-chip">⏰ SchedulerTool · Cron · Background</span>
-      <span class="tool-chip">🎫 JiraTool · Issues · Sprints</span>
-      <span class="tool-chip">✈ TelegramTool · Bot Messages</span>
-      <span class="tool-chip">🔲 QRTool · Generate QR Codes</span>
-      <span class="tool-chip">🎤 VoiceTool · TTS · STT</span>
-      <span class="tool-chip">👁 WatcherTool · File Change Detection</span>
-      <span class="tool-chip">📚 RAGTool · Large Doc Query · Summarize</span>
-      <span class="tool-chip">🖧 SSHTool · Remote Commands · SFTP</span>
-      <span class="tool-chip">🐦 TwitterTool · Tweets · Timeline</span>
-      <span class="tool-chip">🖥 SystemTool · Shell · Clipboard · Screenshot</span>
-      <span class="tool-chip">🖼 ImageTool · Resize · OCR · Compress</span>
-      <span class="tool-chip">⏰ SchedulerTool · Cron · Background</span>
-      <span class="tool-chip">🎫 JiraTool · Issues · Sprints</span>
-      <span class="tool-chip">✈ TelegramTool · Bot Messages</span>
-      <span class="tool-chip">🔲 QRTool · Generate QR Codes</span>
-      <span class="tool-chip">🎤 VoiceTool · TTS · STT</span>
-      <span class="tool-chip">👁 WatcherTool · File Change Detection</span>
-      <span class="tool-chip">📚 RAGTool · Large Doc Query · Summarize</span>
-      <span class="tool-chip">🖧 SSHTool · Remote Commands · SFTP</span>
+      <span class="tool-chip">🖥 TerminalTool · run commands · pipe output</span>
+      <span class="tool-chip">📦 PackageManagerTool · npm · pip · cargo</span>
+      <span class="tool-chip">🧩 VSCodeTool · open · edit · extensions</span>
+      <span class="tool-chip">🛠 MakefileTool · targets · build steps</span>
+      <span class="tool-chip">🧱 CMakeTool · configure · build · test</span>
+      <span class="tool-chip">🐞 DebuggerTool · breakpoints · stack traces</span>
+      <span class="tool-chip">🎙 SpeechAITool · transcribe · diarize · clone</span>
+      <span class="tool-chip">👁 ComputerVisionTool · detect · classify · OCR</span>
+      <span class="tool-chip">🎬 FFmpegTool · convert · compress · trim</span>
+      <span class="tool-chip">🖼 ImageAdvancedTool · resize · batch edit</span>
+      <span class="tool-chip">🖥 TerminalTool · run commands · pipe output</span>
+      <span class="tool-chip">📦 PackageManagerTool · npm · pip · cargo</span>
+      <span class="tool-chip">🧩 VSCodeTool · open · edit · extensions</span>
+      <span class="tool-chip">🛠 MakefileTool · targets · build steps</span>
+      <span class="tool-chip">🧱 CMakeTool · configure · build · test</span>
+      <span class="tool-chip">🐞 DebuggerTool · breakpoints · stack traces</span>
+      <span class="tool-chip">🎙 SpeechAITool · transcribe · diarize · clone</span>
+      <span class="tool-chip">👁 ComputerVisionTool · detect · classify · OCR</span>
+      <span class="tool-chip">🎬 FFmpegTool · convert · compress · trim</span>
+      <span class="tool-chip">🖼 ImageAdvancedTool · resize · batch edit</span>
     </div>
   </div>
 </section>
@@ -987,108 +691,19 @@ footer{
 
 <!-- PIPELINE -->
 <section id="pipeline">
-  <div style="text-align:center;margin-bottom:64px;" class="reveal">
+  <div style="text-align:center;margin-bottom:60px;" class="reveal">
     <div class="section-eyebrow" style="justify-content:center;">Agent Architecture</div>
-    <h2 class="section-title">How the Agent Thinks</h2>
-    <p style="color:var(--mid);font-size:15px;max-width:500px;margin:0 auto;">Every task goes through 6 stages. Each stage runs a different LLM for the right job.</p>
+    <h2 class="section-title">How the agent thinks</h2>
+    <p style="color:var(--mid);font-size:14.5px;max-width:520px;margin:0 auto;">Every task moves through these stages in order — each one runs a different role for the right job.</p>
   </div>
   <div class="pipeline reveal">
-    <div class="pipe-step reveal-d1">
-      <div class="pipe-num">01</div>
-      <span class="pipe-icon">🔍</span>
-      <div class="pipe-name">Scan</div>
-      <div class="pipe-desc">Workspace scanner reads your file system — folders, files, paths — before anything else</div>
-      <div class="pipe-arrow">→</div>
-    </div>
-    <div class="pipe-step reveal-d2">
-      <div class="pipe-num">02</div>
-      <span class="pipe-icon">🗺</span>
-      <div class="pipe-name">Plan</div>
-      <div class="pipe-desc">llama3.2:3b breaks your task into 2-5 atomic, independently verifiable steps</div>
-      <div class="pipe-arrow">→</div>
-    </div>
-    <div class="pipe-step reveal-d3">
-      <div class="pipe-num">03</div>
-      <span class="pipe-icon">⚡</span>
-      <div class="pipe-name">Generate</div>
-      <div class="pipe-desc">codellama:7b writes Python for each step using the 21 tool templates as scaffolding</div>
-      <div class="pipe-arrow">→</div>
-    </div>
-    <div class="pipe-step reveal-d1" style="transition-delay:0.35s">
-      <div class="pipe-num">04</div>
-      <span class="pipe-icon">🔒</span>
-      <div class="pipe-name">Audit</div>
-      <div class="pipe-desc">qwen2.5-coder checks 5 risk categories. BLOCK or ALLOW — no ambiguity</div>
-      <div class="pipe-arrow">→</div>
-    </div>
-    <div class="pipe-step reveal-d2" style="transition-delay:0.45s">
-      <div class="pipe-num">05</div>
-      <span class="pipe-icon">▶</span>
-      <div class="pipe-name">Execute</div>
-      <div class="pipe-desc">Real subprocess.Popen — not exec(). stdout streams live. Kill anytime.</div>
-      <div class="pipe-arrow">→</div>
-    </div>
-    <div class="pipe-step reveal-d3" style="transition-delay:0.55s">
-      <div class="pipe-num">06</div>
-      <span class="pipe-icon">✓</span>
-      <div class="pipe-name">Verify</div>
-      <div class="pipe-desc">A second LLM checks "did this actually complete?" — not just exit code 0</div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- MCP -->
-<section id="mcp" style="background:rgba(0,0,0,0.1);">
-  <div class="reveal">
-    <div class="section-eyebrow">MCP Protocol</div>
-    <h2 class="section-title">Power Your Other Projects</h2>
-    <p class="section-desc">Start the embedded MCP server from the app sidebar. All 21 tools become available to Claude Desktop, your own LLMs, or any MCP client.</p>
-  </div>
-  <div class="mcp-grid reveal">
-    <div class="mcp-code">
-      <div class="mcp-code-header">MCP Client · TCP · Port 7799</div>
-      <pre><span class="cm"># Connect from Claude Desktop</span>
-<span class="cm"># Add to mcp_config.json:</span>
-{
-  <span class="str">"npm_agent"</span>: {
-    <span class="str">"type"</span>: <span class="str">"tcp"</span>,
-    <span class="str">"host"</span>: <span class="str">"localhost"</span>,
-    <span class="str">"port"</span>: <span class="num">7799</span>
-  }
-}
-
-<span class="cm"># Or call directly:</span>
-<span class="kw">import</span> socket, json
-
-<span class="kw">def</span> <span class="fn">call_tool</span>(tool, params):
-  s = socket.<span class="fn">socket</span>()
-  s.<span class="fn">connect</span>((<span class="str">"localhost"</span>, <span class="num">7799</span>))
-  s.<span class="fn">sendall</span>(json.<span class="fn">dumps</span>({
-    <span class="str">"tool"</span>: tool,
-    <span class="str">"params"</span>: params
-  }).<span class="fn">encode</span>() + <span class="str">b"\n"</span>)
-  <span class="kw">return</span> json.<span class="fn">loads</span>(s.<span class="fn">recv</span>(<span class="num">65536</span>))
-
-<span class="cm"># Example: send an email</span>
-result = <span class="fn">call_tool</span>(<span class="str">"email_send"</span>, {
-  <span class="str">"to"</span>: <span class="str">"teacher@school.edu"</span>,
-  <span class="str">"subject"</span>: <span class="str">"Attendance Report"</span>,
-  <span class="str">"body"</span>: <span class="str">"Today's report attached."</span>
-})</pre>
-    </div>
-    <div class="mcp-tools-list">
-      <div style="font-family:var(--font-mono);font-size:10px;color:var(--dim);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px;">50+ Exposed Endpoints</div>
-      <div class="mcp-tool-row"><div class="mcp-tool-icon">💬</div><div class="mcp-tool-name">npmai_chat</div><div class="mcp-tool-desc">Chat with any of 45+ models with named memory</div></div>
-      <div class="mcp-tool-row"><div class="mcp-tool-icon">🤖</div><div class="mcp-tool-name">npmai_run_task</div><div class="mcp-tool-desc">Full agent pipeline from any external client</div></div>
-      <div class="mcp-tool-row"><div class="mcp-tool-icon">📧</div><div class="mcp-tool-name">email_send</div><div class="mcp-tool-desc">Send email · email_bulk · email_inbox</div></div>
-      <div class="mcp-tool-row"><div class="mcp-tool-icon">⭐</div><div class="mcp-tool-name">github_issue</div><div class="mcp-tool-desc">Create issues · push files · clone repos</div></div>
-      <div class="mcp-tool-row"><div class="mcp-tool-icon">💬</div><div class="mcp-tool-name">slack_send</div><div class="mcp-tool-desc">Send messages · read channels · upload files</div></div>
-      <div class="mcp-tool-row"><div class="mcp-tool-icon">📚</div><div class="mcp-tool-name">rag_query</div><div class="mcp-tool-desc">Query large documents via npmai Rag class</div></div>
-      <div class="mcp-tool-row"><div class="mcp-tool-icon">🖥</div><div class="mcp-tool-name">system_run</div><div class="mcp-tool-desc">Execute shell commands on the host machine</div></div>
-      <div class="mcp-tool-row"><div class="mcp-tool-icon">📊</div><div class="mcp-tool-name">workspace_scan</div><div class="mcp-tool-desc">Scan file system, returns full path map</div></div>
-    </div>
+    <div class="pipe-step reveal-d1"><div class="pipe-num">01</div><span class="pipe-icon">🔍</span><div class="pipe-name">Scan</div><div class="pipe-desc">Reads your file system before anything else</div><div class="pipe-arrow">→</div></div>
+    <div class="pipe-step reveal-d2"><div class="pipe-num">02</div><span class="pipe-icon">🗺</span><div class="pipe-name">Plan</div><div class="pipe-desc">Breaks the task into ordered, atomic steps</div><div class="pipe-arrow">→</div></div>
+    <div class="pipe-step reveal-d3"><div class="pipe-num">03</div><span class="pipe-icon">🧰</span><div class="pipe-name">Select Tools</div><div class="pipe-desc">Picks exactly what each step needs from the registry</div><div class="pipe-arrow">→</div></div>
+    <div class="pipe-step reveal-d1" style="transition-delay:.3s"><div class="pipe-num">04</div><span class="pipe-icon">⚡</span><div class="pipe-name">Generate</div><div class="pipe-desc">Writes real Python for each step</div><div class="pipe-arrow">→</div></div>
+    <div class="pipe-step reveal-d2" style="transition-delay:.4s"><div class="pipe-num">05</div><span class="pipe-icon">🔒</span><div class="pipe-name">Audit</div><div class="pipe-desc">Reviewed for anything destructive — BLOCK or ALLOW</div><div class="pipe-arrow">→</div></div>
+    <div class="pipe-step reveal-d3" style="transition-delay:.5s"><div class="pipe-num">06</div><span class="pipe-icon">▶</span><div class="pipe-name">Execute</div><div class="pipe-desc">Real subprocess. Streams live. Kill anytime.</div><div class="pipe-arrow">→</div></div>
+    <div class="pipe-step reveal-d1" style="transition-delay:.6s"><div class="pipe-num">07</div><span class="pipe-icon">✓</span><div class="pipe-name">Verify</div><div class="pipe-desc">Confirms the task actually completed</div></div>
   </div>
 </section>
 
@@ -1125,19 +740,19 @@ result = <span class="fn">call_tool</span>(<span class="str">"email_send"</span>
     </div>
     <div class="founder-right">
       <div class="founder-stats">
-        <div class="f-stat"><div class="f-stat-num">1.5M+</div><div class="f-stat-lbl">PyPI downloads</div></div>
+        <div class="f-stat"><div class="f-stat-num">4M+</div><div class="f-stat-lbl">npmai PyPI downloads</div></div>
+        <div class="f-stat"><div class="f-stat-num">300K+</div><div class="f-stat-lbl">npmai-agents downloads</div></div>
         <div class="f-stat"><div class="f-stat-num">433K+</div><div class="f-stat-lbl">Social followers</div></div>
         <div class="f-stat"><div class="f-stat-num">TEDx</div><div class="f-stat-lbl">Speaker at 13</div></div>
         <div class="f-stat"><div class="f-stat-num">100%</div><div class="f-stat-lbl">Allen scholarship</div></div>
-        <div class="f-stat"><div class="f-stat-num">45+</div><div class="f-stat-lbl">LLMs in ecosystem</div></div>
-        <div class="f-stat"><div class="f-stat-num">3</div><div class="f-stat-lbl">Research papers 2026</div></div>
+        <div class="f-stat"><div class="f-stat-num">10</div><div class="f-stat-lbl">Research papers</div></div>
       </div>
       <div class="timeline">
         <div class="tl-item"><div class="tl-dot">🧒</div><div><div class="tl-age">Age 9</div><div class="tl-title">Started Teaching Nursery Kids</div><div class="tl-desc">While in 4th grade, taught nursery children — planting the seed for education equity.</div></div></div>
         <div class="tl-item"><div class="tl-dot">🔥</div><div><div class="tl-age">Age 11 — "Bihar Viral Boy"</div><div class="tl-title">Challenged Bihar's Chief Minister</div><div class="tl-desc">Raised education & liquor ban issues. Went viral nationally. Received support from Cabinet Ministers, Bollywood actors & ALLEN Institute founder.</div></div></div>
         <div class="tl-item"><div class="tl-dot">🎤</div><div><div class="tl-age">Age 13</div><div class="tl-title">TEDx Speaker</div><div class="tl-desc">One of India's youngest TEDx speakers — rural education and using tech to bridge India's urban-rural divide.</div></div></div>
-        <div class="tl-item"><div class="tl-dot">💻</div><div><div class="tl-age">Age 13-14</div><div class="tl-title">Founded NPMAI ECOSYSTEM — 1.5M+ Downloads</div><div class="tl-desc">Self-taught, zero CS background. Built entire ecosystem on free cloud infrastructure.</div></div></div>
-        <div class="tl-item"><div class="tl-dot">📄</div><div><div class="tl-age">2026</div><div class="tl-title">3 Research Papers Published</div><div class="tl-desc">LARA · Representative Ideal Democracy · Ideal Administrative System Theory</div></div></div>
+        <div class="tl-item"><div class="tl-dot">💻</div><div><div class="tl-age">Age 13-15</div><div class="tl-title">Founded NPMAI ECOSYSTEM</div><div class="tl-desc">Self-taught, zero CS background. Built the entire ecosystem on free cloud infrastructure.</div></div></div>
+        <div class="tl-item"><div class="tl-dot">📄</div><div><div class="tl-age">2026</div><div class="tl-title">10 Research Papers Published</div><div class="tl-desc">Spanning AI/agent architecture, chemistry, mathematics, and constitutional/political science.</div></div></div>
       </div>
     </div>
   </div>
@@ -1149,22 +764,22 @@ result = <span class="fn">call_tool</span>(<span class="str">"email_send"</span>
 <section id="download">
   <div class="cta-box reveal">
     <div class="section-eyebrow" style="justify-content:center;">Get Started</div>
-    <h2>Download Free.<br>Run Instantly.</h2>
-    <p>No API keys. No local GPU. No Ollama setup. Unzip and run.</p>
+    <h2>Download free.<br>Run instantly.</h2>
+    <p>No API keys required to start. No local GPU needed. Unzip and run.</p>
     <div class="dl-steps">
       <div class="dl-step"><div class="dl-step-n">1</div><p>Download ZIP</p></div>
       <div class="dl-step"><div class="dl-step-n">2</div><p>Unzip folder</p></div>
       <div class="dl-step"><div class="dl-step-n">3</div><p>Run .exe</p></div>
       <div class="dl-step"><div class="dl-step-n">4</div><p>Start automating</p></div>
     </div>
-    <a href="https://github.com/sonuramashishnpm/NPM-AutoCode-AI/releases/download/v2.2/NPM_AutoCode_AI.zip" class="btn-download" download>↓ Download NPM Agent v3.0</a>
-    <div class="dl-note">Windows · Free Forever · Open Source · No API Key Needed · NPMAI Ecosystem</div>
+    <a href="https://github.com/npmaiecosystem/NPM-AutoCode-AI/releases/download/v3.0/NPM_AutoCode_AI.zip" class="btn-download" download>↓ Download NPM-AutoCode-AI v3</a>
+    <div class="dl-note">Windows · Free Forever · Open Source · NPMAI Ecosystem</div>
+    <div class="dl-methodology">57,000+ downloads — determined as per the LLM requests received on our npmai_LLM server; that's how we identified this figure.</div>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
-  <div class="footer-brand">NPM_AGENT · v3.0</div>
+  <div class="footer-brand">NPM-AutoCode-AI · v3</div>
   <div class="footer-mid">© 2026 NPMAI ECOSYSTEM · Made with ❤️ by <span>Sonu Kumar</span> · Free & Open Source</div>
   <div class="footer-links">
     <a href="https://github.com/sonuramashishnpm" target="_blank">GitHub</a>
@@ -1174,23 +789,19 @@ result = <span class="fn">call_tool</span>(<span class="str">"email_send"</span>
   </div>
 </footer>
 
-</div><!-- /wrap -->
+</div>
 
 <script>
-// ═══════════════════════════════════════
-// THREE.JS — deep space scene
-// ═══════════════════════════════════════
+// ═══ THREE.JS deep space scene — UNCHANGED background ═══
 (function(){
   const canvas=document.getElementById('three-canvas');
   const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
   renderer.setSize(window.innerWidth,window.innerHeight);
-
   const scene=new THREE.Scene();
   const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
   camera.position.z=5;
 
-  // ── STAR FIELD ──
   const starGeo=new THREE.BufferGeometry();
   const starCount=3500;
   const positions=new Float32Array(starCount*3);
@@ -1203,116 +814,58 @@ result = <span class="fn">call_tool</span>(<span class="str">"email_send"</span>
   }
   starGeo.setAttribute('position',new THREE.BufferAttribute(positions,3));
   starGeo.setAttribute('size',new THREE.BufferAttribute(starSizes,1));
-  const starMat=new THREE.PointsMaterial({
-    color:0xffffff,size:0.06,sizeAttenuation:true,
-    transparent:true,opacity:0.7,
-    vertexColors:false,
-  });
+  const starMat=new THREE.PointsMaterial({color:0xffffff,size:0.06,sizeAttenuation:true,transparent:true,opacity:0.7});
   scene.add(new THREE.Points(starGeo,starMat));
 
-  // ── COLORED NEBULA PARTICLES ──
   const nebulaColors=[0x2AFFA0,0x00E5FF,0xA78BFA,0xFF6B9D,0xFFB347];
   nebulaColors.forEach((col,ci)=>{
     const geo=new THREE.BufferGeometry();
-    const n=400;
-    const pos=new Float32Array(n*3);
+    const n=400; const pos=new Float32Array(n*3);
     for(let i=0;i<n;i++){
-      const r=8+Math.random()*12;
-      const theta=Math.random()*Math.PI*2;
-      const phi=Math.random()*Math.PI;
+      const r=8+Math.random()*12; const theta=Math.random()*Math.PI*2; const phi=Math.random()*Math.PI;
       pos[i*3]=r*Math.sin(phi)*Math.cos(theta)+(ci-2)*4;
       pos[i*3+1]=r*Math.sin(phi)*Math.sin(theta)+(ci%2===0?3:-3);
       pos[i*3+2]=r*Math.cos(phi)-10;
     }
     geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
-    const mat=new THREE.PointsMaterial({
-      color:col,size:0.04,transparent:true,opacity:0.35,sizeAttenuation:true,
-    });
+    const mat=new THREE.PointsMaterial({color:col,size:0.04,transparent:true,opacity:0.35,sizeAttenuation:true});
     scene.add(new THREE.Points(geo,mat));
   });
 
-  // ── FLOATING WIREFRAME GEOMETRIES ──
-  const geos=[
-    new THREE.IcosahedronGeometry(0.8,1),
-    new THREE.OctahedronGeometry(0.6,0),
-    new THREE.TetrahedronGeometry(0.5,0),
-    new THREE.IcosahedronGeometry(0.4,0),
-    new THREE.OctahedronGeometry(0.35,0),
-  ];
+  const geos=[new THREE.IcosahedronGeometry(0.8,1),new THREE.OctahedronGeometry(0.6,0),new THREE.TetrahedronGeometry(0.5,0),new THREE.IcosahedronGeometry(0.4,0),new THREE.OctahedronGeometry(0.35,0)];
   const colors=[0x2AFFA0,0xA78BFA,0x00E5FF,0xFF6B9D,0xFFB347];
   const meshes=[];
   geos.forEach((g,i)=>{
-    const mat=new THREE.MeshBasicMaterial({
-      color:colors[i],wireframe:true,transparent:true,opacity:0.25,
-    });
+    const mat=new THREE.MeshBasicMaterial({color:colors[i],wireframe:true,transparent:true,opacity:0.25});
     const mesh=new THREE.Mesh(g,mat);
-    mesh.position.set(
-      (Math.random()-0.5)*12,
-      (Math.random()-0.5)*8,
-      -5-Math.random()*10
-    );
-    mesh.userData={
-      rotX:Math.random()*0.008,
-      rotY:Math.random()*0.01,
-      floatSpeed:Math.random()*0.001+0.0005,
-      floatOffset:Math.random()*Math.PI*2,
-    };
-    scene.add(mesh);
-    meshes.push(mesh);
+    mesh.position.set((Math.random()-0.5)*12,(Math.random()-0.5)*8,-5-Math.random()*10);
+    mesh.userData={rotX:Math.random()*0.008,rotY:Math.random()*0.01,floatSpeed:Math.random()*0.001+0.0005,floatOffset:Math.random()*Math.PI*2};
+    scene.add(mesh); meshes.push(mesh);
   });
 
-  // ── MOUSE PARALLAX ──
   let mouseX=0,mouseY=0;
-  document.addEventListener('mousemove',e=>{
-    mouseX=(e.clientX/window.innerWidth-0.5)*0.6;
-    mouseY=(e.clientY/window.innerHeight-0.5)*0.4;
-  });
-
-  // ── SCROLL PARALLAX ──
+  document.addEventListener('mousemove',e=>{mouseX=(e.clientX/window.innerWidth-0.5)*0.6;mouseY=(e.clientY/window.innerHeight-0.5)*0.4;});
   let scrollY=0;
-  window.addEventListener('scroll',()=>{ scrollY=window.scrollY; });
+  window.addEventListener('scroll',()=>{scrollY=window.scrollY;});
 
-  // ── ANIMATE ──
   let t=0;
   function animate(){
-    requestAnimationFrame(animate);
-    t+=0.008;
-
-    // camera drift
+    requestAnimationFrame(animate); t+=0.008;
     camera.position.x+=(mouseX-camera.position.x)*0.025;
     camera.position.y+=(-mouseY-camera.position.y)*0.025;
     camera.position.z=5+scrollY*0.002;
     camera.lookAt(scene.position);
-
-    // star twinkle
     const sizes=starGeo.attributes.size.array;
-    for(let i=0;i<starCount;i+=12){
-      sizes[i]=Math.abs(Math.sin(t+i))*2+0.4;
-    }
+    for(let i=0;i<starCount;i+=12){sizes[i]=Math.abs(Math.sin(t+i))*2+0.4;}
     starGeo.attributes.size.needsUpdate=true;
-
-    // floating meshes
-    meshes.forEach((m,i)=>{
-      const u=m.userData;
-      m.rotation.x+=u.rotX;
-      m.rotation.y+=u.rotY;
-      m.position.y+=Math.sin(t*u.floatSpeed*100+u.floatOffset)*0.002;
-    });
-
+    meshes.forEach(m=>{const u=m.userData;m.rotation.x+=u.rotX;m.rotation.y+=u.rotY;m.position.y+=Math.sin(t*u.floatSpeed*100+u.floatOffset)*0.002;});
     renderer.render(scene,camera);
   }
   animate();
-
-  window.addEventListener('resize',()=>{
-    camera.aspect=window.innerWidth/window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth,window.innerHeight);
-  });
+  window.addEventListener('resize',()=>{camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);});
 })();
 
-// ═══════════════════════════════════════
-// CUSTOM CURSOR
-// ═══════════════════════════════════════
+// ═══ CUSTOM CURSOR — UNCHANGED ═══
 const cursor=document.getElementById('cursor');
 const cursorRing=document.getElementById('cursor-ring');
 let cx=0,cy=0,rx=0,ry=0;
@@ -1324,50 +877,29 @@ function animateCursor(){
   requestAnimationFrame(animateCursor);
 }
 animateCursor();
-
-document.querySelectorAll('a,button,.feat-card,.pipe-step,.tool-chip,.mcp-tool-row,.tl-item,.f-stat,.stat').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{
-    cursor.style.width='20px'; cursor.style.height='20px';
-    cursorRing.style.width='60px'; cursorRing.style.height='60px';
-    cursorRing.style.borderColor='rgba(42,255,160,0.8)';
-  });
-  el.addEventListener('mouseleave',()=>{
-    cursor.style.width='12px'; cursor.style.height='12px';
-    cursorRing.style.width='40px'; cursorRing.style.height='40px';
-    cursorRing.style.borderColor='rgba(42,255,160,0.5)';
-  });
+document.querySelectorAll('a,button,.feat-card,.pipe-step,.tool-chip,.relay-node,.tl-item,.f-stat,.stat,.mcp-explain-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.style.width='20px';cursor.style.height='20px';cursorRing.style.width='60px';cursorRing.style.height='60px';cursorRing.style.borderColor='rgba(42,255,160,0.8)';});
+  el.addEventListener('mouseleave',()=>{cursor.style.width='12px';cursor.style.height='12px';cursorRing.style.width='40px';cursorRing.style.height='40px';cursorRing.style.borderColor='rgba(42,255,160,0.5)';});
 });
 
-// ═══════════════════════════════════════
-// SCROLL REVEAL
-// ═══════════════════════════════════════
-const observer=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
-},{threshold:0.12});
+// ═══ SCROLL REVEAL ═══
+const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.12});
 document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
 
-// ═══════════════════════════════════════
-// COUNTER ANIMATION
-// ═══════════════════════════════════════
+// ═══ COUNTER ═══
 const counters=document.querySelectorAll('[data-count]');
 const cObs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{
     if(!e.isIntersecting) return;
     const el=e.target; const target=parseInt(el.dataset.count);
     let current=0; const step=target/60;
-    const tick=setInterval(()=>{
-      current=Math.min(current+step,target);
-      el.textContent=Math.floor(current).toLocaleString()+'+';
-      if(current>=target) clearInterval(tick);
-    },16);
+    const tick=setInterval(()=>{current=Math.min(current+step,target);el.textContent=Math.floor(current).toLocaleString()+'+';if(current>=target)clearInterval(tick);},16);
     cObs.unobserve(el);
   });
 },{threshold:0.5});
 counters.forEach(c=>cObs.observe(c));
 
-// ═══════════════════════════════════════
-// FEAT CARD MOUSE GLOW
-// ═══════════════════════════════════════
+// ═══ FEAT CARD GLOW ═══
 document.querySelectorAll('.feat-card').forEach(card=>{
   card.addEventListener('mousemove',e=>{
     const r=card.getBoundingClientRect();
@@ -1376,205 +908,223 @@ document.querySelectorAll('.feat-card').forEach(card=>{
   });
 });
 
-// ═══════════════════════════════════════
-// APP DEMO SIMULATION
-// ═══════════════════════════════════════
+// ═══ DEMO SIMULATION — expanded to 14 real-tool scripts ═══
 const demoScripts=[
-  {
-    task:'Read data.csv from Desktop and create a bar chart PNG',
-    steps:[
-      {t:0.4,log:'<span style="color:#4A4668;">▸ Scanning workspace…</span>'},
-      {t:1.2,log:'<span style="color:#A78BFA;">▸ Planning 2 steps…</span>',prog:18,status:'Planning…'},
-      {t:2.0,log:'<span style="color:#4A4668;">  1. Read CSV with pandas</span>'},
-      {t:2.5,log:'<span style="color:#4A4668;">  2. Plot bar chart with matplotlib</span>'},
-      {t:3.2,log:'<span style="color:#4A4668;">▸ Generating code for step 1…</span>',prog:32,status:'Generating…'},
-      {t:4.5,log:'<span style="color:#2AFFA0;">✓ Code generated (18 lines)</span>'},
-      {t:5.0,log:'<span style="color:#A78BFA;">🔒 Security audit…</span>',prog:48,status:'Auditing…'},
-      {t:6.0,log:'<span style="color:#2AFFA0;">✓ Audit passed — ALLOW</span>'},
-      {t:6.5,log:'<span style="color:#4A4668;">▸ Installing: matplotlib, pandas…</span>',prog:58,status:'Executing…'},
-      {t:8.5,log:'<span style="color:#2AFFA0;">✓ Step 1 complete</span>',prog:72},
-      {t:9.0,log:'<span style="color:#4A4668;">▸ Step 2: generating chart code…</span>'},
-      {t:10.5,log:'<span style="color:#2AFFA0;">✓ chart.png saved to Desktop</span>',prog:96},
-      {t:11.2,log:'<span style="color:#00E5FF;font-weight:bold;">✓ ─── Task Completed Successfully ───</span>',prog:100,status:'Done ✓',
-       bubble:'Done! I read your CSV and saved a bar chart as chart.png on your Desktop. 📊'},
-    ]
-  },
-  {
-    task:'Rename all files in Downloads folder adding today\'s date prefix',
-    steps:[
-      {t:0.5,log:'<span style="color:#4A4668;">▸ Workspace scan complete</span>'},
-      {t:1.3,log:'<span style="color:#A78BFA;">▸ Planning 1 step…</span>',prog:20,status:'Planning…'},
-      {t:2.1,log:'<span style="color:#4A4668;">  1. Batch rename with pathlib</span>'},
-      {t:3.0,log:'<span style="color:#4A4668;">▸ Generating rename code…</span>',prog:35,status:'Generating…'},
-      {t:4.2,log:'<span style="color:#2AFFA0;">✓ Generated (12 lines)</span>'},
-      {t:4.8,log:'<span style="color:#A78BFA;">🔒 Security: file rename — checking</span>',prog:52,status:'Auditing…'},
-      {t:5.7,log:'<span style="color:#2AFFA0;">✓ ALLOW — standard file operation</span>'},
-      {t:6.3,log:'<span style="color:#4A4668;">▸ Scanning Downloads…</span>',prog:65,status:'Executing…'},
-      {t:7.5,log:'<span style="color:#4A4668;">▸ Renaming 84 files with 2026-06-06_ prefix</span>'},
-      {t:9.0,log:'<span style="color:#2AFFA0;">✓ 84 files renamed</span>',prog:100,status:'Done ✓',
-       bubble:'Done! Renamed 84 files in your Downloads folder with today\'s date prefix. 📁'},
-    ]
-  },
-  {
-    task:'Scrape top 20 headlines from Hacker News and save to news.xlsx',
-    steps:[
-      {t:0.4,log:'<span style="color:#4A4668;">▸ Context loaded</span>'},
-      {t:1.1,log:'<span style="color:#A78BFA;">▸ Planning 2 steps…</span>',prog:15,status:'Planning…'},
-      {t:2.0,log:'<span style="color:#4A4668;">  1. Scrape with requests+bs4  2. Write Excel</span>'},
-      {t:2.8,log:'<span style="color:#4A4668;">▸ Generating scraper…</span>',prog:30,status:'Generating…'},
-      {t:4.3,log:'<span style="color:#2AFFA0;">✓ Scraper generated</span>'},
-      {t:5.0,log:'<span style="color:#A78BFA;">🔒 Audit: web scraping task</span>',prog:48,status:'Auditing…'},
-      {t:6.0,log:'<span style="color:#2AFFA0;">✓ ALLOW — standard web scrape</span>'},
-      {t:6.5,log:'<span style="color:#4A4668;">▸ Installing: requests, bs4, openpyxl</span>',prog:60,status:'Executing…'},
-      {t:8.2,log:'<span style="color:#4A4668;">▸ Fetching news.ycombinator.com…</span>'},
-      {t:9.8,log:'<span style="color:#2AFFA0;">✓ 20 headlines scraped → news.xlsx</span>',prog:100,status:'Done ✓',
-       bubble:'Scraped 20 headlines and saved them to news.xlsx on your Desktop. 🌐'},
-    ]
-  },
-  {
-    task:'Send hello email to all addresses in contacts.csv',
-    steps:[
-      {t:0.5,log:'<span style="color:#4A4668;">▸ Loading workspace + credentials</span>'},
-      {t:1.4,log:'<span style="color:#A78BFA;">▸ Planning: 1 step</span>',prog:18,status:'Planning…'},
-      {t:2.3,log:'<span style="color:#4A4668;">▸ Generating bulk email code…</span>',prog:33,status:'Generating…'},
-      {t:3.8,log:'<span style="color:#2AFFA0;">✓ EmailTool template loaded</span>'},
-      {t:4.5,log:'<span style="color:#A78BFA;">🔒 Audit: email via SMTP</span>',prog:50,status:'Auditing…'},
-      {t:5.5,log:'<span style="color:#2AFFA0;">✓ ALLOW — standard SMTP operation</span>'},
-      {t:6.2,log:'<span style="color:#4A4668;">▸ Reading contacts.csv… 32 contacts</span>',prog:62,status:'Executing…'},
-      {t:8.5,log:'<span style="color:#4A4668;">▸ Sending emails via Gmail SMTP…</span>'},
-      {t:10.5,log:'<span style="color:#2AFFA0;">✓ Sent 32 emails</span>',prog:100,status:'Done ✓',
-       bubble:'Sent hello emails to all 32 contacts in your CSV. 📧'},
-    ]
-  },
-  {
-    task:'Create a GitHub issue: "Update README with new install steps"',
-    steps:[
-      {t:0.5,log:'<span style="color:#4A4668;">▸ Workspace + GitHub token loaded</span>'},
-      {t:1.3,log:'<span style="color:#A78BFA;">▸ Planning: 1 step</span>',prog:22,status:'Planning…'},
-      {t:2.2,log:'<span style="color:#4A4668;">▸ Generating GitHubTool call…</span>',prog:38,status:'Generating…'},
-      {t:3.5,log:'<span style="color:#2AFFA0;">✓ Code generated</span>'},
-      {t:4.2,log:'<span style="color:#A78BFA;">🔒 Audit: GitHub API call</span>',prog:55,status:'Auditing…'},
-      {t:5.3,log:'<span style="color:#2AFFA0;">✓ ALLOW</span>'},
-      {t:6.0,log:'<span style="color:#4A4668;">▸ Connecting to GitHub API…</span>',prog:70,status:'Executing…'},
-      {t:7.5,log:'<span style="color:#2AFFA0;">✓ Issue #47 created</span>',prog:100,status:'Done ✓',
-       bubble:'Created GitHub issue #47 "Update README with new install steps" ⭐'},
-    ]
-  },
-  {
-    task:'Find all PDFs in Documents, sort by date, zip into archive.zip',
-    steps:[
-      {t:0.4,log:'<span style="color:#4A4668;">▸ Workspace scan: Documents folder found</span>'},
-      {t:1.2,log:'<span style="color:#A78BFA;">▸ Planning 2 steps…</span>',prog:16,status:'Planning…'},
-      {t:2.0,log:'<span style="color:#4A4668;">  1. Find + sort PDFs  2. Zip them</span>'},
-      {t:2.9,log:'<span style="color:#4A4668;">▸ Generating code…</span>',prog:35,status:'Generating…'},
-      {t:4.1,log:'<span style="color:#2AFFA0;">✓ FileTool + PDFTool loaded</span>'},
-      {t:4.8,log:'<span style="color:#A78BFA;">🔒 Audit: file zip operation</span>',prog:52},
-      {t:5.8,log:'<span style="color:#2AFFA0;">✓ ALLOW</span>'},
-      {t:6.5,log:'<span style="color:#4A4668;">▸ Found 23 PDFs, sorting by date…</span>',prog:68,status:'Executing…'},
-      {t:8.2,log:'<span style="color:#4A4668;">▸ Creating archive.zip…</span>'},
-      {t:9.5,log:'<span style="color:#2AFFA0;">✓ archive.zip created (23 files)</span>',prog:100,status:'Done ✓',
-       bubble:'Found 23 PDFs, sorted them by date, and zipped them into archive.zip on your Desktop. 🔒'},
-    ]
-  },
+  {task:'Read data.csv from Desktop and create a bar chart PNG',steps:[
+    {t:0.4,log:'<span style="color:#4A4668;">▸ Scanning workspace…</span>'},
+    {t:1.2,log:'<span style="color:#A78BFA;">▸ Planning 2 steps…</span>',prog:18,status:'Planning…'},
+    {t:2.5,log:'<span style="color:#4A4668;">▸ Selecting DataAnalysisTool…</span>',prog:30,status:'Selecting tools…'},
+    {t:3.4,log:'<span style="color:#4A4668;">▸ Generating chart code…</span>',prog:44,status:'Generating…'},
+    {t:4.8,log:'<span style="color:#2AFFA0;">✓ Code generated (18 lines)</span>'},
+    {t:5.4,log:'<span style="color:#A78BFA;">🔒 Auditing…</span>',prog:58,status:'Auditing…'},
+    {t:6.3,log:'<span style="color:#2AFFA0;">✓ ALLOW</span>'},
+    {t:6.9,log:'<span style="color:#4A4668;">▸ Running on your machine…</span>',prog:74,status:'Executing…'},
+    {t:8.6,log:'<span style="color:#2AFFA0;">✓ chart.png saved to Desktop</span>',prog:100,status:'Done ✓',bubble:'Done! Read your CSV and saved a bar chart as chart.png on your Desktop. 📊'},
+  ]},
+  {task:"Rename all files in Downloads adding today's date prefix",steps:[
+    {t:0.5,log:'<span style="color:#4A4668;">▸ Workspace scan complete</span>'},
+    {t:1.3,log:'<span style="color:#A78BFA;">▸ Planning 1 step…</span>',prog:20,status:'Planning…'},
+    {t:2.4,log:'<span style="color:#4A4668;">▸ Selecting FileSystemAdvancedTool…</span>',prog:34,status:'Selecting tools…'},
+    {t:3.4,log:'<span style="color:#4A4668;">▸ Generating rename code…</span>',prog:46,status:'Generating…'},
+    {t:4.4,log:'<span style="color:#2AFFA0;">✓ Generated (12 lines)</span>'},
+    {t:5.0,log:'<span style="color:#A78BFA;">🔒 Auditing rename operation…</span>',prog:60,status:'Auditing…'},
+    {t:5.9,log:'<span style="color:#2AFFA0;">✓ ALLOW — reversible operation</span>'},
+    {t:6.5,log:'<span style="color:#4A4668;">▸ Renaming 84 files…</span>',prog:80,status:'Executing…'},
+    {t:8.2,log:'<span style="color:#2AFFA0;">✓ 84 files renamed</span>',prog:100,status:'Done ✓',bubble:'Done! Renamed 84 files in Downloads with today\'s date prefix. 📁'},
+  ]},
+  {task:'Scrape top 20 headlines from Hacker News to news.xlsx',steps:[
+    {t:0.4,log:'<span style="color:#4A4668;">▸ Context loaded</span>'},
+    {t:1.1,log:'<span style="color:#A78BFA;">▸ Planning 2 steps…</span>',prog:15,status:'Planning…'},
+    {t:2.3,log:'<span style="color:#4A4668;">▸ Selecting WebScrapingAdvancedTool…</span>',prog:28,status:'Selecting tools…'},
+    {t:3.2,log:'<span style="color:#4A4668;">▸ Generating scraper…</span>',prog:42,status:'Generating…'},
+    {t:4.7,log:'<span style="color:#2AFFA0;">✓ Scraper generated</span>'},
+    {t:5.3,log:'<span style="color:#A78BFA;">🔒 Auditing web request scope…</span>',prog:56,status:'Auditing…'},
+    {t:6.2,log:'<span style="color:#2AFFA0;">✓ ALLOW — read-only fetch</span>'},
+    {t:7.0,log:'<span style="color:#4A4668;">▸ Fetching news.ycombinator.com…</span>',prog:75,status:'Executing…'},
+    {t:9.0,log:'<span style="color:#2AFFA0;">✓ 20 headlines → news.xlsx</span>',prog:100,status:'Done ✓',bubble:'Scraped 20 headlines and saved them to news.xlsx on your Desktop. 🌐'},
+  ]},
+  {task:'Send a hello email to every address in contacts.csv',steps:[
+    {t:0.5,log:'<span style="color:#4A4668;">▸ Loading credentials from CredStore…</span>'},
+    {t:1.4,log:'<span style="color:#A78BFA;">▸ Planning 1 step</span>',prog:18,status:'Planning…'},
+    {t:2.5,log:'<span style="color:#4A4668;">▸ Selecting SMTPAdvancedTool…</span>',prog:32,status:'Selecting tools…'},
+    {t:3.5,log:'<span style="color:#4A4668;">▸ Generating bulk-send code…</span>',prog:46,status:'Generating…'},
+    {t:4.6,log:'<span style="color:#2AFFA0;">✓ Code generated</span>'},
+    {t:5.3,log:'<span style="color:#A78BFA;">🔒 Auditing SMTP call…</span>',prog:60,status:'Auditing…'},
+    {t:6.2,log:'<span style="color:#2AFFA0;">✓ ALLOW</span>'},
+    {t:7.0,log:'<span style="color:#4A4668;">▸ Sending to 32 contacts…</span>',prog:82,status:'Executing…'},
+    {t:9.3,log:'<span style="color:#2AFFA0;">✓ Sent 32 emails</span>',prog:100,status:'Done ✓',bubble:'Sent the hello email to all 32 contacts in your CSV. 📧'},
+  ]},
+  {task:'Open a GitHub issue: "Update README install steps"',steps:[
+    {t:0.5,log:'<span style="color:#4A4668;">▸ GitHub token loaded</span>'},
+    {t:1.3,log:'<span style="color:#A78BFA;">▸ Planning 1 step</span>',prog:22,status:'Planning…'},
+    {t:2.3,log:'<span style="color:#4A4668;">▸ Selecting GitHubTool…</span>',prog:36,status:'Selecting tools…'},
+    {t:3.3,log:'<span style="color:#4A4668;">▸ Generating API call…</span>',prog:50,status:'Generating…'},
+    {t:4.2,log:'<span style="color:#2AFFA0;">✓ Code generated</span>'},
+    {t:4.9,log:'<span style="color:#A78BFA;">🔒 Auditing GitHub API scope…</span>',prog:64,status:'Auditing…'},
+    {t:5.8,log:'<span style="color:#2AFFA0;">✓ ALLOW</span>'},
+    {t:6.5,log:'<span style="color:#4A4668;">▸ Calling GitHub API…</span>',prog:82,status:'Executing…'},
+    {t:8.0,log:'<span style="color:#2AFFA0;">✓ Issue #47 created</span>',prog:100,status:'Done ✓',bubble:'Created GitHub issue #47 — "Update README install steps". ⭐'},
+  ]},
+  {task:'Find PDFs in Documents, sort by date, zip into archive.zip',steps:[
+    {t:0.4,log:'<span style="color:#4A4668;">▸ Documents folder found</span>'},
+    {t:1.2,log:'<span style="color:#A78BFA;">▸ Planning 2 steps…</span>',prog:16,status:'Planning…'},
+    {t:2.3,log:'<span style="color:#4A4668;">▸ Selecting FileSystemAdvancedTool…</span>',prog:30,status:'Selecting tools…'},
+    {t:3.3,log:'<span style="color:#4A4668;">▸ Generating sort + zip code…</span>',prog:44,status:'Generating…'},
+    {t:4.5,log:'<span style="color:#2AFFA0;">✓ Code generated</span>'},
+    {t:5.2,log:'<span style="color:#A78BFA;">🔒 Auditing archive operation…</span>',prog:58},
+    {t:6.1,log:'<span style="color:#2AFFA0;">✓ ALLOW</span>'},
+    {t:6.9,log:'<span style="color:#4A4668;">▸ Found 23 PDFs, zipping…</span>',prog:80,status:'Executing…'},
+    {t:9.0,log:'<span style="color:#2AFFA0;">✓ archive.zip created (23 files)</span>',prog:100,status:'Done ✓',bubble:'Sorted 23 PDFs by date and zipped them into archive.zip. 🔒'},
+  ]},
+  {task:'List all objects in my S3 bucket',steps:[
+    {t:0.4,log:'<span style="color:#4A4668;">▸ AWS credentials loaded</span>'},
+    {t:1.2,log:'<span style="color:#A78BFA;">▸ Planning 1 step…</span>',prog:22,status:'Planning…'},
+    {t:2.2,log:'<span style="color:#4A4668;">▸ Selecting AWSS3Tool…</span>',prog:38,status:'Selecting tools…'},
+    {t:3.2,log:'<span style="color:#4A4668;">▸ Generating list_objects call…</span>',prog:52,status:'Generating…'},
+    {t:4.2,log:'<span style="color:#2AFFA0;">✓ Code generated</span>'},
+    {t:4.9,log:'<span style="color:#A78BFA;">🔒 Auditing read-only S3 call…</span>',prog:64,status:'Auditing…'},
+    {t:5.7,log:'<span style="color:#2AFFA0;">✓ ALLOW</span>'},
+    {t:6.4,log:'<span style="color:#4A4668;">▸ Listing bucket contents…</span>',prog:84,status:'Executing…'},
+    {t:8.0,log:'<span style="color:#2AFFA0;">✓ 214 objects listed</span>',prog:100,status:'Done ✓',bubble:'Your bucket has 214 objects — full listing printed to the log panel. ☁'},
+  ]},
+  {task:'Rebuild my Docker image and restart the container',steps:[
+    {t:0.5,log:'<span style="color:#4A4668;">▸ Dockerfile located</span>'},
+    {t:1.3,log:'<span style="color:#A78BFA;">▸ Planning 2 steps…</span>',prog:18,status:'Planning…'},
+    {t:2.4,log:'<span style="color:#4A4668;">▸ Selecting DockerTool…</span>',prog:32,status:'Selecting tools…'},
+    {t:3.4,log:'<span style="color:#4A4668;">▸ Generating build + restart commands…</span>',prog:46,status:'Generating…'},
+    {t:4.6,log:'<span style="color:#2AFFA0;">✓ Code generated</span>'},
+    {t:5.3,log:'<span style="color:#A78BFA;">🔒 Auditing container restart…</span>',prog:60,status:'Auditing…'},
+    {t:6.2,log:'<span style="color:#2AFFA0;">✓ ALLOW — scoped to named container</span>'},
+    {t:7.0,log:'<span style="color:#4A4668;">▸ Building image…</span>',prog:82,status:'Executing…'},
+    {t:9.5,log:'<span style="color:#2AFFA0;">✓ Image rebuilt, container restarted</span>',prog:100,status:'Done ✓',bubble:'Rebuilt the image and restarted your container. 🐳'},
+  ]},
+  {task:"Pull this month's Stripe payouts",steps:[
+    {t:0.4,log:'<span style="color:#4A4668;">▸ Stripe key loaded</span>'},
+    {t:1.2,log:'<span style="color:#A78BFA;">▸ Planning 1 step…</span>',prog:20,status:'Planning…'},
+    {t:2.2,log:'<span style="color:#4A4668;">▸ Selecting StripeTool…</span>',prog:36,status:'Selecting tools…'},
+    {t:3.2,log:'<span style="color:#4A4668;">▸ Generating payouts.list call…</span>',prog:50,status:'Generating…'},
+    {t:4.2,log:'<span style="color:#2AFFA0;">✓ Code generated</span>'},
+    {t:4.9,log:'<span style="color:#A78BFA;">🔒 Auditing Stripe read scope…</span>',prog:64,status:'Auditing…'},
+    {t:5.7,log:'<span style="color:#2AFFA0;">✓ ALLOW — read-only</span>'},
+    {t:6.4,log:'<span style="color:#4A4668;">▸ Fetching payouts…</span>',prog:84,status:'Executing…'},
+    {t:8.0,log:'<span style="color:#2AFFA0;">✓ 6 payouts retrieved</span>',prog:100,status:'Done ✓',bubble:"Pulled 6 payouts for this month — totals printed to the log panel. 💳"},
+  ]},
+  {task:'Log today\'s standup notes as a new Notion entry',steps:[
+    {t:0.4,log:'<span style="color:#4A4668;">▸ Notion token loaded</span>'},
+    {t:1.2,log:'<span style="color:#A78BFA;">▸ Planning 1 step…</span>',prog:20,status:'Planning…'},
+    {t:2.2,log:'<span style="color:#4A4668;">▸ Selecting NotionAdvancedTool…</span>',prog:36,status:'Selecting tools…'},
+    {t:3.2,log:'<span style="color:#4A4668;">▸ Generating page.create call…</span>',prog:50,status:'Generating…'},
+    {t:4.2,log:'<span style="color:#2AFFA0;">✓ Code generated</span>'},
+    {t:4.9,log:'<span style="color:#A78BFA;">🔒 Auditing Notion write scope…</span>',prog:64,status:'Auditing…'},
+    {t:5.7,log:'<span style="color:#2AFFA0;">✓ ALLOW</span>'},
+    {t:6.4,log:'<span style="color:#4A4668;">▸ Creating page…</span>',prog:84,status:'Executing…'},
+    {t:8.0,log:'<span style="color:#2AFFA0;">✓ Entry logged in Notion</span>',prog:100,status:'Done ✓',bubble:"Logged today's standup notes as a new entry in your Notion workspace. 📓"},
+  ]},
+  {task:'Compress recording.mp4 to under 50MB',steps:[
+    {t:0.4,log:'<span style="color:#4A4668;">▸ File found on Desktop</span>'},
+    {t:1.2,log:'<span style="color:#A78BFA;">▸ Planning 1 step…</span>',prog:20,status:'Planning…'},
+    {t:2.2,log:'<span style="color:#4A4668;">▸ Selecting FFmpegTool…</span>',prog:36,status:'Selecting tools…'},
+    {t:3.2,log:'<span style="color:#4A4668;">▸ Generating compression command…</span>',prog:50,status:'Generating…'},
+    {t:4.2,log:'<span style="color:#2AFFA0;">✓ Code generated</span>'},
+    {t:4.9,log:'<span style="color:#A78BFA;">🔒 Auditing…</span>',prog:64,status:'Auditing…'},
+    {t:5.7,log:'<span style="color:#2AFFA0;">✓ ALLOW</span>'},
+    {t:6.4,log:'<span style="color:#4A4668;">▸ Compressing video…</span>',prog:84,status:'Executing…'},
+    {t:9.0,log:'<span style="color:#2AFFA0;">✓ Compressed to 41MB</span>',prog:100,status:'Done ✓',bubble:'Compressed recording.mp4 down to 41MB. 🎬'},
+  ]},
+  {task:'Resize every photo in Desktop/Photos to 800×600',steps:[
+    {t:0.4,log:'<span style="color:#4A4668;">▸ Photos folder found — 46 images</span>'},
+    {t:1.2,log:'<span style="color:#A78BFA;">▸ Planning 1 step…</span>',prog:20,status:'Planning…'},
+    {t:2.2,log:'<span style="color:#4A4668;">▸ Selecting ImageAdvancedTool…</span>',prog:36,status:'Selecting tools…'},
+    {t:3.2,log:'<span style="color:#4A4668;">▸ Generating batch resize code…</span>',prog:50,status:'Generating…'},
+    {t:4.2,log:'<span style="color:#2AFFA0;">✓ Code generated</span>'},
+    {t:4.9,log:'<span style="color:#A78BFA;">🔒 Auditing…</span>',prog:64,status:'Auditing…'},
+    {t:5.7,log:'<span style="color:#2AFFA0;">✓ ALLOW</span>'},
+    {t:6.4,log:'<span style="color:#4A4668;">▸ Resizing 46 photos…</span>',prog:84,status:'Executing…'},
+    {t:9.2,log:'<span style="color:#2AFFA0;">✓ 46 photos resized</span>',prog:100,status:'Done ✓',bubble:'Resized all 46 photos in Desktop/Photos to 800×600. 🖼'},
+  ]},
+  {task:'Deploy latest build to the staging server over SSH',steps:[
+    {t:0.5,log:'<span style="color:#4A4668;">▸ SSH key loaded</span>'},
+    {t:1.3,log:'<span style="color:#A78BFA;">▸ Planning 2 steps…</span>',prog:18,status:'Planning…'},
+    {t:2.4,log:'<span style="color:#4A4668;">▸ Selecting TerminalTool…</span>',prog:32,status:'Selecting tools…'},
+    {t:3.4,log:'<span style="color:#4A4668;">▸ Generating deploy commands…</span>',prog:46,status:'Generating…'},
+    {t:4.6,log:'<span style="color:#2AFFA0;">✓ Code generated</span>'},
+    {t:5.3,log:'<span style="color:#A78BFA;">🔒 Auditing remote command scope…</span>',prog:60,status:'Auditing…'},
+    {t:6.2,log:'<span style="color:#2AFFA0;">✓ ALLOW — scoped to staging host</span>'},
+    {t:7.0,log:'<span style="color:#4A4668;">▸ Connecting and deploying…</span>',prog:84,status:'Executing…'},
+    {t:9.5,log:'<span style="color:#2AFFA0;">✓ Deployed to staging</span>',prog:100,status:'Done ✓',bubble:'Deployed the latest build to staging over SSH. 🖥'},
+  ]},
+  {task:'Transcribe my last voice memo into text',steps:[
+    {t:0.4,log:'<span style="color:#4A4668;">▸ Voice memo located</span>'},
+    {t:1.2,log:'<span style="color:#A78BFA;">▸ Planning 1 step…</span>',prog:20,status:'Planning…'},
+    {t:2.2,log:'<span style="color:#4A4668;">▸ Selecting SpeechAITool…</span>',prog:36,status:'Selecting tools…'},
+    {t:3.2,log:'<span style="color:#4A4668;">▸ Generating transcription call…</span>',prog:50,status:'Generating…'},
+    {t:4.2,log:'<span style="color:#2AFFA0;">✓ Code generated</span>'},
+    {t:4.9,log:'<span style="color:#A78BFA;">🔒 Auditing…</span>',prog:64,status:'Auditing…'},
+    {t:5.7,log:'<span style="color:#2AFFA0;">✓ ALLOW</span>'},
+    {t:6.4,log:'<span style="color:#4A4668;">▸ Transcribing audio…</span>',prog:84,status:'Executing…'},
+    {t:8.4,log:'<span style="color:#2AFFA0;">✓ Transcript saved</span>',prog:100,status:'Done ✓',bubble:'Transcribed your voice memo — saved as memo.txt on your Desktop. 🎙'},
+  ]},
 ];
 
 let currentDemo=null;
 let demoTimers=[];
-
 function clearTimers(){demoTimers.forEach(clearTimeout);demoTimers=[];}
-
 function selectChip(idx,el){
-  document.querySelectorAll('#demo-chips button').forEach(b=>b.style.borderColor='rgba(255,255,255,0.08)');
-  el.style.borderColor='rgba(42,255,160,0.6)';
-  el.style.color='#2AFFA0';
+  document.querySelectorAll('#demo-chips button').forEach(b=>{b.style.borderColor='rgba(255,255,255,0.08)';b.style.color='';});
+  el.style.borderColor='rgba(42,255,160,0.6)'; el.style.color='#2AFFA0';
   currentDemo=idx;
-  const input=document.getElementById('demo-input');
-  input.value='';
+  const input=document.getElementById('demo-input'); input.value='';
   typeText(input,demoScripts[idx].task);
 }
-
 function typeText(el,text){
   let i=0;
-  function tick(){
-    if(i<text.length){el.value=text.slice(0,i+1);i++;setTimeout(tick,28+Math.random()*15);}
-  }
+  function tick(){ if(i<text.length){el.value=text.slice(0,i+1);i++;setTimeout(tick,26+Math.random()*14);} }
   tick();
 }
-
 function addBubble(text,isAgent){
   const chat=document.getElementById('demo-chat');
-  const b=document.createElement('div');
-  b.className='bubble '+(isAgent?'agent':'user');
-  b.innerHTML=`<div class="bubble-text">${text}</div>`;
-  chat.appendChild(b);
-  chat.scrollTop=chat.scrollHeight;
+  const b=document.createElement('div'); b.className='bubble '+(isAgent?'agent':'user');
+  b.innerHTML=`<div class="bubble-text">${text}</div>`; chat.appendChild(b); chat.scrollTop=chat.scrollHeight;
 }
-
 function addThinking(){
   const chat=document.getElementById('demo-chat');
-  const b=document.createElement('div');
-  b.className='bubble agent'; b.id='thinking-bubble';
+  const b=document.createElement('div'); b.className='bubble agent'; b.id='thinking-bubble';
   b.innerHTML='<div class="bubble-text bubble-thinking"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>';
   chat.appendChild(b); chat.scrollTop=chat.scrollHeight;
 }
-
-function removeThinking(){const b=document.getElementById('thinking-bubble');if(b)b.remove();}
-
+function removeThinking(){const b=document.getElementById('thinking-bubble'); if(b)b.remove();}
 function addLog(html){
   const log=document.getElementById('demo-log');
-  const line=document.createElement('div');
-  line.className='log-line'; line.innerHTML=html;
-  log.appendChild(line);
-  log.scrollTop=log.scrollHeight;
+  const line=document.createElement('div'); line.className='log-line'; line.innerHTML=html;
+  log.appendChild(line); log.scrollTop=log.scrollHeight;
 }
-
 function runDemo(){
-  if(currentDemo===null){
-    addBubble('Please click a task chip below first!',true);return;
-  }
+  if(currentDemo===null){ addBubble('Pick a task chip below first!',true); return; }
   clearTimers();
   const script=demoScripts[currentDemo];
-  const chat=document.getElementById('demo-chat');
-
-  // clear logs
   document.getElementById('demo-log').innerHTML='<div class="log-header">Execution Logs</div>';
   document.getElementById('demo-prog').style.width='3%';
   document.getElementById('demo-pct').textContent='3%';
   document.getElementById('demo-status').textContent='Starting…';
-
-  // user bubble
   addBubble(script.task,false);
   setTimeout(addThinking,400);
-
   script.steps.forEach((step,i)=>{
     const timer=setTimeout(()=>{
       if(i===0)removeThinking();
       if(step.log) addLog(step.log);
-      if(step.prog){
-        document.getElementById('demo-prog').style.width=step.prog+'%';
-        document.getElementById('demo-pct').textContent=step.prog+'%';
-      }
+      if(step.prog){document.getElementById('demo-prog').style.width=step.prog+'%';document.getElementById('demo-pct').textContent=step.prog+'%';}
       if(step.status) document.getElementById('demo-status').textContent=step.status;
-      if(step.bubble){
-        removeThinking();
-        setTimeout(()=>addBubble(step.bubble,true),200);
-      }
+      if(step.bubble){ removeThinking(); setTimeout(()=>addBubble(step.bubble,true),200); }
     },step.t*1000);
     demoTimers.push(timer);
   });
 }
-
 function killDemo(){
-  clearTimers();
-  removeThinking();
+  clearTimers(); removeThinking();
   addBubble('Task killed by user.',true);
   document.getElementById('demo-status').textContent='Killed';
 }
-
-// allow typing + enter in demo input
-document.getElementById('demo-input').addEventListener('keypress',e=>{
-  if(e.key==='Enter') runDemo();
-});
+document.getElementById('demo-input').addEventListener('keypress',e=>{ if(e.key==='Enter') runDemo(); });
 </script>
 </body>
 </html>
