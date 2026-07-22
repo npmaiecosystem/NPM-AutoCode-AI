@@ -28,6 +28,8 @@ Thumbs.db
 # User config & credentials
 .npmai_agent/
 Desktop_App/app_config.json
+LICENSE
+README.md
 
 # Build artifacts
 *.exe
