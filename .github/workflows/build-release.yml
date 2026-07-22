@@ -1,0 +1,94 @@
+name: Build & Release Desktop App
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "NPM-AutoCode-AI big Update."
+        required: true
+        default: "v3.0.0"
+
+permissions:
+  contents: write   
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: NPM-AutoCode-AI-linux
+            data_sep: ":"
+          - os: windows-latest
+            artifact_name: NPM-AutoCode-AI-windows
+            data_sep: ";"
+          - os: macos-latest
+            artifact_name: NPM-AutoCode-AI-macos
+            data_sep: ":"
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout NPM-AutoCode-AI
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # npmai-agents / npmai are already pinned in requirements.txt and published
+      # on PyPI, so they install straight from there — no separate source build needed.
+      - name: Install app dependencies
+        working-directory: Desktop_App
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build with PyInstaller
+        shell: bash
+        working-directory: Desktop_App
+        run: |
+          pyinstaller --noconfirm --onefile --windowed \
+            --name "NPM-AutoCode-AI" \
+            --icon "../npmai.png" \
+            --add-data "../npmai.png${{ matrix.data_sep }}." \
+            --add-data "app_config.json${{ matrix.data_sep }}." \
+            app.py
+
+      - name: Zip build output (Linux/macOS)
+        if: matrix.os != 'windows-latest'
+        working-directory: Desktop_App/dist
+        run: zip -r "../../${{ matrix.artifact_name }}.zip" .
+
+      - name: Zip build output (Windows)
+        if: matrix.os == 'windows-latest'
+        working-directory: Desktop_App/dist
+        run: Compress-Archive -Path * -DestinationPath "../../${{ matrix.artifact_name }}.zip"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_name }}.zip
+
+  release:
+    name: Publish Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all built zips
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create release with all three zips attached
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          name: "NPM-AutoCode-AI ${{ github.event.inputs.version }}"
+          files: |
+            artifacts/NPM-AutoCode-AI-linux/NPM-AutoCode-AI-linux.zip
+            artifacts/NPM-AutoCode-AI-windows/NPM-AutoCode-AI-windows.zip
+            artifacts/NPM-AutoCode-AI-macos/NPM-AutoCode-AI-macos.zip
