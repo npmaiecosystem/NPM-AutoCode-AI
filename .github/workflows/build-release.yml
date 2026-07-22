@@ -51,6 +51,7 @@ jobs:
         working-directory: Desktop_App
         run: |
           pyinstaller --noconfirm --onefile --windowed \
+            --collect-all charset_normalizer \
             --name "NPM-AutoCode-AI" \
             --icon "../npmai.png" \
             --add-data "../npmai.png${{ matrix.data_sep }}." \
