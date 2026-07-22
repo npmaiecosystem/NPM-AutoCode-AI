@@ -68,16 +68,19 @@ _LLM_CONFIG_PATH = Path.home() / ".npmai_agent" / "llm_roles.json"
 
 
 def _load_llm_stage_config() -> dict:
-    """Returns {stage: {'provider':..., 'model':...}} — falls back to npmai defaults."""
     cfg = {}
     if _LLM_CONFIG_PATH.exists():
         try:
             cfg = json.loads(_LLM_CONFIG_PATH.read_text())
         except Exception:
             cfg = {}
+
     for stage_key, _, _ in AGENT_STAGES:
-        if stage_key not in cfg:
-            cfg[stage_key] = {"provider": "npmai", "model": LLM_PROVIDERS["npmai"]["model_default"]}
+        if stage_key not in cfg or cfg[stage_key].get("provider") in ["groq", "openai", "anthropic"]:
+            cfg[stage_key] = {
+                "provider": "npmai", 
+                "model": LLM_PROVIDERS["npmai"]["model_default"]
+            }
     return cfg
 
 
