@@ -3,23 +3,23 @@ import json
 import uuid
 import threading
 import time
+import requests
 from pathlib import Path
 from typing import Callable, Optional
 
 CONFIG_PATH = Path.home() / ".npmai_agent" / "supabase_config.json"
 
 
+CONFIG_URL = "https://raw.githubusercontent.com/yourusername/yourrepo/main/app_config.json"
+
 def load_config() -> dict:
-    if CONFIG_PATH.exists():
-        try:
-            return json.loads(CONFIG_PATH.read_text())
-        except Exception:
-            pass
-    return {
-        "url": os.environ.get("SUPABASE_URL", ""),
-        "anon_key": os.environ.get("SUPABASE_ANON_KEY", ""),
-        "mcp_base_url": os.environ.get("NPMAI_MCP_BASE_URL", "https://YOUR-HF-SPACE.hf.space/mcp"),
-    }
+    """Fetch latest config from GitHub"""
+    try:
+        response = requests.get(CONFIG_URL, timeout=8)
+        if response.status_code == 200:
+            return response.json()
+    except Exception as e:
+        print(f"Failed to fetch remote config: {e}")
 
 
 def save_config(url: str, anon_key: str, mcp_base_url: str = None):

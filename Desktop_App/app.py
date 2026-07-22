@@ -1,10 +1,10 @@
 """
-NPMAI Agent Desktop — v4 (npmai_agents edition)
+NPM-AutoCode-AI Desktop — v4 (npmai_agents edition)
 
 THIS IS NOT YET DEPLOYED.
 Here it is about Desktop APP.
 """
-import sys, os, math, random, threading
+import sys, os, math, random, threading, json
 from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
     QTextEdit, QLineEdit, QPushButton, QFrame, QScrollArea,
     QStackedWidget, QSizePolicy, QGraphicsOpacityEffect,
     QTabWidget, QDialog, QDialogButtonBox, QMessageBox,
-    QGroupBox
+    QGroupBox, QComboBox
 )
 from PySide6.QtCore import (
     QThread, Signal, Qt, QTimer, QPointF, QRectF, QRect,
@@ -23,7 +23,7 @@ from PySide6.QtCore import (
 )
 from PySide6.QtGui import (
     QFont, QColor, QPalette, QLinearGradient, QPainter, QBrush, QPen,
-    QPainterPath, QRadialGradient,
+    QPainterPath, QRadialGradient, QIcon
 )
 
 P = {
@@ -35,6 +35,98 @@ P = {
     "bright": "#F0EEFF", "mid":   "#8E8AAE", "dim":   "#4E4B6A",
     "ghost":  "#2A2744",
 }
+
+# ── LLM provider registry — mirrors npmai_agents.core backends + cli.build_backend ──
+# Each entry: key -> (display label, [(field_key, field_label, is_secret), ...])
+# "model" is handled separately (every provider except a couple takes a model/model_id name).
+LLM_PROVIDERS = {
+    "npmai":     {"label": "🌐 NPMAI (cloud Ollama — default)", "needs_key": False, "model_label": "Model", "model_default": "llama3.2:3b", "extra_fields": []},
+    "local":     {"label": "💻 Local Ollama",                    "needs_key": False, "model_label": "Model", "model_default": "llama3.2:3b", "extra_fields": []},
+    "openai":    {"label": "🟢 OpenAI",                          "needs_key": True,  "model_label": "Model", "model_default": "gpt-4o", "extra_fields": []},
+    "anthropic": {"label": "🟣 Anthropic",                       "needs_key": True,  "model_label": "Model", "model_default": "claude-sonnet-4-6", "extra_fields": []},
+    "gemini":    {"label": "🔵 Google Gemini",                   "needs_key": True,  "model_label": "Model", "model_default": "gemini-2.0-flash", "extra_fields": []},
+    "groq":      {"label": "⚡ Groq",                            "needs_key": True,  "model_label": "Model", "model_default": "llama-3.3-70b-versatile", "extra_fields": []},
+    "mistral":   {"label": "🌬 Mistral",                         "needs_key": True,  "model_label": "Model", "model_default": "mistral-large-latest", "extra_fields": []},
+    "cohere":    {"label": "🔶 Cohere",                          "needs_key": True,  "model_label": "Model", "model_default": "command-r-plus", "extra_fields": []},
+    "azure":     {"label": "🔷 Azure OpenAI",                    "needs_key": True,  "model_label": "Deployment", "model_default": "", "extra_fields": [("endpoint","Endpoint URL"),("api_version","API version (default 2024-08-01-preview)")]},
+    "bedrock":   {"label": "🟠 AWS Bedrock",                     "needs_key": False, "model_label": "Model ID", "model_default": "anthropic.claude-3-sonnet-20240229-v1:0", "extra_fields": [("region","AWS region (default us-east-1)")]},
+    "hf":        {"label": "🤗 HuggingFace",                     "needs_key": True,  "model_label": "Model", "model_default": "meta-llama/Llama-3.1-8B-Instruct", "extra_fields": []},
+    "llamacpp":  {"label": "🦙 llama.cpp (local server)",        "needs_key": False, "model_label": "Base URL", "model_default": "http://localhost:8080", "extra_fields": []},
+}
+
+# The 6 AgentBrain roles/stages that can each use a different LLM
+AGENT_STAGES = [
+    ("planner",      "🧭 Planner",      "Breaks the task into atomic steps"),
+    ("tool_manager", "🧰 Tool Manager", "Selects which of the 1371 tools to use"),
+    ("coder",        "👨‍💻 Coder",        "Writes the Python for each step"),
+    ("auditor",      "🛡 Auditor",       "Reviews code for safety before execution"),
+    ("verifier",     "✅ Verifier",      "Confirms a step actually completed"),
+    ("chatter",      "💬 Chatter",       "Handles plain conversation (non-task replies)"),
+]
+
+_LLM_CONFIG_PATH = Path.home() / ".npmai_agent" / "llm_roles.json"
+
+
+def _load_llm_stage_config() -> dict:
+    """Returns {stage: {'provider':..., 'model':...}} — falls back to npmai defaults."""
+    cfg = {}
+    if _LLM_CONFIG_PATH.exists():
+        try:
+            cfg = json.loads(_LLM_CONFIG_PATH.read_text())
+        except Exception:
+            cfg = {}
+    for stage_key, _, _ in AGENT_STAGES:
+        if stage_key not in cfg:
+            cfg[stage_key] = {"provider": "npmai", "model": LLM_PROVIDERS["npmai"]["model_default"]}
+    return cfg
+
+
+def _save_llm_stage_config(cfg: dict):
+    _LLM_CONFIG_PATH.parent.mkdir(exist_ok=True)
+    _LLM_CONFIG_PATH.write_text(json.dumps(cfg, indent=2))
+
+
+def _credstore_delete(name: str):
+    """CredStore has no delete() — this mirrors its own encryption logic to remove one group."""
+    from cryptography.fernet import Fernet
+    if not CredStore._PATH.exists():
+        return
+    try:
+        f = Fernet(CredStore._key())
+        store = json.loads(f.decrypt(CredStore._PATH.read_bytes()))
+        if name in store:
+            del store[name]
+            CredStore._PATH.write_bytes(f.encrypt(json.dumps(store).encode()))
+    except Exception:
+        pass
+
+
+def _build_llm_backend(provider: str, model: str):
+    """Mirrors npmai_agents.cli.build_backend — constructs a real LLMBackend from CredStore creds."""
+    from npmai_agents import (Ollama_Local, OpenAIBackend, AnthropicBackend, GeminiBackend,
+                               GroqBackend, MistralBackend, CohereBackend, AzureOpenAIBackend,
+                               BedrockBackend, HuggingFaceBackend, LlamaCppBackend)
+    from npmai import Ollama
+    p = provider.lower()
+    if p == "npmai":       return Ollama(model=model)
+    if p == "local":       return Ollama_Local(model=model)
+    if p == "openai":      return OpenAIBackend(model=model, api_key=CredStore.load("openai").get("api_key",""))
+    if p == "anthropic":   return AnthropicBackend(model=model, api_key=CredStore.load("anthropic").get("api_key",""))
+    if p == "gemini":      return GeminiBackend(model=model, api_key=CredStore.load("gemini").get("api_key",""))
+    if p == "groq":        return GroqBackend(model=model, api_key=CredStore.load("groq").get("api_key",""))
+    if p == "mistral":     return MistralBackend(model=model, api_key=CredStore.load("mistral").get("api_key",""))
+    if p == "cohere":      return CohereBackend(model=model, api_key=CredStore.load("cohere").get("api_key",""))
+    if p == "azure":
+        c = CredStore.load("azure")
+        return AzureOpenAIBackend(api_key=c.get("api_key",""), endpoint=c.get("endpoint",""),
+                                   deployment=model, api_version=c.get("api_version","2024-08-01-preview"))
+    if p == "bedrock":
+        c = CredStore.load("bedrock")
+        return BedrockBackend(model_id=model, region=c.get("region","us-east-1"))
+    if p == "hf":          return HuggingFaceBackend(model=model, api_key=CredStore.load("hf").get("api_key",""))
+    if p == "llamacpp":    return LlamaCppBackend(base_url=model or "http://localhost:8080")
+    return Ollama(model=model)  # unknown provider -> safe fallback
+
 
 _TASK_KEYWORDS = [
     "file", "folder", "git", "github", "gitlab", "docker", "kubernetes", "k8s",
@@ -77,10 +169,25 @@ class AgentWorker(QThread):
             self._brain.executor.kill()
 
     def run(self):
+        stage_cfg = _load_llm_stage_config()
+        backends = {}
+        for stage_key, _, _ in AGENT_STAGES:
+            s = stage_cfg.get(stage_key, {"provider": "npmai", "model": LLM_PROVIDERS["npmai"]["model_default"]})
+            try:
+                backends[stage_key] = _build_llm_backend(s.get("provider","npmai"), s.get("model",""))
+            except Exception as e:
+                self.log_sig.emit(f'<font color="#FF6B9D">LLM config error for {stage_key} ({s.get("provider")}): {e} — falling back to default.</font>')
+                backends[stage_key] = None
         self._brain = AgentBrain(
             log_cb      = self.log_sig.emit,
             progress_cb = self.progress_sig.emit,
             status_cb   = self.status_sig.emit,
+            planner      = backends.get("planner"),
+            tool_manager = backends.get("tool_manager"),
+            coder        = backends.get("coder"),
+            auditor      = backends.get("auditor"),
+            verifier     = backends.get("verifier"),
+            chatter      = backends.get("chatter"),
         )
         if _looks_like_task(self.task):
             ok = self._brain.run_task(self.task, killed_flag=self._killed)
@@ -384,6 +491,7 @@ class LoginDialog(QDialog):
         super().__init__(parent)
         self._mgr = link_mgr
         self.setWindowTitle("Log in — MCP Link")
+        self.setWindowIcon(QIcon("npmai.png"))
         self.setFixedSize(360, 260)
         self.setStyleSheet(f"QDialog{{background:{P['void']};}}")
         lay = QVBoxLayout(self); lay.setContentsMargins(28,24,28,24); lay.setSpacing(12)
@@ -442,7 +550,7 @@ class Sidebar(QWidget):
 
         lw=QWidget(); lw.setAttribute(Qt.WA_TranslucentBackground); lw.setFixedHeight(86)
         ll=QVBoxLayout(lw); ll.setContentsMargins(18,20,18,10); ll.setSpacing(3)
-        lg=QLabel("⚙  NPM Agent"); lg.setFont(QFont("Segoe UI",14,QFont.Bold))
+        lg=QLabel("⚙  NPM-AutoCode-AI"); lg.setFont(QFont("Segoe UI",14,QFont.Bold))
         lg.setStyleSheet(f"color:{P['mint']};background:transparent;")
         lv=QLabel("v4.0  ·  npmai_agents"); lv.setFont(QFont("Segoe UI",9))
         lv.setStyleSheet(f"color:{P['dim']};background:transparent;")
@@ -476,7 +584,7 @@ class Sidebar(QWidget):
         fl.addWidget(self._mcp_btn)
 
         for lbl,url in [("🐍 PyPI","https://pypi.org/project/npmai"),
-                         ("⭐ GitHub","https://github.com/sonuramashishnpm")]:
+                         ("⭐ GitHub","https://github.com/npmaiecosystem")]:
             b2=QPushButton(lbl); b2.setCursor(Qt.PointingHandCursor); b2.setFixedHeight(32)
             b2.setStyleSheet(self._btn_style())
             import webbrowser
@@ -535,6 +643,137 @@ QPushButton:hover{{background:rgba(42,255,160,22);border-color:rgba(42,255,160,9
         p.setPen(QPen(QColor(P["ghost"]),1))
         p.drawLine(self.width()-1,0,self.width()-1,self.height()); p.end()
 
+class LLMConfigDialog(QDialog):
+    """'Configure LLMs' — Part ① sets up credentials/args per provider (only the
+    fields that provider's backend class actually needs). Part ② assigns a
+    provider+model to each of the 6 AgentBrain stages. Saved locally so the
+    Agent tab uses it automatically on every run without repeating setup."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Configure LLMs")
+        self.setWindowIcon(QIcon("npmai.png"))
+        self.resize(640, 720)
+        self.setStyleSheet(f"QDialog{{background:{P['void']};}}")
+
+        outer=QVBoxLayout(self); outer.setContentsMargins(0,0,0,0)
+        scroll=QScrollArea(); scroll.setWidgetResizable(True)
+        scroll.setStyleSheet("QScrollArea{border:none;background:transparent;}")
+        page=QWidget(); page.setAttribute(Qt.WA_TranslucentBackground)
+        lay=QVBoxLayout(page); lay.setContentsMargins(26,22,26,22); lay.setSpacing(16)
+
+        t=QLabel("🤖  Configure LLMs"); t.setFont(QFont("Segoe UI",17,QFont.Bold))
+        t.setStyleSheet(f"color:{P['mint']};background:transparent;"); lay.addWidget(t)
+        sub=QLabel("① Add credentials for any provider you plan to use — only the fields that provider "
+                    "actually needs are shown. ② Then assign which provider+model handles each of the 6 "
+                    "pipeline stages. Everything is saved locally and reused automatically on every run.")
+        sub.setFont(QFont("Segoe UI",9)); sub.setWordWrap(True)
+        sub.setStyleSheet(f"color:{P['mid']};background:transparent;"); lay.addWidget(sub)
+
+        h1=QLabel("① Provider Credentials"); h1.setFont(QFont("Segoe UI",13,QFont.Bold))
+        h1.setStyleSheet(f"color:{P['bright']};background:transparent;"); lay.addWidget(h1)
+
+        self._provider_fields={}
+        for pkey,meta in LLM_PROVIDERS.items():
+            card=GlowCard(accent=P["cyan"],radius=16,alpha=200)
+            cl=QVBoxLayout(card); cl.setContentsMargins(22,16,22,16); cl.setSpacing(8)
+            hl=QLabel(meta["label"]); hl.setFont(QFont("Segoe UI",12,QFont.Bold))
+            hl.setStyleSheet(f"color:{P['bright']};background:transparent;"); cl.addWidget(hl)
+            existing=CredStore.load(pkey)
+            fields={}
+            if meta["needs_key"]:
+                lbl=QLabel("API key"); lbl.setFont(QFont("Segoe UI",9))
+                lbl.setStyleSheet(f"color:{P['mid']};background:transparent;"); cl.addWidget(lbl)
+                api_in=GlowInput(f"{pkey} API key"); api_in.setEchoMode(QLineEdit.Password)
+                if existing.get("api_key"): api_in.setText("●"*8)
+                cl.addWidget(api_in); fields["api_key"]=api_in
+            for fkey,flabel in meta["extra_fields"]:
+                lbl=QLabel(flabel); lbl.setFont(QFont("Segoe UI",9))
+                lbl.setStyleSheet(f"color:{P['mid']};background:transparent;"); cl.addWidget(lbl)
+                inp=GlowInput(flabel)
+                if existing.get(fkey): inp.setText(existing.get(fkey))
+                cl.addWidget(inp); fields[fkey]=inp
+            if not fields:
+                nolbl=QLabel("No credentials needed — runs without an API key.")
+                nolbl.setFont(QFont("Segoe UI",9)); nolbl.setStyleSheet(f"color:{P['dim']};background:transparent;")
+                cl.addWidget(nolbl)
+            else:
+                save_btn=PulseBtn(f"💾  Save {pkey}",P["cyan"],True); save_btn.setFixedHeight(36)
+                def _save(pk=pkey, f=fields):
+                    data={}
+                    for k,w in f.items():
+                        v=w.text().strip()
+                        if v and v!="●"*8: data[k]=v
+                    if data:
+                        ex=CredStore.load(pk); ex.update(data); CredStore.save(pk,ex)
+                        QMessageBox.information(self,"Saved",f"'{pk}' configuration saved.")
+                save_btn.clicked.connect(_save); cl.addWidget(save_btn)
+            lay.addWidget(card)
+            self._provider_fields[pkey]=fields
+
+        sep=QFrame(); sep.setFixedHeight(1); sep.setStyleSheet(f"background:{P['ghost']};border:none;")
+        lay.addWidget(sep)
+
+        h2=QLabel("② Assign Provider + Model per Stage"); h2.setFont(QFont("Segoe UI",13,QFont.Bold))
+        h2.setStyleSheet(f"color:{P['bright']};background:transparent;"); lay.addWidget(h2)
+
+        stage_cfg=_load_llm_stage_config()
+        self._stage_combo={}; self._stage_model={}
+        for skey,slabel,sdesc in AGENT_STAGES:
+            card=GlowCard(accent=P["violet"],radius=16,alpha=200)
+            cl=QVBoxLayout(card); cl.setContentsMargins(22,16,22,16); cl.setSpacing(8)
+            hl=QLabel(slabel); hl.setFont(QFont("Segoe UI",12,QFont.Bold))
+            hl.setStyleSheet(f"color:{P['bright']};background:transparent;"); cl.addWidget(hl)
+            dl=QLabel(sdesc); dl.setFont(QFont("Segoe UI",9))
+            dl.setStyleSheet(f"color:{P['mid']};background:transparent;"); cl.addWidget(dl)
+            combo=QComboBox()
+            for pkey,meta in LLM_PROVIDERS.items():
+                combo.addItem(meta["label"], pkey)
+            cur=stage_cfg.get(skey,{}).get("provider","npmai")
+            idx=combo.findData(cur)
+            if idx>=0: combo.setCurrentIndex(idx)
+            combo.setStyleSheet(f"QComboBox{{background:rgba(255,255,255,8);border:1px solid {P['ghost']};"
+                                 f"border-radius:8px;color:{P['bright']};padding:6px 10px;}}")
+            model_in=GlowInput("model name")
+            saved_model=stage_cfg.get(skey,{}).get("model","")
+            model_in.setText(saved_model or LLM_PROVIDERS[cur]["model_default"])
+            def _provider_changed(i, combo=combo, model_in=model_in):
+                pkey=combo.itemData(i)
+                if not model_in.text().strip():
+                    model_in.setText(LLM_PROVIDERS[pkey]["model_default"])
+            combo.currentIndexChanged.connect(_provider_changed)
+            cl.addWidget(combo); cl.addWidget(model_in)
+            lay.addWidget(card)
+            self._stage_combo[skey]=combo; self._stage_model[skey]=model_in
+
+        save_all_btn=PulseBtn("💾  Save Stage Assignments",P["mint"],True); save_all_btn.setFixedHeight(44)
+        save_all_btn.clicked.connect(self._save_all_stages)
+        lay.addWidget(save_all_btn)
+
+        close_btn=GhostBtn("Close",P["rose"]); close_btn.clicked.connect(self.accept)
+        lay.addWidget(close_btn)
+
+        lay.addStretch(); scroll.setWidget(page); outer.addWidget(scroll)
+
+    def _save_all_stages(self):
+        cfg=_load_llm_stage_config()
+        missing=[]
+        for skey,slabel,_ in AGENT_STAGES:
+            combo=self._stage_combo[skey]; pkey=combo.currentData()
+            model_val=self._stage_model[skey].text().strip() or LLM_PROVIDERS[pkey]["model_default"]
+            meta=LLM_PROVIDERS[pkey]
+            if meta["needs_key"] and not CredStore.load(pkey).get("api_key"):
+                missing.append(f"{slabel} → {meta['label']}")
+            cfg[skey]={"provider":pkey,"model":model_val}
+        _save_llm_stage_config(cfg)
+        if missing:
+            QMessageBox.warning(self,"Missing API keys",
+                "Stage assignments saved, but these still need an API key added in section ① above "
+                "before they'll actually run:\n\n" + "\n".join(f"- {m}" for m in missing))
+        else:
+            QMessageBox.information(self,"Saved","LLM configuration saved — used automatically on every run.")
+
+
 class AgentPage(QWidget):
     def __init__(self,parent=None):
         super().__init__(parent)
@@ -546,17 +785,21 @@ class AgentPage(QWidget):
         outer=QVBoxLayout(self); outer.setContentsMargins(0,0,0,0)
         topbar=QWidget(); topbar.setAttribute(Qt.WA_TranslucentBackground); topbar.setFixedHeight(64)
         tbl=QHBoxLayout(topbar); tbl.setContentsMargins(36,12,36,12); tbl.setSpacing(12)
-        title=QLabel("NPM Agent"); title.setFont(QFont("Segoe UI",18,QFont.Bold))
+        title=QLabel("NPM-AutoCode-AI"); title.setFont(QFont("Segoe UI",18,QFont.Bold))
         title.setStyleSheet(f"color:{P['mint']};background:transparent;")
         sub=QLabel("Runs fully locally · no login required"); sub.setFont(QFont("Segoe UI",10))
         sub.setStyleSheet(f"color:{P['dim']};background:transparent;")
         tc=QVBoxLayout(); tc.setSpacing(0); tc.addWidget(title); tc.addWidget(sub)
         tbl.addLayout(tc); tbl.addStretch()
 
-        for badge,col in [("⚡ 100 Tools",P["mint"]),("🔒 Local-first",P["violet"]),("🤖 Agentic",P["cyan"])]:
+        for badge,col in [("⚡ 1371 Tools",P["mint"]),("🔒 Local-first",P["violet"]),("🤖 Agentic",P["cyan"])]:
             b=QLabel(f" {badge} "); b.setFont(QFont("Segoe UI",9,QFont.Bold))
             b.setStyleSheet(f"color:{col};background:rgba(42,255,160,12);border:1px solid rgba(42,255,160,35);border-radius:9px;padding:3px 8px;")
             tbl.addWidget(b)
+
+        llm_cfg_btn=GhostBtn("⚙ Configure LLMs",P["violet"]); llm_cfg_btn.setFixedHeight(30)
+        llm_cfg_btn.clicked.connect(self._open_llm_config)
+        tbl.addWidget(llm_cfg_btn)
 
         sep=QFrame(); sep.setFixedHeight(1); sep.setStyleSheet(f"background:{P['ghost']};border:none;")
         outer.addWidget(topbar); outer.addWidget(sep)
@@ -619,6 +862,10 @@ QPushButton:hover{{background:rgba(42,255,160,22);border-color:rgba(42,255,160,1
         chips.addStretch(); bl.addLayout(chips)
         sep2=QFrame(); sep2.setFixedHeight(1); sep2.setStyleSheet(f"background:{P['ghost']};border:none;")
         outer.addWidget(sep2); outer.addWidget(bottom)
+
+    def _open_llm_config(self):
+        dlg=LLMConfigDialog(self)
+        dlg.exec()
 
     def _add_bubble(self, text:str, is_agent:bool):
         b=ChatBubble(text, is_agent)
@@ -783,6 +1030,81 @@ class ToolsPage(QWidget):
         scroll.setWidget(page); outer.addWidget(scroll)
 
 
+class CredKeyValueDialog(QDialog):
+    """Generic credential-group editor — user names the group (cred_key) and adds
+    any number of key/value pairs. Used by '+ Add Credential Group' in Settings
+    and by the per-provider forms inside Configure LLMs on the Agent page."""
+
+    def __init__(self, parent=None, group_name="", existing_data=None, lock_name=False,
+                 title="🔑  Credential Group", subtitle=None):
+        super().__init__(parent)
+        self.setWindowTitle(title.replace("🔑","").strip() or "Credential Group")
+        self.setWindowIcon("npmai.png")
+        self.setMinimumWidth(440)
+        self.setStyleSheet(f"QDialog{{background:{P['void']};}}")
+        self._row_widgets = []
+
+        lay = QVBoxLayout(self); lay.setContentsMargins(26,22,26,22); lay.setSpacing(12)
+
+        t = QLabel(title); t.setFont(QFont("Segoe UI",15,QFont.Bold))
+        t.setStyleSheet(f"color:{P['mint']};background:transparent;"); lay.addWidget(t)
+
+        sub = QLabel(subtitle or ("Give this group a name (e.g. 'twilio', 'mailchimp') — check Docs for "
+                     "the exact keys a tool expects — then add each key/value pair below."))
+        sub.setFont(QFont("Segoe UI",9)); sub.setWordWrap(True)
+        sub.setStyleSheet(f"color:{P['mid']};background:transparent;"); lay.addWidget(sub)
+
+        self._name_input = GlowInput("Group name, e.g. twilio")
+        if group_name: self._name_input.setText(group_name)
+        self._name_input.setEnabled(not lock_name)
+        lay.addWidget(self._name_input)
+
+        sep = QFrame(); sep.setFixedHeight(1); sep.setStyleSheet(f"background:{P['ghost']};border:none;")
+        lay.addWidget(sep)
+
+        self._rows_container = QWidget(); self._rows_container.setAttribute(Qt.WA_TranslucentBackground)
+        self._rows_layout = QVBoxLayout(self._rows_container)
+        self._rows_layout.setContentsMargins(0,0,0,0); self._rows_layout.setSpacing(8)
+        lay.addWidget(self._rows_container)
+
+        add_row_btn = GhostBtn("+  Add Key", P["cyan"])
+        add_row_btn.clicked.connect(lambda: self._add_row())
+        lay.addWidget(add_row_btn)
+
+        existing_data = existing_data or {}
+        if existing_data:
+            for k, v in existing_data.items(): self._add_row(k, v)
+        else:
+            self._add_row()
+
+        btns = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel)
+        btns.accepted.connect(self.accept); btns.rejected.connect(self.reject)
+        lay.addWidget(btns)
+
+    def _add_row(self, key="", value=""):
+        row = QWidget(); row.setAttribute(Qt.WA_TranslucentBackground)
+        rl = QHBoxLayout(row); rl.setContentsMargins(0,0,0,0); rl.setSpacing(8)
+        key_in = GlowInput("key name, e.g. token"); key_in.setText(key)
+        val_in = GlowInput("value"); val_in.setText(value)
+        rm_btn = GhostBtn("✕", P["rose"]); rm_btn.setFixedWidth(36)
+        def _remove():
+            self._rows_layout.removeWidget(row); row.deleteLater()
+            self._row_widgets[:] = [r for r in self._row_widgets if r[2] is not row]
+        rm_btn.clicked.connect(_remove)
+        rl.addWidget(key_in,1); rl.addWidget(val_in,2); rl.addWidget(rm_btn)
+        self._rows_layout.addWidget(row)
+        self._row_widgets.append((key_in, val_in, row))
+
+    def get_data(self):
+        """Returns (group_name:str, data:dict) — rows with an empty key are skipped."""
+        name = self._name_input.text().strip()
+        data = {}
+        for key_in, val_in, _ in self._row_widgets:
+            k = key_in.text().strip(); v = val_in.text().strip()
+            if k: data[k] = v
+        return name, data
+
+
 class SettingsPage(QWidget):
     def __init__(self,parent=None):
         super().__init__(parent); self.setAttribute(Qt.WA_TranslucentBackground); self._build()
@@ -873,11 +1195,27 @@ class SettingsPage(QWidget):
             ("region","Region","us-east-1",False),
         ],"aws",P["sky"])
 
-        note=QLabel("More tools follow the same pattern — CredStore.save('<cred_key>', {...}). "
-                     "Check each tool's `use` docstring (visible to the agent's Coder role) for its "
-                     "exact cred_key and field names before wiring up a new section here.")
+        note=QLabel("Need a tool that isn't listed above (Twilio, GitLab, Stripe alternatives, Mailchimp, "
+                     "Notion, Zoom, Cloudflare, and 30+ more)? Use '+ Add Credential Group' below — see the "
+                     "Docs tab for the exact cred_key and field names each tool expects.")
         note.setFont(QFont("Segoe UI",9)); note.setWordWrap(True)
         note.setStyleSheet(f"color:{P['dim']};background:transparent;"); lay.addWidget(note)
+
+        # ── Generic custom credential groups — for any tool not hardcoded above ──
+        custom_hdr=QHBoxLayout(); custom_hdr.setSpacing(12)
+        custom_t=QLabel("🗂  Custom Credential Groups"); custom_t.setFont(QFont("Segoe UI",13,QFont.Bold))
+        custom_t.setStyleSheet(f"color:{P['bright']};background:transparent;")
+        custom_hdr.addWidget(custom_t); custom_hdr.addStretch()
+        add_group_btn=PulseBtn("➕  Add Credential Group",P["violet"],True); add_group_btn.setFixedHeight(38)
+        add_group_btn.clicked.connect(self._open_add_dialog)
+        custom_hdr.addWidget(add_group_btn)
+        lay.addLayout(custom_hdr)
+
+        self._custom_creds_container=QWidget(); self._custom_creds_container.setAttribute(Qt.WA_TranslucentBackground)
+        self._custom_creds_layout=QVBoxLayout(self._custom_creds_container)
+        self._custom_creds_layout.setContentsMargins(0,0,0,0); self._custom_creds_layout.setSpacing(10)
+        lay.addWidget(self._custom_creds_container)
+        self._refresh_custom_creds()
 
         mcp_card=GlowCard(accent=P["mint"],radius=16,alpha=195)
         ml=QVBoxLayout(mcp_card); ml.setContentsMargins(24,18,24,18); ml.setSpacing(8)
@@ -893,6 +1231,65 @@ class SettingsPage(QWidget):
         md.setStyleSheet(f"color:{P['mid']};background:transparent;"); ml.addWidget(md)
         lay.addWidget(mcp_card)
         lay.addStretch(); scroll.setWidget(page); outer.addWidget(scroll)
+
+    _HARDCODED_KEYS = {"github","smtp","notion","stripe","aws"}
+
+    def _refresh_custom_creds(self):
+        while self._custom_creds_layout.count():
+            item=self._custom_creds_layout.takeAt(0)
+            w=item.widget()
+            if w: w.deleteLater()
+        hidden=self._HARDCODED_KEYS | set(LLM_PROVIDERS.keys())
+        try: names=[n for n in CredStore.all_keys() if n not in hidden]
+        except Exception: names=[]
+        if not names:
+            empty=QLabel("No custom credential groups yet — click '➕ Add Credential Group' above.")
+            empty.setFont(QFont("Segoe UI",9)); empty.setStyleSheet(f"color:{P['dim']};background:transparent;")
+            self._custom_creds_layout.addWidget(empty); return
+        for name in names:
+            data=CredStore.load(name)
+            card=GlowCard(accent=P["sky"],radius=14,alpha=195)
+            cl=QHBoxLayout(card); cl.setContentsMargins(20,14,20,14); cl.setSpacing(12)
+            info=QVBoxLayout(); info.setSpacing(2)
+            nl=QLabel(f"🔑 {name}"); nl.setFont(QFont("Segoe UI",11,QFont.Bold))
+            nl.setStyleSheet(f"color:{P['bright']};background:transparent;")
+            kl=QLabel(", ".join(data.keys()) if data else "no keys saved")
+            kl.setFont(QFont("Segoe UI",9)); kl.setStyleSheet(f"color:{P['mid']};background:transparent;")
+            info.addWidget(nl); info.addWidget(kl)
+            cl.addLayout(info); cl.addStretch()
+            edit_btn=GhostBtn("Edit",P["cyan"]); edit_btn.setFixedWidth(70)
+            edit_btn.clicked.connect(lambda _,n=name: self._open_edit_dialog(n))
+            del_btn=GhostBtn("Delete",P["rose"]); del_btn.setFixedWidth(70)
+            del_btn.clicked.connect(lambda _,n=name: self._delete_group(n))
+            cl.addWidget(edit_btn); cl.addWidget(del_btn)
+            self._custom_creds_layout.addWidget(card)
+
+    def _open_add_dialog(self):
+        dlg=CredKeyValueDialog(self)
+        if dlg.exec():
+            name,data=dlg.get_data()
+            if not name:
+                QMessageBox.warning(self,"Missing name","Please enter a group name."); return
+            if not data:
+                QMessageBox.warning(self,"No keys","Add at least one key/value pair."); return
+            existing=CredStore.load(name); existing.update(data); CredStore.save(name,existing)
+            QMessageBox.information(self,"Saved",f"'{name}' credentials saved securely.")
+            self._refresh_custom_creds()
+
+    def _open_edit_dialog(self, name):
+        data=CredStore.load(name)
+        dlg=CredKeyValueDialog(self, group_name=name, existing_data=data, lock_name=True,
+                                title=f"🔑  Edit '{name}'")
+        if dlg.exec():
+            _,new_data=dlg.get_data(); CredStore.save(name,new_data)
+            QMessageBox.information(self,"Updated",f"'{name}' credentials updated.")
+            self._refresh_custom_creds()
+
+    def _delete_group(self, name):
+        reply=QMessageBox.question(self,"Delete",f"Delete all credentials saved under '{name}'?",
+                                    QMessageBox.Yes | QMessageBox.No)
+        if reply==QMessageBox.Yes:
+            _credstore_delete(name); self._refresh_custom_creds()
 
 
 class FounderPage(QWidget):
@@ -989,6 +1386,31 @@ class DocsPage(QWidget):
             ("Everything else stays local","Chat, tasks, and credentials never touch this — login is scoped "
                               "to this one feature only."),
         ])
+        self._sec(lay,"🗂","Credential Key Reference (for '+ Add Credential Group')",P["sky"],[
+            ("github","{ token }"),
+            ("gitlab","{ token, url }"),
+            ("stripe","{ secret_key }"),
+            ("razorpay","{ key_id, key_secret }"),
+            ("shopify","{ store, access_token }"),
+            ("mailchimp","{ api_key, server_prefix }"),
+            ("aws","{ access_key_id, secret_access_key, region }"),
+            ("cloudflare","{ token }  or  { api_key, email }"),
+            ("vercel","{ token }"),
+            ("netlify","{ token }"),
+            ("railway","{ token }"),
+            ("twilio","{ account_sid, auth_token, from_number, whatsapp_from, verify_service_sid }"),
+            ("sendgrid","{ api_key }"),
+            ("zoom","{ account_id, client_id, client_secret }"),
+            ("smtp / gmail","{ email, password, smtp_host, smtp_port }"),
+            ("notion","{ token }"),
+            ("linear / asana / clickup / todoist / trello","{ token }  (trello also needs { key } )"),
+            ("figma / canva / elevenlabs / stability","{ token }  or  { api_key }"),
+            ("googlemaps / openweather / virustotal / shodan / hibp","{ api_key }"),
+            ("google_analytics / google_calendar / google","{ ...service account or OAuth JSON... }"),
+            ("postgres / mysql / mongodb / redis","{ host, port, user, password, database } (varies)"),
+            ("ssh","{ host, user, key_path or password }"),
+            ("docker","usually no creds needed for local Docker"),
+        ])
         self._sec(lay,"🔒","Security",P["rose"],[
             ("Dual-role audit","Every script is reviewed by a separate Auditor role before execution."),
             ("Subprocess isolation","Code runs as a child process — a broken script cannot crash the app."),
@@ -1001,7 +1423,8 @@ class DocsPage(QWidget):
 class AppWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("NPM Agent  —  NPMAI Ecosystem  v4.0")
+        self.setWindowTitle("NPM-AutoCode-AI  —  NPMAI Ecosystem  v3.0")
+        self.setWindowIcon(QIcon("npmai.png"))
         self.resize(1220,780); self.setMinimumSize(920,640)
         self._build()
 

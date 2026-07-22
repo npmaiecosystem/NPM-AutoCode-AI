@@ -4,3 +4,4 @@ langchain-core
 langchain-community
 npmai==0.1.9
 npmai-agents==1.0.2
+supabase
