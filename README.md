@@ -5,7 +5,7 @@ Install the app:
 [Download Latest Release](https://github.com/sonuramashishnpm/NPM-AutoCode-AI/releases/download/v2.2/NPM_AutoCode_AI.zip)
 
 1. Unzip the file.
-2. Run `NPM_AutoCode_AI.exe` (Windows) or `python main.py` (Python 3.12+).
+2. Run `NPM_AutoCode_AI.exe` (Windows) or `python Desktop_App/app.py` (Python 3.12+).
 3. Enter your task in the input box (e.g., "Plot a sine wave").
 4. Click **Generate & Execute**.
 5. Watch logs and progress bar – AI generates, checks safety, executes, and fixes errors if needed.
