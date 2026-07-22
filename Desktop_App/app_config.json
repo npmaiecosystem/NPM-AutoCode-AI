@@ -1,5 +1,5 @@
 {
-  "SUPABASE_URL": "https://qyxuvuhhaspkuhbognyk.supabase.co",
-  "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5eHV2dWhoYXNwa3VoYm9nbnlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MDYwNzYsImV4cCI6MjEwMDI4MjA3Nn0.h3hyVr_OV38SfY2_2qQ6Hgtm6_FbvNQ31AG5YO7mVko",
-  "MCP_BASE_URL": "https://your-mcp-server.hf.space/mcp"
+  "url": "https://qyxuvuhhaspkuhbognyk.supabase.co",
+  "annon_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5eHV2dWhoYXNwa3VoYm9nbnlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MDYwNzYsImV4cCI6MjEwMDI4MjA3Nn0.h3hyVr_OV38SfY2_2qQ6Hgtm6_FbvNQ31AG5YO7mVko",
+  "mcp_base_url": "https://your-mcp-server.hf.space/mcp"
 }
