@@ -1,4 +1,3 @@
-import os
 import json
 import uuid
 import threading
@@ -13,13 +12,25 @@ CONFIG_PATH = Path.home() / ".npmai_agent" / "supabase_config.json"
 CONFIG_URL = "https://raw.githubusercontent.com/npmaiecosystem/NPM-AutoCode-AI/refs/heads/main/Desktop_App/app_config.json"
 
 def load_config() -> dict:
-    """Fetch latest config from GitHub"""
+    """Fetch latest config from GitHub, falling back to local cache."""
     try:
         response = requests.get(CONFIG_URL, timeout=8)
         if response.status_code == 200:
-            return response.json()
+            data = response.json()
+            try:
+                CONFIG_PATH.parent.mkdir(exist_ok=True)
+                CONFIG_PATH.write_text(json.dumps(data))
+            except Exception:
+                pass
+            return data
     except Exception as e:
         print(f"Failed to fetch remote config: {e}")
+    if CONFIG_PATH.exists():
+        try:
+            return json.loads(CONFIG_PATH.read_text())
+        except Exception:
+            pass
+    return {}
 
 
 def save_config(url: str, anon_key: str, mcp_base_url: str = None):

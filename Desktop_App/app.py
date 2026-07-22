@@ -4,7 +4,7 @@ NPM-AutoCode-AI Desktop — v4 (npmai_agents edition)
 THIS IS NOT YET DEPLOYED.
 Here it is about Desktop APP.
 """
-import sys, os, math, random, threading, json
+import sys, os, math, random, json
 from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -14,8 +14,8 @@ from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel,
     QTextEdit, QLineEdit, QPushButton, QFrame, QScrollArea,
     QStackedWidget, QSizePolicy, QGraphicsOpacityEffect,
-    QTabWidget, QDialog, QDialogButtonBox, QMessageBox,
-    QGroupBox, QComboBox
+    QDialog, QDialogButtonBox, QMessageBox,
+    QComboBox
 )
 from PySide6.QtCore import (
     QThread, Signal, Qt, QTimer, QPointF, QRectF, QRect,
@@ -339,10 +339,8 @@ class GhostBtn(QPushButton):
         super().__init__(text,parent); self._ac=QColor(accent); self._h=0.0
         self.setCursor(Qt.PointingHandCursor); self.setFixedHeight(48)
         self.setFont(QFont("Segoe UI",11,QFont.DemiBold))
-        QTimer(self,timeout=self.update,interval=16).start()
-
-    def enterEvent(self,e): self._h=1.0
-    def leaveEvent(self,e): self._h=0.0
+    def enterEvent(self,e): self._h=1.0; self.update()
+    def leaveEvent(self,e): self._h=0.0; self.update()
 
     def paintEvent(self,_):
         p=QPainter(self); p.setRenderHint(QPainter.Antialiasing)
@@ -1039,7 +1037,7 @@ class CredKeyValueDialog(QDialog):
                  title="🔑  Credential Group", subtitle=None):
         super().__init__(parent)
         self.setWindowTitle(title.replace("🔑","").strip() or "Credential Group")
-        self.setWindowIcon("npmai.png")
+        self.setWindowIcon(QIcon("npmai.png"))
         self.setMinimumWidth(440)
         self.setStyleSheet(f"QDialog{{background:{P['void']};}}")
         self._row_widgets = []
