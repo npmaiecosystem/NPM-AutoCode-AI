@@ -1,4 +1,5 @@
 """
+app.py
 NPM-AutoCode-AI Desktop — v4 (npmai_agents edition)
 
 THIS IS NOT YET DEPLOYED.
@@ -76,7 +77,7 @@ def _load_llm_stage_config() -> dict:
             cfg = {}
 
     for stage_key, _, _ in AGENT_STAGES:
-        if stage_key not in cfg or cfg[stage_key].get("provider") in ["groq", "openai", "anthropic"]:
+        if stage_key not in cfg:                    # ← only this line changed
             cfg[stage_key] = {
                 "provider": "npmai", 
                 "model": LLM_PROVIDERS["npmai"]["model_default"]
@@ -701,16 +702,27 @@ class LLMConfigDialog(QDialog):
                 nolbl.setFont(QFont("Segoe UI",9)); nolbl.setStyleSheet(f"color:{P['dim']};background:transparent;")
                 cl.addWidget(nolbl)
             else:
-                save_btn=PulseBtn(f"💾  Save {pkey}",P["cyan"],True); save_btn.setFixedHeight(36)
-                def _save(pk=pkey, f=fields):
-                    data={}
-                    for k,w in f.items():
-                        v=w.text().strip()
-                        if v and v!="●"*8: data[k]=v
-                    if data:
-                        ex=CredStore.load(pk); ex.update(data); CredStore.save(pk,ex)
-                        QMessageBox.information(self,"Saved",f"'{pk}' configuration saved.")
-                save_btn.clicked.connect(_save); cl.addWidget(save_btn)
+                save_btn = PulseBtn(f"💾  Save {pkey}", P["cyan"], True)
+                save_btn.setFixedHeight(36)
+
+                def make_save_handler(provider_key, field_widgets):
+                    def _save():
+                        data = {}
+                        for k, w in field_widgets.items():
+                            v = w.text().strip()
+                            if v and v != "●" * 8:
+                                data[k] = v
+                        if data:
+                            ex = CredStore.load(provider_key)
+                            ex.update(data)
+                            CredStore.save(provider_key, ex)
+                            QMessageBox.information(self, "Saved", f"'{provider_key}' configuration saved.")
+                        else:
+                            QMessageBox.warning(self, "Nothing to save", "Please enter a real API key (don't leave the masked ●●●●●●●●).")
+                    return _save
+
+                save_btn.clicked.connect(make_save_handler(pkey, fields))
+                cl.addWidget(save_btn)
             lay.addWidget(card)
             self._provider_fields[pkey]=fields
 
