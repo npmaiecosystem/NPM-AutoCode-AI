@@ -5,7 +5,7 @@ NPM-AutoCode-AI Desktop — v4 (npmai_agents edition)
 THIS IS NOT YET DEPLOYED.
 Here it is about Desktop APP.
 """
-import sys, os, math, random, threading, json
+import sys, os, math, random, json
 from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -77,7 +77,7 @@ def _load_llm_stage_config() -> dict:
             cfg = {}
 
     for stage_key, _, _ in AGENT_STAGES:
-        if stage_key not in cfg:                    # ← only this line changed
+        if stage_key not in cfg:
             cfg[stage_key] = {
                 "provider": "npmai", 
                 "model": LLM_PROVIDERS["npmai"]["model_default"]
@@ -315,8 +315,8 @@ class PulseBtn(QPushButton):
         if self._pulse<=0: self._pd=1
         self.update()
 
-    def enterEvent(self,e): self._h=1.0
-    def leaveEvent(self,e): self._h=0.0
+    def enterEvent(self,e): self._h=1.0; super().enterEvent(e)
+    def leaveEvent(self,e): self._h=0.0; super().leaveEvent(e)
     def mousePressEvent(self,e): self._press=True; super().mousePressEvent(e)
     def mouseReleaseEvent(self,e): self._press=False; super().mouseReleaseEvent(e)
 
@@ -345,8 +345,8 @@ class GhostBtn(QPushButton):
         self.setFont(QFont("Segoe UI",11,QFont.DemiBold))
         QTimer(self,timeout=self.update,interval=16).start()
 
-    def enterEvent(self,e): self._h=1.0
-    def leaveEvent(self,e): self._h=0.0
+    def enterEvent(self,e): self._h=1.0; super().enterEvent(e)
+    def leaveEvent(self,e): self._h=0.0; super().leaveEvent(e)
 
     def paintEvent(self,_):
         p=QPainter(self); p.setRenderHint(QPainter.Antialiasing)
@@ -456,8 +456,8 @@ class NavBtn(QWidget):
         self._h+=(t-self._h)*0.1; self.update()
 
     def set_active(self,v): self._active=v; self.update()
-    def enterEvent(self,e): self._hf=True
-    def leaveEvent(self,e): self._hf=False
+    def enterEvent(self,e): self._hf=True; super().enterEvent(e)
+    def leaveEvent(self,e): self._hf=False; super().leaveEvent(e)
     def mousePressEvent(self,e): self.clicked.emit(self._idx)
 
     def paintEvent(self,_):
@@ -893,8 +893,8 @@ QPushButton:hover{{background:rgba(42,255,160,22);border-color:rgba(42,255,160,1
         self._log_box.verticalScrollBar().setValue(self._log_box.verticalScrollBar().maximum())
 
     def _voice_input(self):
-        """ If you are working with voice input kindly read the documentation of npmai_agents and this code uses
-        npmai_agents version 1.0.2, npmai_agents change frequently although not syntax but it will be better to read 
+        """If you are working with voice input kindly read the documentation of npmai_agents and this code uses
+        npmai_agents version 1.0.2, npmai_agents change frequently although not syntax but it will be better to read
         before making any change."""
         """ old VoiceTool.listen(): SpeechAITool.transcribe_realtime """
         from npmai_agents.Tools_security_ai import SpeechAITool

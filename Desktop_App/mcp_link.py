@@ -1,4 +1,3 @@
-import os
 import json
 import uuid
 import threading
@@ -13,13 +12,20 @@ CONFIG_PATH = Path.home() / ".npmai_agent" / "supabase_config.json"
 CONFIG_URL = "https://raw.githubusercontent.com/npmaiecosystem/NPM-AutoCode-AI/refs/heads/main/Desktop_App/app_config.json"
 
 def load_config() -> dict:
-    """Fetch latest config from GitHub"""
+    """Fetch latest config from GitHub (primary), fall back to bundled file."""
     try:
         response = requests.get(CONFIG_URL, timeout=8)
         if response.status_code == 200:
             return response.json()
     except Exception as e:
         print(f"Failed to fetch remote config: {e}")
+    bundled = Path(__file__).resolve().parent / "app_config.json"
+    if bundled.exists():
+        try:
+            return json.loads(bundled.read_text())
+        except Exception:
+            pass
+    return {}
 
 
 def save_config(url: str, anon_key: str, mcp_base_url: str = None):
@@ -61,12 +67,12 @@ class MCPLinkManager:
                 "The 'supabase' package isn't installed. Run: pip install supabase"
             )
         cfg = load_config()
-        if not cfg.get("SUPABASE_URL") or not cfg.get("SUPABASE_ANNON_KEY"):
+        if not cfg.get("url") or not cfg.get("anon_key"):
             raise SupabaseAuthError(
                 "Supabase isn't configured yet. Set SUPABASE_URL and SUPABASE_ANON_KEY "
                 "env vars, or call mcp_link.save_config(url, anon_key) once from Settings."
             )
-        self._client = create_client(cfg["SUPABASE_URL"], cfg["SUPABASE_ANNON_KEY"])
+        self._client = create_client(cfg["url"], cfg["anon_key"])
         return self._client
 
     def sign_up(self, email: str, password: str):
