@@ -61,12 +61,12 @@ class MCPLinkManager:
                 "The 'supabase' package isn't installed. Run: pip install supabase"
             )
         cfg = load_config()
-        if not cfg.get("url") or not cfg.get("anon_key"):
+        if not cfg.get("SUPABASE_URL") or not cfg.get("SUPABASE_ANNON_KEY"):
             raise SupabaseAuthError(
                 "Supabase isn't configured yet. Set SUPABASE_URL and SUPABASE_ANON_KEY "
                 "env vars, or call mcp_link.save_config(url, anon_key) once from Settings."
             )
-        self._client = create_client(cfg["url"], cfg["anon_key"])
+        self._client = create_client(cfg["SUPABASE_URL"], cfg["SUPABASE_ANNON_KEY"])
         return self._client
 
     def sign_up(self, email: str, password: str):
@@ -124,7 +124,7 @@ class MCPLinkManager:
                 "platform": "desktop",
                 "token": token,
             }).execute()
-        base = load_config().get("mcp_base_url", "https://YOUR-HF-SPACE.hf.space/mcp")
+        base = load_config().get("MCP_BASE_URL", "https://YOUR-HF-SPACE.hf.space/mcp")
         return f"{base}/{token}"
 
     def start_listener(self):
