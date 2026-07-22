@@ -1042,10 +1042,18 @@ class CredKeyValueDialog(QDialog):
                  title="🔑  Credential Group", subtitle=None):
         super().__init__(parent)
         self.setWindowTitle(title.replace("🔑","").strip() or "Credential Group")
-        self.setWindowIcon("npmai.png")
         self.setMinimumWidth(440)
         self.setStyleSheet(f"QDialog{{background:{P['void']};}}")
         self._row_widgets = []
+
+        # === FIXED ICON LOADING ===
+        from pathlib import Path
+        from PySide6.QtGui import QIcon
+        icon_path = Path(__file__).parent / "npmai.png"
+        if icon_path.exists():
+            self.setWindowIcon(QIcon(str(icon_path)))
+        else:
+            print("Warning: npmai.png not found for CredKeyValueDialog")
 
         lay = QVBoxLayout(self); lay.setContentsMargins(26,22,26,22); lay.setSpacing(12)
 
@@ -1071,7 +1079,7 @@ class CredKeyValueDialog(QDialog):
         lay.addWidget(self._rows_container)
 
         add_row_btn = GhostBtn("+  Add Key", P["cyan"])
-        add_row_btn.clicked.connect(lambda: self._add_row())
+        add_row_btn.clicked.connect(self._add_row)   # Removed unnecessary lambda
         lay.addWidget(add_row_btn)
 
         existing_data = existing_data or {}
@@ -1090,9 +1098,11 @@ class CredKeyValueDialog(QDialog):
         key_in = GlowInput("key name, e.g. token"); key_in.setText(key)
         val_in = GlowInput("value"); val_in.setText(value)
         rm_btn = GhostBtn("✕", P["rose"]); rm_btn.setFixedWidth(36)
+        
         def _remove():
             self._rows_layout.removeWidget(row); row.deleteLater()
             self._row_widgets[:] = [r for r in self._row_widgets if r[2] is not row]
+        
         rm_btn.clicked.connect(_remove)
         rl.addWidget(key_in,1); rl.addWidget(val_in,2); rl.addWidget(rm_btn)
         self._rows_layout.addWidget(row)
@@ -1106,6 +1116,7 @@ class CredKeyValueDialog(QDialog):
             k = key_in.text().strip(); v = val_in.text().strip()
             if k: data[k] = v
         return name, data
+
 
 
 class SettingsPage(QWidget):
@@ -1271,13 +1282,13 @@ class SettingsPage(QWidget):
         dlg=CredKeyValueDialog(self)
         if dlg.exec():
             name,data=dlg.get_data()
-            if not name:
-                QMessageBox.warning(self,"Missing name","Please enter a group name."); return
-            if not data:
-                QMessageBox.warning(self,"No keys","Add at least one key/value pair."); return
-            existing=CredStore.load(name); existing.update(data); CredStore.save(name,existing)
-            QMessageBox.information(self,"Saved",f"'{name}' credentials saved securely.")
-            self._refresh_custom_creds()
+        if not name:
+            QMessageBox.warning(self,"Missing name","Please enter a group name."); return
+        if not data:
+            QMessageBox.warning(self,"No keys","Add at least one key/value pair."); return
+        existing=CredStore.load(name); existing.update(data); CredStore.save(name,existing)
+        QMessageBox.information(self,"Saved",f"'{name}' credentials saved securely.")
+        self._refresh_custom_creds()
 
     def _open_edit_dialog(self, name):
         data=CredStore.load(name)
