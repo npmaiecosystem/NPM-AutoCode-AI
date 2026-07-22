@@ -10,7 +10,7 @@ from typing import Callable, Optional
 CONFIG_PATH = Path.home() / ".npmai_agent" / "supabase_config.json"
 
 
-CONFIG_URL = "https://raw.githubusercontent.com/yourusername/yourrepo/main/app_config.json"
+CONFIG_URL = "https://raw.githubusercontent.com/npmaiecosystem/NPM-AutoCode-AI/refs/heads/main/Desktop_App/app_config.json"
 
 def load_config() -> dict:
     """Fetch latest config from GitHub"""
