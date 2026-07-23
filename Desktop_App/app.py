@@ -9,6 +9,18 @@ import sys, os, math, random, json
 from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+
+def resource_path(filename: str) -> str:
+    """Resolve a bundled data file (icon, config) whether running from source
+    or from a PyInstaller-frozen build. PyInstaller unpacks --add-data files
+    next to sys.executable (onedir) or into sys._MEIPASS (onefile); neither
+    is the current working directory, so a bare relative path silently fails."""
+    base = getattr(sys, "_MEIPASS", None) or os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base, filename)
+
+
+APP_ICON_PATH = resource_path("npmai.png")
+
 from npmai_agents import AgentBrain, Workspace, CredStore
 
 from PySide6.QtWidgets import (
@@ -495,7 +507,7 @@ class LoginDialog(QDialog):
         super().__init__(parent)
         self._mgr = link_mgr
         self.setWindowTitle("Log in — MCP Link")
-        self.setWindowIcon(QIcon("npmai.png"))
+        self.setWindowIcon(QIcon(APP_ICON_PATH))
         self.setFixedSize(360, 260)
         self.setStyleSheet(f"QDialog{{background:{P['void']};}}")
         lay = QVBoxLayout(self); lay.setContentsMargins(28,24,28,24); lay.setSpacing(12)
@@ -656,7 +668,7 @@ class LLMConfigDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Configure LLMs")
-        self.setWindowIcon(QIcon("npmai.png"))
+        self.setWindowIcon(QIcon(APP_ICON_PATH))
         self.resize(640, 720)
         self.setStyleSheet(f"QDialog{{background:{P['void']};}}")
 
@@ -1058,14 +1070,10 @@ class CredKeyValueDialog(QDialog):
         self.setStyleSheet(f"QDialog{{background:{P['void']};}}")
         self._row_widgets = []
 
-        # === FIXED ICON LOADING ===
-        from pathlib import Path
-        from PySide6.QtGui import QIcon
-        icon_path = Path(__file__).parent / "npmai.png"
-        if icon_path.exists():
-            self.setWindowIcon(QIcon(str(icon_path)))
+        if os.path.exists(APP_ICON_PATH):
+            self.setWindowIcon(QIcon(APP_ICON_PATH))
         else:
-            print("Warning: npmai.png not found for CredKeyValueDialog")
+            print(f"Warning: npmai.png not found at {APP_ICON_PATH}")
 
         lay = QVBoxLayout(self); lay.setContentsMargins(26,22,26,22); lay.setSpacing(12)
 
@@ -1450,7 +1458,7 @@ class AppWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("NPM-AutoCode-AI  —  NPMAI Ecosystem  v3.0")
-        self.setWindowIcon(QIcon("npmai.png"))
+        self.setWindowIcon(QIcon(APP_ICON_PATH))
         self.resize(1220,780); self.setMinimumSize(920,640)
         self._build()
 
