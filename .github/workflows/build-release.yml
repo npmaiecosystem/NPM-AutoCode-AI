@@ -52,7 +52,7 @@ jobs:
         shell: bash
         working-directory: Desktop_App
         run: |
-          pyinstaller --noconfirm --onefile --windowed \
+          pyinstaller --noconfirm --onedir --windowed \
             --collect-all charset_normalizer \
             --name "NPM-AutoCode-AI" \
             --icon "../npmai.png" \
