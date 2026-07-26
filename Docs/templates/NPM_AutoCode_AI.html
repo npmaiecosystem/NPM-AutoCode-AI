@@ -1,12 +1,13 @@
+\
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!-- saved from url=(0030)https://npmcodeai.netlify.app/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NPM-AutoCode-AI — v3 · NPMAI Ecosystem</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./NPM-AutoCode-AI — v3 · NPMAI Ecosystem_files/css2" rel="stylesheet">
+<script src="./NPM-AutoCode-AI — v3 · NPMAI Ecosystem_files/three.min.js.download"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -442,37 +443,37 @@ footer{padding:44px 6vw;border-top:1px solid rgba(255,255,255,0.05);display:flex
 </style>
 </head>
 <body>
-<canvas id="three-canvas"></canvas>
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
+<canvas id="three-canvas" width="1920" height="945" style="width: 1920px; height: 945px;"></canvas>
+<div id="cursor" style="left: 1288px; top: 40px; width: 12px; height: 12px;"></div>
+<div id="cursor-ring" style="left: 1287.94px; top: 40.0358px; width: 40px; height: 40px; border-color: rgba(42, 255, 160, 0.5);"></div>
 
 <div class="wrap">
 
 <nav>
   <div class="nav-logo"><div class="nav-logo-dot"></div>NPM-AutoCode-AI</div>
   <div class="nav-links">
-    <a href="#demo">Demo</a>
-    <a href="#mcp-arch">MCP Architecture</a>
-    <a href="#features">Capabilities</a>
-    <a href="#tools">Tool Registry</a>
-    <a href="#founder">Founder</a>
+    <a href="https://npmcodeai.netlify.app/#demo">Demo</a>
+    <a href="https://npmcodeai.netlify.app/#mcp-arch">MCP Architecture</a>
+    <a href="https://npmcodeai.netlify.app/#features">Capabilities</a>
+    <a href="https://npmcodeai.netlify.app/#tools">Tool Registry</a>
+    <a href="https://npmcodeai.netlify.app/#founder">Founder</a>
   </div>
-  <a href="https://github.com/npmaiecosystem/NPM-AutoCode-AI/releases/download/v3.0/NPM_AutoCode_AI.zip" class="nav-cta" download>Get v3 →</a>
+  <a href="https://npmcodeai.netlify.app/#download" class="nav-cta" download="">Download →</a>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
   <div>
-    <div class="hero-version-tag"><span class="v-big">v3</span><span class="v-txt">NPMAI Ecosystem · Free & Open Source</span></div>
+    <div class="hero-version-tag"><span class="v-big">v3</span><span class="v-txt">NPMAI Ecosystem · Free &amp; Open Source</span></div>
     <h1 class="hero-title">NPM-AutoCode-AI<br>turns <span class="grad">plain English</span><br>into things done.</h1>
     <p class="hero-sub">Describe a task. It plans it, writes the code, checks the code, runs it on your machine, and confirms it actually worked — a five-role agent loop, not a chatbot pretending to be one.</p>
     <div class="hero-actions">
-      <a href="https://github.com/npmaiecosystem/NPM-AutoCode-AI/releases/download/v3.0/NPM_AutoCode_AI.zip" class="btn-primary" download>↓ Download v3 — Free</a>
-      <a href="#demo" class="btn-ghost">Watch it think →</a>
+      <a href="https://npmcodeai.netlify.app/#download" class="btn-primary" download="">↓ Download v3 — Free</a>
+      <a href="https://npmcodeai.netlify.app/#demo" class="btn-ghost">Watch it think →</a>
     </div>
     <div class="stats-strip">
-      <div class="stat"><div class="stat-num" data-count="57000">0</div><div class="stat-lbl">Downloads</div></div>
-      <div class="stat"><div class="stat-num">100</div><div class="stat-lbl">Tools</div></div>
+      <div class="stat"><div class="stat-num" data-count="57000">57,000+</div><div class="stat-lbl">Downloads</div></div>
+      <div class="stat"><div class="stat-num">1371</div><div class="stat-lbl">Tools</div></div>
       <div class="stat"><div class="stat-num">Free</div><div class="stat-lbl">Forever</div></div>
       <div class="stat"><div class="stat-num">45+</div><div class="stat-lbl">LLMs</div></div>
     </div>
@@ -528,7 +529,7 @@ footer{padding:44px 6vw;border-top:1px solid rgba(255,255,255,0.05);display:flex
           </div>
           <div class="app-log" id="demo-log"><div class="log-header">Execution Logs</div></div>
           <div class="app-input-bar">
-            <input class="app-input-field" id="demo-input" type="text" placeholder="Describe your automation task…"/>
+            <input class="app-input-field" id="demo-input" type="text" placeholder="Describe your automation task…">
             <button class="app-run" id="demo-run-btn" onclick="runDemo()">▶ Run</button>
             <button class="app-kill" onclick="killDemo()">■ Kill</button>
           </div>
@@ -541,7 +542,7 @@ footer{padding:44px 6vw;border-top:1px solid rgba(255,255,255,0.05);display:flex
       <button class="tool-chip" onclick="selectChip(2,this)">🌐 Scrape → Excel</button>
       <button class="tool-chip" onclick="selectChip(3,this)">📧 Bulk email from CSV</button>
       <button class="tool-chip" onclick="selectChip(4,this)">⭐ Open a GitHub issue</button>
-      <button class="tool-chip" onclick="selectChip(5,this)">🔒 Zip & sort PDFs</button>
+      <button class="tool-chip" onclick="selectChip(5,this)">🔒 Zip &amp; sort PDFs</button>
       <button class="tool-chip" onclick="selectChip(6,this)">☁ List S3 objects</button>
       <button class="tool-chip" onclick="selectChip(7,this)">🐳 Rebuild a Docker image</button>
       <button class="tool-chip" onclick="selectChip(8,this)">💳 Pull Stripe payouts</button>
@@ -567,9 +568,9 @@ footer{padding:44px 6vw;border-top:1px solid rgba(255,255,255,0.05);display:flex
   <div class="relay reveal">
     <div class="relay-node"><span class="rn-icon">🖥</span><div class="rn-title">Your Desktop</div><div class="rn-sub">executes locally</div></div>
     <div class="relay-link"></div>
-    <div class="relay-node"><span class="rn-icon">🛰</span><div class="rn-title">MCP Server</div><div class="rn-sub">plan · route · verify</div></div>
+    <div class="relay-node"><span class="rn-icon">🛰</span><div class="rn-title">MCP Server(Hosted by NPMAI ECOSYSTEM)</div><div class="rn-sub">Connect your web browser LLMs to your desktop</div></div>
     <div class="relay-link rev"></div>
-    <div class="relay-node"><span class="rn-icon">🤖</span><div class="rn-title">Claude / Grok</div><div class="rn-sub">thinks, writes, reviews</div></div>
+    <div class="relay-node"><span class="rn-icon">🤖</span><div class="rn-title">Claude / Grok and others</div><div class="rn-sub">thinks, writes, reviews</div></div>
   </div>
   <div class="relay-label" style="max-width:980px;margin:-40px auto 60px;">
     <span>Code + results flow back →</span><span>← Prompts + tasks flow out</span>
@@ -593,6 +594,8 @@ footer{padding:44px 6vw;border-top:1px solid rgba(255,255,255,0.05);display:flex
     <div class="section-eyebrow">Capabilities</div>
     <h2 class="section-title">Built to compete.<br>Free to use.</h2>
     <p class="section-desc">Everything a coding agent should do — on your own machine, with a GUI, for everyone.</p>
+    <p class="section-desc">A System which can automate everything without needed of API_Key.</p>
+    <p class="section-desc">A System by which you can automate your Local Machine from AI Websites like claude.com, grok.com</p>
   </div>
   <div class="features-grid">
     <div class="feat-card reveal reveal-d1" style="--card-accent:linear-gradient(90deg,transparent,var(--mint),transparent)">
@@ -634,7 +637,7 @@ footer{padding:44px 6vw;border-top:1px solid rgba(255,255,255,0.05);display:flex
 <section id="tools">
   <div style="text-align:center;margin-bottom:52px;" class="reveal">
     <div class="section-eyebrow" style="justify-content:center;">Tool Registry</div>
-    <h2 class="section-title">100 Tools. Zero Setup.</h2>
+    <h2 class="section-title">1371 Tools. Zero Setup.</h2>
     <p style="color:var(--mid);font-size:14.5px;max-width:520px;margin:0 auto;">Every tool below is available automatically. Just describe the task — the agent picks what it needs.</p>
   </div>
   <div class="tools-marquee-wrap">
@@ -718,7 +721,7 @@ footer{padding:44px 6vw;border-top:1px solid rgba(255,255,255,0.05);display:flex
   <div class="founder-grid reveal">
     <div class="founder-left">
       <div class="founder-avatar-wrap">
-        <img src="https://i.ibb.co/rGJ6bGHc/Sonu2.jpg" alt="Sonu Kumar" class="founder-avatar" loading="lazy"/>
+        <img src="./NPM-AutoCode-AI — v3 · NPMAI Ecosystem_files/Sonu2.jpg" alt="Sonu Kumar" class="founder-avatar" loading="lazy">
         <div class="founder-avatar-ring"></div>
       </div>
       <div class="founder-name">Sonu Kumar 🇮🇳</div>
@@ -749,7 +752,7 @@ footer{padding:44px 6vw;border-top:1px solid rgba(255,255,255,0.05);display:flex
       </div>
       <div class="timeline">
         <div class="tl-item"><div class="tl-dot">🧒</div><div><div class="tl-age">Age 9</div><div class="tl-title">Started Teaching Nursery Kids</div><div class="tl-desc">While in 4th grade, taught nursery children — planting the seed for education equity.</div></div></div>
-        <div class="tl-item"><div class="tl-dot">🔥</div><div><div class="tl-age">Age 11 — "Bihar Viral Boy"</div><div class="tl-title">Challenged Bihar's Chief Minister</div><div class="tl-desc">Raised education & liquor ban issues. Went viral nationally. Received support from Cabinet Ministers, Bollywood actors & ALLEN Institute founder.</div></div></div>
+        <div class="tl-item"><div class="tl-dot">🔥</div><div><div class="tl-age">Age 11 — "Bihar Viral Boy"</div><div class="tl-title">Challenged Bihar's Chief Minister</div><div class="tl-desc">Raised education &amp; liquor ban issues. Went viral nationally. Received support from Cabinet Ministers, Bollywood actors &amp; ALLEN Institute founder.</div></div></div>
         <div class="tl-item"><div class="tl-dot">🎤</div><div><div class="tl-age">Age 13</div><div class="tl-title">TEDx Speaker</div><div class="tl-desc">One of India's youngest TEDx speakers — rural education and using tech to bridge India's urban-rural divide.</div></div></div>
         <div class="tl-item"><div class="tl-dot">💻</div><div><div class="tl-age">Age 13-15</div><div class="tl-title">Founded NPMAI ECOSYSTEM</div><div class="tl-desc">Self-taught, zero CS background. Built the entire ecosystem on free cloud infrastructure.</div></div></div>
         <div class="tl-item"><div class="tl-dot">📄</div><div><div class="tl-age">2026</div><div class="tl-title">10 Research Papers Published</div><div class="tl-desc">Spanning AI/agent architecture, chemistry, mathematics, and constitutional/political science.</div></div></div>
@@ -772,19 +775,21 @@ footer{padding:44px 6vw;border-top:1px solid rgba(255,255,255,0.05);display:flex
       <div class="dl-step"><div class="dl-step-n">3</div><p>Run .exe</p></div>
       <div class="dl-step"><div class="dl-step-n">4</div><p>Start automating</p></div>
     </div>
-    <a href="https://github.com/npmaiecosystem/NPM-AutoCode-AI/releases/download/v3.0/NPM_AutoCode_AI.zip" class="btn-download" download>↓ Download NPM-AutoCode-AI v3</a>
-    <div class="dl-note">Windows · Free Forever · Open Source · NPMAI Ecosystem</div>
+    <a href="https://github.com/npmaiecosystem/NPM-AutoCode-AI/releases/download/v3.0.0/NPM-AutoCode-AI-windows.zip" class="btn-download" download="">↓ For Windows:- Download NPM-AutoCode-AI v3</a><br><br>
+    <a href="https://github.com/npmaiecosystem/NPM-AutoCode-AI/releases/download/v3.0.0/NPM-AutoCode-AI-linux.zip" class="btn-download" download="">↓ For Linux:- Download NPM-AutoCode-AI v3</a><br><br>
+    <a href="https://github.com/npmaiecosystem/NPM-AutoCode-AI/releases/download/v3.0.0/NPM-AutoCode-AI-macos.zip" class="btn-download" download="">↓ For Macos:- Download NPM-AutoCode-AI v3</a>
+    <div class="dl-note">Windows · Linux · Macos · Free Forever · Open Source · NPMAI Ecosystem</div>
     <div class="dl-methodology">57,000+ downloads — determined as per the LLM requests received on our npmai_LLM server; that's how we identified this figure.</div>
   </div>
 </section>
 
 <footer>
   <div class="footer-brand">NPM-AutoCode-AI · v3</div>
-  <div class="footer-mid">© 2026 NPMAI ECOSYSTEM · Made with ❤️ by <span>Sonu Kumar</span> · Free & Open Source</div>
+  <div class="footer-mid">© 2026 NPMAI ECOSYSTEM · Made with ❤️ by <span>Sonu Kumar</span> · Free &amp; Open Source</div>
   <div class="footer-links">
     <a href="https://github.com/sonuramashishnpm" target="_blank">GitHub</a>
     <a href="https://pypi.org/project/npmai" target="_blank">PyPI</a>
-    <a href="https://npmai.netlify.app" target="_blank">Docs</a>
+    <a href="https://npmai.netlify.app/" target="_blank">Docs</a>
     <a href="https://youtu.be/qWTkKsegx9c" target="_blank">TEDx</a>
   </div>
 </footer>
@@ -1126,5 +1131,5 @@ function killDemo(){
 }
 document.getElementById('demo-input').addEventListener('keypress',e=>{ if(e.key==='Enter') runDemo(); });
 </script>
-</body>
-</html>
+
+</body></html>
