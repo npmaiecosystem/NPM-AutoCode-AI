@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NPM-AutoCode-AI — v3 · NPMAI Ecosystem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+      </svg>
+      <span>NPM<span class="nav-logo-accent">AutoCode</span>AI</span>
+    </a>
+    <div class="nav-links">
+      <a href="#demo">Demo</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#features">Features</a>
+      <a href="#tools">Tools</a>
+      <a href="#founder">Founder</a>
+    </div>
+    <div class="nav-right">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+      <a href="https://github.com/npmaiecosystem/NPM-AutoCode-AI/releases/download/v3.0/NPM_AutoCode_AI.zip" class="nav-cta" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Get v3
+      </a>
+      <button class="mobile-menu-btn" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;">
+          <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container hero-grid">
+    <div class="hero-left">
+      <div class="hero-version">
+        <span class="hero-version-dot"></span>
+        v3 · Free & Open Source
+      </div>
+      <h1 class="hero-title">
+        NPM-AutoCode-AI turns<br/>
+        <span class="grad">plain English</span><br/>
+        into things done.
+      </h1>
+      <p class="hero-sub">Describe a task. It plans it, writes the code, checks the code, runs it on your machine, and confirms it actually worked — a five-role agent loop, not a chatbot pretending to be one.</p>
+      <div class="hero-actions">
+        <a href="https://github.com/npmaiecosystem/NPM-AutoCode-AI/releases/download/v3.0/NPM_AutoCode_AI.zip" class="btn-primary" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Download v3 — Free
+        </a>
+        <a href="#demo" class="btn-secondary">
+          Watch it think
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hero-stat-num" data-count="57000" data-suffix="+">0</div><div class="hero-stat-lbl">Downloads</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">100</div><div class="hero-stat-lbl">Tools</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">Free</div><div class="hero-stat-lbl">Forever</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">45+</div><div class="hero-stat-lbl">LLMs</div></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-right-label">Every task, five roles</div>
+      <div class="hero-role">
+        <div class="hero-role-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+        </div>
+        <div class="hero-role-info"><div class="hero-role-name">Planner</div><div class="hero-role-desc">Breaks your task into steps</div></div>
+      </div>
+      <div class="hero-role">
+        <div class="hero-role-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+        </div>
+        <div class="hero-role-info"><div class="hero-role-name">Tool Manager</div><div class="hero-role-desc">Picks from 100 real tools</div></div>
+      </div>
+      <div class="hero-role">
+        <div class="hero-role-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+          </svg>
+        </div>
+        <div class="hero-role-info"><div class="hero-role-name">Coder</div><div class="hero-role-desc">Writes the Python for each step</div></div>
+      </div>
+      <div class="hero-role">
+        <div class="hero-role-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div class="hero-role-info"><div class="hero-role-name">Auditor</div><div class="hero-role-desc">Checks it before anything runs</div></div>
+      </div>
+      <div class="hero-role">
+        <div class="hero-role-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+        <div class="hero-role-info"><div class="hero-role-name">Verifier</div><div class="hero-role-desc">Confirms it actually worked</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEMO -->
+<section id="demo" class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">Live Demo</div>
+      <h2 class="section-title">Pick any task. Watch it run.</h2>
+      <p class="section-desc">Real categories from the tool registry — dev tooling, cloud, business, communication, creative, data, media, and system automation.</p>
+    </div>
+    <div class="demo-center reveal">
+      <div class="app-frame">
+        <div class="app-tb">
+          <div class="tb-dots"><div class="tb-dot td-r"></div><div class="tb-dot td-y"></div><div class="tb-dot td-g"></div></div>
+          <div class="tb-title">NPM-AutoCode-AI — v3</div>
+          <div class="tb-badge">MCP LINKED</div>
+        </div>
+        <div class="app-body">
+          <div class="app-sidebar">
+            <div class="app-sidebar-logo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
+                <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+              </svg>
+              NPM-AutoCode-AI
+            </div>
+            <div class="app-sidebar-sep"></div>
+            <div class="app-sidebar-label">Navigation</div>
+            <div class="app-nav-item active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              Agent
+            </div>
+            <div class="app-nav-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+              History
+            </div>
+            <div class="app-nav-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
+                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+              </svg>
+              Tools
+            </div>
+            <div class="app-nav-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
+                <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+              Settings
+            </div>
+            <div class="app-nav-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+              Founder
+            </div>
+            <div class="app-nav-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              </svg>
+              Docs
+            </div>
+            <div class="app-sidebar-spacer"></div>
+            <div class="app-mcp">
+              <div class="app-mcp-dot"></div>
+              MCP Link Connected
+            </div>
+          </div>
+          <div class="app-main">
+            <div class="app-prog-wrap">
+              <div class="app-prog-row"><span id="demo-status">Ready</span><span id="demo-pct">0%</span></div>
+              <div class="app-prog-track"><div class="app-prog-fill" id="demo-prog"></div></div>
+            </div>
+            <div class="app-chat" id="demo-chat">
+              <div class="chat-bubble agent"><div class="chat-bubble-text">Hi! Describe any task — I'll plan it, write the code, audit it, run it, and confirm it actually worked. Pick one below to see it live.</div></div>
+            </div>
+            <div class="app-log" id="demo-log"><div class="app-log-header">Execution Logs</div></div>
+            <div class="app-input-bar">
+              <input class="app-input-field" id="demo-input" type="text" placeholder="Describe your automation task…"/>
+              <button class="app-run" id="demo-run-btn" onclick="runDemo()">
+                <svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+                Run
+              </button>
+              <button class="app-kill" onclick="killDemo()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;">
+                  <rect x="6" y="6" width="12" height="12" rx="2"/>
+                </svg>
+                Kill
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="chip-bank" id="demo-chips">
+        <button class="tool-chip" onclick="selectChip(0,this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Plot CSV chart
+        </button>
+        <button class="tool-chip" onclick="selectChip(1,this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Rename 100 files
+        </button>
+        <button class="tool-chip" onclick="selectChip(2,this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Scrape → Excel
+        </button>
+        <button class="tool-chip" onclick="selectChip(3,this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Bulk email from CSV
+        </button>
+        <button class="tool-chip" onclick="selectChip(4,this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          Open a GitHub issue
+        </button>
+        <button class="tool-chip" onclick="selectChip(5,this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          Zip & sort PDFs
+        </button>
+        <button class="tool-chip" onclick="selectChip(6,this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+          List S3 objects
+        </button>
+        <button class="tool-chip" onclick="selectChip(7,this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          Rebuild Docker image
+        </button>
+        <button class="tool-chip" onclick="selectChip(8,this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Pull Stripe payouts
+        </button>
+        <button class="tool-chip" onclick="selectChip(9,this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Log a Notion entry
+        </button>
+        <button class="tool-chip" onclick="selectChip(10,this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          Compress a video
+        </button>
+        <button class="tool-chip" onclick="selectChip(11,this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Batch-resize photos
+        </button>
+        <button class="tool-chip" onclick="selectChip(12,this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Deploy via SSH
+        </button>
+        <button class="tool-chip" onclick="selectChip(13,this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          Transcribe voice memo
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ARCHITECTURE -->
+<section id="architecture" class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">MCP Architecture</div>
+      <h2 class="section-title">Connect it to Claude or Grok.<br/>No API key required.</h2>
+      <p class="section-desc">NPM-AutoCode-AI hosts its own MCP endpoint. Link it once from the app, paste the link into your Claude or Grok connector settings, and the LLM you already talk to becomes the brain.</p>
+    </div>
+
+    <div class="relay reveal">
+      <div class="relay-node">
+        <div class="relay-node-icon desktop">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div class="relay-node-title">Your Desktop</div>
+        <div class="relay-node-sub">executes locally</div>
+      </div>
+      <div class="relay-link"></div>
+      <div class="relay-node">
+        <div class="relay-node-icon mcp">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <div class="relay-node-title">MCP Server</div>
+        <div class="relay-node-sub">plan · route · verify</div>
+      </div>
+      <div class="relay-link rev"></div>
+      <div class="relay-node">
+        <div class="relay-node-icon llm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.4-1.2 4.5-3 5.7V17H8v-2.3C6.2 13.5 5 11.4 5 9a7 7 0 0 1 7-7z"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div class="relay-node-title">Claude / Grok</div>
+        <div class="relay-node-sub">thinks, writes, reviews</div>
+      </div>
+    </div>
+    <div class="relay-label" style="max-width:900px;margin:-30px auto 50px;">
+      <span>Code + results flow back →</span>
+      <span>← Prompts + tasks flow out</span>
+    </div>
+
+    <div class="arch-grid reveal">
+      <div class="arch-card"><div class="arch-card-step">01</div><h4>Get your link, once</h4><p>Log in from the app's MCP tab. That's the only time you'll ever need to log in — everything else works without an account.</p></div>
+      <div class="arch-card"><div class="arch-card-step">02</div><h4>Paste it into your connector</h4><p>Drop the link into Claude or Grok's custom connector settings. From then on, just talk to your normal LLM like always.</p></div>
+      <div class="arch-card"><div class="arch-card-step">03</div><h4>Ask for anything</h4><p>"Clear my Downloads folder," "email my team the report" — the LLM detects it needs a real action and calls into your link automatically.</p></div>
+      <div class="arch-card"><div class="arch-card-step">04</div><h4>It's audited before it runs</h4><p>Every generated script passes an Auditor review, plus a separate safety check, before it's sent to your desktop to execute.</p></div>
+      <div class="arch-card"><div class="arch-card-step">05</div><h4>Runs on your machine, not the cloud</h4><p>Execution happens locally — your files, your credentials, your machine. The MCP server only ever relays code and results.</p></div>
+      <div class="arch-card"><div class="arch-card-step">06</div><h4>You confirm it, not just the exit code</h4><p>A Verifier role checks the actual output against the task — not just whether the script ran without crashing.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FEATURES -->
+<section id="features" class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">Capabilities</div>
+      <h2 class="section-title">Built to compete. Free to use.</h2>
+      <p class="section-desc">Everything a coding agent should do — on your own machine, with a GUI, for everyone.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card reveal reveal-d1" style="--card-accent:linear-gradient(90deg,transparent,var(--primary),transparent)">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <h3>Five-Role Agent Pipeline</h3>
+        <p>Planner, Tool Manager, Coder, Auditor, and Verifier — each with its own job and fallback chain. A real agent loop, not a chatbot.</p>
+        <span class="feat-tag">Plan → Select → Code → Audit → Execute → Verify</span>
+      </div>
+      <div class="feat-card reveal reveal-d2" style="--card-accent:linear-gradient(90deg,transparent,var(--violet),transparent)">
+        <div class="feat-icon" style="background:rgba(139,92,246,0.1);color:var(--violet);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Independent Security Audit</h3>
+        <p>Every generated script is reviewed by a separate Auditor role before execution, plus a second non-LLM safety check that can't be talked around.</p>
+        <span class="feat-tag" style="background:rgba(139,92,246,0.1);color:var(--violet);border-color:rgba(139,92,246,0.2);">Security First</span>
+      </div>
+      <div class="feat-card reveal reveal-d3" style="--card-accent:linear-gradient(90deg,transparent,var(--cyan),transparent)">
+        <div class="feat-icon" style="background:rgba(6,182,212,0.1);color:var(--cyan);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </div>
+        <h3>Auto-Debug Loop (12 retries)</h3>
+        <p>Execution fails? The agent captures the error, feeds it back to the Coder, and retries with the prior attempt as context — up to 12 times per step.</p>
+        <span class="feat-tag" style="background:rgba(6,182,212,0.1);color:var(--cyan);border-color:rgba(6,182,212,0.2);">Self-Healing</span>
+      </div>
+      <div class="feat-card reveal reveal-d1" style="--card-accent:linear-gradient(90deg,transparent,var(--amber),transparent)">
+        <div class="feat-icon" style="background:rgba(245,158,11,0.1);color:var(--amber);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h3>Workspace Awareness</h3>
+        <p>On first run, the agent scans Desktop, Downloads, Documents, Pictures, Videos, and Music — it knows your files before you type a path.</p>
+        <span class="feat-tag" style="background:rgba(245,158,11,0.1);color:var(--amber);border-color:rgba(245,158,11,0.2);">Workspace Scanner</span>
+      </div>
+      <div class="feat-card reveal reveal-d2" style="--card-accent:linear-gradient(90deg,transparent,var(--rose),transparent)">
+        <div class="feat-icon" style="background:rgba(244,63,94,0.1);color:var(--rose);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <h3>MCP Link, Not an API Key</h3>
+        <p>Connect Claude or Grok directly from the sidebar. Login happens once, only for this — everything else in the app stays account-free.</p>
+        <span class="feat-tag" style="background:rgba(244,63,94,0.1);color:var(--rose);border-color:rgba(244,63,94,0.2);">Bring Your Own LLM</span>
+      </div>
+      <div class="feat-card reveal reveal-d3" style="--card-accent:linear-gradient(90deg,transparent,var(--sky),transparent)">
+        <div class="feat-icon" style="background:rgba(14,165,233,0.1);color:var(--sky);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <h3>Real Subprocess Execution</h3>
+        <p>Code runs as an actual child process — not exec(). Output streams live to the log panel. Kill any script instantly, mid-run.</p>
+        <span class="feat-tag" style="background:rgba(14,165,233,0.1);color:var(--sky);border-color:rgba(14,165,233,0.2);">Real Isolation</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TOOL REGISTRY -->
+<section id="tools" class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">Tool Registry</div>
+      <h2 class="section-title">100 Tools. Zero Setup.</h2>
+      <p class="section-desc">Every tool below is available automatically. Just describe the task — the agent picks what it needs.</p>
+    </div>
+    <div class="tools-marquee-wrap">
+      <div class="tools-marquee">
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg> GitTool · commit · branch · rebase</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg> GitHubTool · issues · PRs · releases</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> GitLabTool · pipelines · merge requests</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> DockerTool · build · compose · registry</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg> AWSS3Tool · buckets · presigned URLs</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> StripeTool · payments · invoices · payouts</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> SMTPAdvancedTool · HTML email · attachments</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> NotionAdvancedTool · pages · databases</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> ZoomTool · meetings · recordings</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg> TwilioTool · SMS · voice · WhatsApp</span>
+        <!-- Duplicate for seamless loop -->
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg> GitTool · commit · branch · rebase</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg> GitHubTool · issues · PRs · releases</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> GitLabTool · pipelines · merge requests</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> DockerTool · build · compose · registry</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg> AWSS3Tool · buckets · presigned URLs</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> StripeTool · payments · invoices · payouts</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> SMTPAdvancedTool · HTML email · attachments</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> NotionAdvancedTool · pages · databases</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> ZoomTool · meetings · recordings</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg> TwilioTool · SMS · voice · WhatsApp</span>
+      </div>
+    </div>
+    <div class="tools-marquee-wrap">
+      <div class="tools-marquee tools-marquee2">
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> TerminalTool · run commands · pipe output</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> PackageManagerTool · npm · pip · cargo</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> VSCodeTool · open · edit · extensions</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> MakefileTool · targets · build steps</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg> CMakeTool · configure · build · test</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> DebuggerTool · breakpoints · stack traces</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg> SpeechAITool · transcribe · diarize · clone</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> ComputerVisionTool · detect · classify · OCR</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> FFmpegTool · convert · compress · trim</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> ImageAdvancedTool · resize · batch edit</span>
+        <!-- Duplicate -->
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> TerminalTool · run commands · pipe output</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> PackageManagerTool · npm · pip · cargo</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> VSCodeTool · open · edit · extensions</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> MakefileTool · targets · build steps</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg> CMakeTool · configure · build · test</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> DebuggerTool · breakpoints · stack traces</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg> SpeechAITool · transcribe · diarize · clone</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> ComputerVisionTool · detect · classify · OCR</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> FFmpegTool · convert · compress · trim</span>
+        <span class="tool-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> ImageAdvancedTool · resize · batch edit</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PIPELINE -->
+<section id="pipeline" class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">Agent Architecture</div>
+      <h2 class="section-title">How the agent thinks</h2>
+      <p class="section-desc">Every task moves through these stages in order — each one runs a different role for the right job.</p>
+    </div>
+    <div class="pipeline-grid reveal">
+      <div class="pipe-step reveal-d1">
+        <div class="pipe-num">01</div>
+        <div class="pipe-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <div class="pipe-name">Scan</div>
+        <div class="pipe-desc">Reads your file system before anything else</div>
+        <div class="pipe-arrow">→</div>
+      </div>
+      <div class="pipe-step reveal-d2">
+        <div class="pipe-num">02</div>
+        <div class="pipe-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+        <div class="pipe-name">Plan</div>
+        <div class="pipe-desc">Breaks the task into ordered, atomic steps</div>
+        <div class="pipe-arrow">→</div>
+      </div>
+      <div class="pipe-step reveal-d3">
+        <div class="pipe-num">03</div>
+        <div class="pipe-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <div class="pipe-name">Select Tools</div>
+        <div class="pipe-desc">Picks exactly what each step needs from the registry</div>
+        <div class="pipe-arrow">→</div>
+      </div>
+      <div class="pipe-step reveal-d1" style="transition-delay:.3s">
+        <div class="pipe-num">04</div>
+        <div class="pipe-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+        <div class="pipe-name">Generate</div>
+        <div class="pipe-desc">Writes real Python for each step</div>
+        <div class="pipe-arrow">→</div>
+      </div>
+      <div class="pipe-step reveal-d2" style="transition-delay:.4s">
+        <div class="pipe-num">05</div>
+        <div class="pipe-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="pipe-name">Audit</div>
+        <div class="pipe-desc">Reviewed for safety — BLOCK or ALLOW</div>
+        <div class="pipe-arrow">→</div>
+      </div>
+      <div class="pipe-step reveal-d3" style="transition-delay:.5s">
+        <div class="pipe-num">06</div>
+        <div class="pipe-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+        <div class="pipe-name">Execute</div>
+        <div class="pipe-desc">Real subprocess. Streams live. Kill anytime.</div>
+        <div class="pipe-arrow">→</div>
+      </div>
+      <div class="pipe-step reveal-d1" style="transition-delay:.6s">
+        <div class="pipe-num">07</div>
+        <div class="pipe-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <div class="pipe-name">Verify</div>
+        <div class="pipe-desc">Confirms the task actually completed</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FOUNDER -->
+<section id="founder" class="section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow" style="justify-content:center;">The Builder</div>
+      <h2 class="section-title" style="text-align:center;">Meet the Founder</h2>
+    </div>
+    <div class="founder-grid reveal" style="margin-top:40px;">
+      <div class="founder-left">
+        <div class="founder-avatar-wrap">
+          <img src="https://i.ibb.co/rGJ6bGHc/Sonu2.jpg" alt="Sonu Kumar" class="founder-avatar" loading="lazy"/>
+        </div>
+        <div class="founder-name">Sonu Kumar</div>
+        <div class="founder-role">Founder · NPMAI ECOSYSTEM</div>
+        <div class="founder-badges">
+          <span class="f-badge">Age 15</span>
+          <span class="f-badge">Bihar, India</span>
+          <span class="f-badge">Kota, Rajasthan</span>
+          <span class="f-badge">434K+ Followers</span>
+          <span class="f-badge">TEDx Speaker</span>
+          <span class="f-badge">Allen 100% Scholar</span>
+        </div>
+        <div class="founder-links">
+          <a href="https://github.com/sonuramashishnpm" target="_blank" class="f-link">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px;"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            GitHub
+          </a>
+          <a href="https://pypi.org/project/npmai" target="_blank" class="f-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            PyPI
+          </a>
+          <a href="https://youtu.be/qWTkKsegx9c" target="_blank" class="f-link">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px;"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 4-8 4z"/></svg>
+            TEDx
+          </a>
+          <a href="https://facebook.com/share/19dvhX1mH7/" target="_blank" class="f-link">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px;"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            FB
+          </a>
+        </div>
+        <div class="founder-stats" style="margin-top:24px;">
+          <div class="f-stat"><div class="f-stat-num">4M+</div><div class="f-stat-lbl">npmai downloads</div></div>
+          <div class="f-stat"><div class="f-stat-num">300K+</div><div class="f-stat-lbl">npmai-agents</div></div>
+          <div class="f-stat"><div class="f-stat-num">433K+</div><div class="f-stat-lbl">Social followers</div></div>
+          <div class="f-stat"><div class="f-stat-num">TEDx</div><div class="f-stat-lbl">Speaker at 13</div></div>
+          <div class="f-stat"><div class="f-stat-num">100%</div><div class="f-stat-lbl">Allen scholarship</div></div>
+          <div class="f-stat"><div class="f-stat-num">10</div><div class="f-stat-lbl">Research papers</div></div>
+        </div>
+      </div>
+      <div class="founder-right">
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg></div>
+            <div><div class="tl-age">Age 9</div><div class="tl-title">Started Teaching Nursery Kids</div><div class="tl-desc">While in 4th grade, taught nursery children — planting the seed for education equity.</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 6l-9.5 9.5-5-5L1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+            <div><div class="tl-age">Age 11 — "Bihar Viral Boy"</div><div class="tl-title">Challenged Bihar's Chief Minister</div><div class="tl-desc">Raised education & liquor ban issues. Went viral nationally. Received support from Cabinet Ministers & ALLEN Institute founder.</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-icon"><svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px;"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 4-8 4z"/></svg></div>
+            <div><div class="tl-age">Age 13</div><div class="tl-title">TEDx Speaker</div><div class="tl-desc">One of India's youngest TEDx speakers — rural education and using tech to bridge India's urban-rural divide.</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+            <div><div class="tl-age">Age 14</div><div class="tl-title">Launched NPM-AutoCode-AI</div><div class="tl-desc">Built an open-source AI agent that writes and runs code on your machine. Downloaded 57K+ times across 45+ countries.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DOWNLOAD -->
+<section id="download" class="section">
+  <div class="container">
+    <div class="cta-box reveal">
+      <h2>Ready to automate anything?</h2>
+      <p>Download v3 free. No account required. No API key needed.</p>
+      <div class="dl-steps">
+        <div class="dl-step"><div class="dl-step-n">1</div><p>Download the zip</p></div>
+        <div class="dl-step"><div class="dl-step-n">2</div><p>Extract & run</p></div>
+        <div class="dl-step"><div class="dl-step-n">3</div><p>Connect your LLM</p></div>
+        <div class="dl-step"><div class="dl-step-n">4</div><p>Start automating</p></div>
+      </div>
+      <a href="https://github.com/npmaiecosystem/NPM-AutoCode-AI/releases/download/v3.0/NPM_AutoCode_AI.zip" class="btn-download" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download v3 — Free
+      </a>
+      <div class="dl-note">ZIP · 85MB · Windows / macOS / Linux</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+      </svg>
+      <span>NPM<span class="footer-brand-accent">AutoCode</span>AI</span>
+    </div>
+    <div class="footer-mid">Built with <span>purpose</span> in Bihar, India</div>
+    <div class="footer-links">
+      <a href="https://github.com/npmaiecosystem/NPM-AutoCode-AI" target="_blank">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        GitHub
+      </a>
+      <a href="https://github.com/npmaiecosystem/NPM-AutoCode-AI/blob/main/LICENSE">License</a>
+      <a href="#hero">Top</a>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
