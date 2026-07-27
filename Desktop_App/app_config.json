@@ -1,5 +1,5 @@
 {
   "url": "https://imdriiradfmbfemysteg.supabase.co",
   "anon_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltZHJpaXJhZGZtYmZlbXlzdGVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwNzU2ODQsImV4cCI6MjEwMDY1MTY4NH0.M3niabNI4LphQTBxz4mB39EFAhYU4hKOqTfcggMGzWY",
-  "mcp_base_url": "https://your-mcp-server.hf.space/mcp" #We will add this
+  "mcp_base_url": "https://your-mcp-server.hf.space/mcp" 
 }
