@@ -5,6 +5,102 @@ NPM-AutoCode-AI Desktop — v4 (npmai_agents edition)
 THIS IS NOT YET DEPLOYED.
 Here it is about Desktop APP.
 """
+import sys, os, runpy, socket, subprocess, traceback
+from pathlib import Path
+
+_APP_DIR = os.path.dirname(os.path.abspath(__file__))    
+
+_LOG_DIR = Path(_APP_DIR) / "logs"
+try:
+    _LOG_DIR.mkdir(parents=True, exist_ok=True)
+except Exception:
+    _LOG_DIR = Path.home() / ".npmai_agent"
+    try:
+        _LOG_DIR.mkdir(exist_ok=True)
+    except Exception:
+        pass
+
+
+def _log_crash(title):
+    try:
+        with open(_LOG_DIR / "crash.log", "a", encoding="utf-8") as f:
+            f.write(f"\n=== {title} ===\n{traceback.format_exc()}\n")
+    except Exception:
+        pass
+
+
+def _excepthook(exc_type, exc, tb):
+    try:
+        with open(_LOG_DIR / "crash.log", "a", encoding="utf-8") as f:
+            f.write("\n=== Unhandled exception ===\n" + "".join(traceback.format_exception(exc_type, exc, tb)) + "\n")
+    except Exception:
+        pass
+
+
+def _fatal(msg):
+    """Cross-platform error popup (Qt), falling back to stderr."""
+    try:
+        from PySide6.QtWidgets import QApplication, QMessageBox
+        _qa = QApplication.instance() or QApplication(sys.argv)
+        QMessageBox.critical(None, "NPM-AutoCode-AI", msg)
+    except Exception:
+        try:
+            sys.stderr.write(msg + "\n")
+        except Exception:
+            pass
+
+
+def _attach_std():
+    for name, fd in (("stdout", 1), ("stderr", 2)):
+        if getattr(sys, name) is None:
+            try:
+                setattr(sys, name, open(fd, "w", encoding="utf-8", errors="replace", closefd=False))
+            except Exception:
+                setattr(sys, name, open(os.devnull, "w"))
+
+
+if getattr(sys, "frozen", False):
+    if len(sys.argv) > 1:
+        _a1 = sys.argv[1]
+        if _a1 == "-m":                                   
+            _attach_std()
+            if len(sys.argv) > 2 and sys.argv[2] != "pip":
+                sys.argv = sys.argv[2:]
+                runpy.run_module(sys.argv[0], run_name="__main__", alter_sys=True)
+            sys.exit(0)                                    
+        if _a1.lower().endswith(".py") and os.path.isfile(_a1):    
+            _attach_std()
+            sys.argv = sys.argv[1:]
+            sys.path.insert(0, os.path.dirname(os.path.abspath(_a1)))
+            runpy.run_path(_a1, run_name="__main__")
+            sys.exit(0)
+
+    for _n in ("stdout", "stderr"):
+        if getattr(sys, _n) is None:
+            setattr(sys, _n, open(os.devnull, "w"))
+
+    _orig_run = subprocess.run
+
+    def _no_pip(cmd, *a, **k):
+        if isinstance(cmd, (list, tuple)) and len(cmd) > 2 and cmd[1] == "-m" and cmd[2] == "pip":
+            return subprocess.CompletedProcess(cmd, 0, b"", b"")
+        return _orig_run(cmd, *a, **k)
+
+    subprocess.run = _no_pip
+
+    try:
+        os.makedirs(os.path.join(getattr(sys, "_MEIPASS", _APP_DIR), "npmai_agents"), exist_ok=True)
+    except Exception:
+        pass
+
+    _instance_lock = socket.socket()
+    try:
+        _instance_lock.bind(("127.0.0.1", 47653))
+    except OSError:
+        sys.exit(0)
+
+    sys.excepthook = _excepthook
+
 import sys, os, math, random, json
 from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -21,7 +117,22 @@ def resource_path(filename: str) -> str:
 
 APP_ICON_PATH = resource_path("npmai.png")
 
-from npmai_agents import AgentBrain, Workspace, CredStore
+try:
+    from npmai_agents import AgentBrain, Workspace, CredStore
+except Exception:
+    _log_crash("npmai_agents import failed")
+    _fatal(f"Startup failed.\nDetails saved in:\n{_LOG_DIR / 'crash.log'}")
+    sys.exit(1)
+
+import importlib
+_pkg = AgentBrain.__module__.rsplit(".", 1)[0]
+for _m in ("Tools_Developer_CLI", "Tools_business", "Tools_cloud_devops",
+           "Tools_communication_extended", "Tools_creative", "Tools_data_research",
+           "Tools_media", "Tools_productivity", "Tools_security_ai", "Tools_system_hardware"):
+    try:
+        sys.modules.setdefault(_m, importlib.import_module(f"{_pkg}.{_m}"))
+    except Exception:
+        _log_crash(f"alias for {_m} failed")
 
 from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel,
@@ -49,9 +160,6 @@ P = {
     "ghost":  "#2A2744",
 }
 
-# ── LLM provider registry — mirrors npmai_agents.core backends + cli.build_backend ──
-# Each entry: key -> (display label, [(field_key, field_label, is_secret), ...])
-# "model" is handled separately (every provider except a couple takes a model/model_id name).
 LLM_PROVIDERS = {
     "npmai":     {"label": "🌐 NPMAI (cloud Ollama — default)", "needs_key": False, "model_label": "Model", "model_default": "llama3.2:3b", "extra_fields": []},
     "local":     {"label": "💻 Local Ollama",                    "needs_key": False, "model_label": "Model", "model_default": "llama3.2:3b", "extra_fields": []},
@@ -67,7 +175,6 @@ LLM_PROVIDERS = {
     "llamacpp":  {"label": "🦙 llama.cpp (local server)",        "needs_key": False, "model_label": "Base URL", "model_default": "http://localhost:8080", "extra_fields": []},
 }
 
-# The 6 AgentBrain roles/stages that can each use a different LLM
 AGENT_STAGES = [
     ("planner",      "🧭 Planner",      "Breaks the task into atomic steps"),
     ("tool_manager", "🧰 Tool Manager", "Selects which of the 1371 tools to use"),
@@ -205,6 +312,11 @@ class AgentWorker(QThread):
             verifier     = backends.get("verifier"),
             chatter      = backends.get("chatter"),
         )
+        try:
+            from npmai_agents import JMTx402AgentTools
+            self._brain.tool_registry.setdefault("JMTx402AgentTools", JMTx402AgentTools)
+        except Exception:
+            pass
         if _looks_like_task(self.task):
             ok = self._brain.run_task(self.task, killed_flag=self._killed)
             msg = "✓ Task completed!" if ok else "✗ Task failed."
