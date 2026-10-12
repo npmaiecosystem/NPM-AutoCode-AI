@@ -8,8 +8,7 @@ Here it is about Desktop APP.
 import sys, os, runpy, socket, subprocess, traceback
 from pathlib import Path
 
-_APP_DIR = os.path.dirname(os.path.abspath(__file__))    
-
+_APP_DIR = os.path.dirname(os.path.abspath(__file__))     
 _LOG_DIR = Path(_APP_DIR) / "logs"
 try:
     _LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -59,34 +58,53 @@ def _attach_std():
                 setattr(sys, name, open(os.devnull, "w"))
 
 
+
+_SYS_PKG_MGRS = {"sudo", "apt", "apt-get", "dnf", "yum", "zypper", "pacman", "snap",
+                 "brew", "winget", "choco", "scoop"}
+_orig_run = subprocess.run
+
+
+def _called_during_import():
+    f = sys._getframe(2)
+    while f is not None:
+        if f.f_code.co_name == "<module>" and str(f.f_globals.get("__name__", "")).startswith("npmai_agents"):
+            return True
+        f = f.f_back
+    return False
+
+
+def _guarded_run(cmd, *a, **k):
+    if isinstance(cmd, (list, tuple)) and cmd:
+        if len(cmd) > 2 and cmd[1] == "-m" and cmd[2] == "pip":         
+            return subprocess.CompletedProcess(cmd, 0, b"", b"")
+        _c0 = os.path.splitext(os.path.basename(str(cmd[0])))[0].lower()
+        if _c0 in _SYS_PKG_MGRS and _called_during_import():              
+            return subprocess.CompletedProcess(cmd, 0, b"", b"")
+    return _orig_run(cmd, *a, **k)
+
+
 if getattr(sys, "frozen", False):
+    subprocess.run = _guarded_run
+
     if len(sys.argv) > 1:
         _a1 = sys.argv[1]
-        if _a1 == "-m":                                   
+        if _a1 == "-m":                                
             _attach_std()
             if len(sys.argv) > 2 and sys.argv[2] != "pip":
                 sys.argv = sys.argv[2:]
                 runpy.run_module(sys.argv[0], run_name="__main__", alter_sys=True)
-            sys.exit(0)                                    
-        if _a1.lower().endswith(".py") and os.path.isfile(_a1):    
+            sys.exit(0)     
+        if _a1.lower().endswith(".py") and os.path.isfile(_a1):   
             _attach_std()
             sys.argv = sys.argv[1:]
             sys.path.insert(0, os.path.dirname(os.path.abspath(_a1)))
             runpy.run_path(_a1, run_name="__main__")
             sys.exit(0)
 
+
     for _n in ("stdout", "stderr"):
         if getattr(sys, _n) is None:
             setattr(sys, _n, open(os.devnull, "w"))
-
-    _orig_run = subprocess.run
-
-    def _no_pip(cmd, *a, **k):
-        if isinstance(cmd, (list, tuple)) and len(cmd) > 2 and cmd[1] == "-m" and cmd[2] == "pip":
-            return subprocess.CompletedProcess(cmd, 0, b"", b"")
-        return _orig_run(cmd, *a, **k)
-
-    subprocess.run = _no_pip
 
     try:
         os.makedirs(os.path.join(getattr(sys, "_MEIPASS", _APP_DIR), "npmai_agents"), exist_ok=True)
@@ -312,11 +330,12 @@ class AgentWorker(QThread):
             verifier     = backends.get("verifier"),
             chatter      = backends.get("chatter"),
         )
-        try:
-            from npmai_agents import JMTx402AgentTools
-            self._brain.tool_registry.setdefault("JMTx402AgentTools", JMTx402AgentTools)
+        """try:
+            _cls = getattr(importlib.import_module(f"{_pkg}.Tools_data_research"), "JMTx402AgentTools", None)
+            if _cls is not None:
+                self._brain.tool_registry.setdefault("JMTx402AgentTools", _cls)
         except Exception:
-            pass
+            pass""" #NEEDED THIS ABOVE THING BUT JMT is planned to deploy in next version of npmai_agents package not in the version right now NPM-AutoCode-AI uses.
         if _looks_like_task(self.task):
             ok = self._brain.run_task(self.task, killed_flag=self._killed)
             msg = "✓ Task completed!" if ok else "✗ Task failed."
