@@ -1,9 +1,5 @@
 """
-app.py
-NPM-AutoCode-AI Desktop — v4 (npmai_agents edition)
-
-THIS IS NOT YET DEPLOYED.
-Here it is about Desktop APP.
+Deployed version v4
 """
 import sys, os, runpy, socket, subprocess, traceback
 from pathlib import Path
@@ -169,13 +165,36 @@ from PySide6.QtGui import (
 )
 
 P = {
-    "void":   "#04030C", "deep":  "#080618", "space": "#0D0B20",
-    "panel":  "#111028", "lift":  "#171530", "ridge": "#1E1C38",
-    "rim":    "#2A2748", "glow":  "#3D3960",
-    "mint":   "#2AFFA0", "cyan":  "#00E5FF", "violet":"#A78BFA",
-    "rose":   "#FF6B9D", "amber": "#FFB347", "sky":   "#38BDF8",
-    "bright": "#F0EEFF", "mid":   "#8E8AAE", "dim":   "#4E4B6A",
-    "ghost":  "#2A2744",
+    # Professional light theme (matches screenshot)
+    "bg":        "#F8FAFC",   # page background
+    "surface":   "#FFFFFF",   # cards / sidebar
+    "surface2":  "#F1F5F9",   # subtle secondary surface
+    "border":    "#E2E8F0",   # soft borders
+    "border2":   "#CBD5E1",   # slightly stronger border
+    "text":      "#0F172A",   # primary text
+    "text2":     "#334155",   # secondary text
+    "muted":     "#64748B",   # muted labels
+    "faint":     "#94A3B8",   # very muted
+    "primary":   "#1E3A5F",   # deep navy (task pill, Run btn)
+    "primary2":  "#1E40AF",   # indigo accent
+    "accent":    "#3B82F6",   # blue accent
+    "active_bg": "#EFF6FF",   # light blue for active nav
+    "active":    "#1D4ED8",   # active nav text
+    "success":   "#059669",   # Ready green
+    "success_bg":"#ECFDF5",   # Ready pill bg
+    "log_bg":    "#0F172A",   # execution log
+    "log_text":  "#E2E8F0",
+    "log_ok":    "#34D399",
+    "log_warn":  "#FBBF24",
+    "log_err":   "#F87171",
+    # legacy aliases so old references don't crash during transition
+    "void": "#F8FAFC", "deep": "#F1F5F9", "space": "#FFFFFF",
+    "panel": "#FFFFFF", "lift": "#F8FAFC", "ridge": "#E2E8F0",
+    "rim": "#CBD5E1", "glow": "#94A3B8",
+    "mint": "#059669", "cyan": "#3B82F6", "violet": "#1E40AF",
+    "rose": "#F87171", "amber": "#FBBF24", "sky": "#38BDF8",
+    "bright": "#0F172A", "mid": "#64748B", "dim": "#94A3B8",
+    "ghost": "#E2E8F0",
 }
 
 LLM_PROVIDERS = {
@@ -349,287 +368,218 @@ class AgentWorker(QThread):
 
 
 class CosmicBG(QWidget):
+    """Clean light page background (name kept for compatibility)."""
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setAttribute(Qt.WA_TransparentForMouseEvents)
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self._phase = 0.0
-        self._particles = self._init_particles(140)
-        self._orbs = [
-            (0.12, 0.22, 460, QColor(42,255,160,20),  0.007, 0.0),
-            (0.82, 0.38, 380, QColor(167,139,250,16), 0.005, 2.1),
-            (0.50, 0.78, 310, QColor(0,229,255,14),   0.009, 4.2),
-            (0.28, 0.68, 260, QColor(255,107,157,12), 0.006, 1.0),
-            (0.88, 0.82, 210, QColor(255,179,71,11),  0.011, 3.3),
-        ]
-        QTimer(self, timeout=self._tick, interval=16).start()
-
-    def _init_particles(self, n):
-        cols = ["#2AFFA0","#00E5FF","#A78BFA","#FF6B9D","#FFB347","#38BDF8"]
-        return [{"x":random.random(),"y":random.random(),
-                 "vx":(random.random()-0.5)*0.35,"vy":(random.random()-0.5)*0.35,
-                 "r":random.random()*1.6+0.3,
-                 "col":QColor(random.choice(cols)),
-                 "ba":random.randint(50,150),
-                 "life":random.random()} for _ in range(n)]
-
-    def _tick(self):
-        self._phase = (self._phase + 0.011) % (math.pi * 2)
-        w,h = max(self.width(),1), max(self.height(),1)
-        for p in self._particles:
-            p["x"] += p["vx"]/w*100; p["y"] += p["vy"]/h*100
-            p["life"] += 0.003
-            if p["x"]<0 or p["x"]>1 or p["y"]<0 or p["y"]>1 or p["life"]>1:
-                p["x"]=random.random(); p["y"]=random.random(); p["life"]=0
-        self.update()
 
     def paintEvent(self, _):
-        p = QPainter(self); p.setRenderHint(QPainter.Antialiasing)
-        w,h = self.width(), self.height()
-        p.fillRect(0,0,w,h, QColor(P["void"]))
-        for cx_r,cy_r,r,col,spd,off in self._orbs:
-            cx = cx_r*w + math.sin(self._phase*spd*80+off)*55
-            cy = cy_r*h + math.cos(self._phase*spd*60+off)*40
-            g = QRadialGradient(cx,cy,r); g.setColorAt(0,col)
-            outer=QColor(col); outer.setAlpha(0); g.setColorAt(1,outer)
-            p.fillRect(0,0,w,h,QBrush(g))
-        p.setPen(QPen(QColor(255,255,255,4),1))
-        for gx in range(0,w+70,70): p.drawLine(gx,0,gx,h)
-        for gy in range(0,h+70,70): p.drawLine(0,gy,w,gy)
-        p.setPen(Qt.NoPen)
-        for pt in self._particles:
-            a = int(pt["ba"]*abs(math.sin(self._phase*1.4+pt["life"]*8)))
-            c=QColor(pt["col"]); c.setAlpha(max(15,min(200,a)))
-            p.setBrush(c); p.drawEllipse(QPointF(pt["x"]*w,pt["y"]*h),pt["r"],pt["r"])
-        vg=QRadialGradient(w/2,h/2,max(w,h)*0.72)
-        vg.setColorAt(0,QColor(0,0,0,0)); vg.setColorAt(1,QColor(0,0,0,165))
-        p.fillRect(0,0,w,h,QBrush(vg)); p.end()
+        p = QPainter(self)
+        p.setRenderHint(QPainter.Antialiasing)
+        p.fillRect(0, 0, self.width(), self.height(), QColor(P["bg"]))
+        p.end()
 
 class GlowCard(QWidget):
-    def __init__(self, parent=None, accent="#2AFFA0", radius=18, alpha=205):
+    """Clean white card with soft border (name kept for compatibility)."""
+    def __init__(self, parent=None, accent=None, radius=12, alpha=255):
         super().__init__(parent)
-        self._accent=QColor(accent); self._radius=radius
-        self._alpha=alpha; self._glow=0.0; self._hover=False
+        self._radius = radius
         self.setAttribute(Qt.WA_TranslucentBackground)
-        QTimer(self,timeout=self._anim,interval=16).start()
 
-    def _anim(self):
-        t=1.0 if self._hover else 0.0
-        self._glow += (t-self._glow)*0.09
-        if abs(self._glow-t)>0.01: self.update()
-
-    def enterEvent(self,e): self._hover=True
-    def leaveEvent(self,e): self._hover=False
-
-    def paintEvent(self,_):
-        p=QPainter(self); p.setRenderHint(QPainter.Antialiasing)
-        rect=self.rect().adjusted(2,2,-2,-2)
-        path=QPainterPath(); path.addRoundedRect(QRectF(rect),self._radius,self._radius)
-        p.setClipPath(path)
-        p.fillPath(path,QColor(17,16,40,self._alpha))
-        sh=QLinearGradient(0,rect.top(),0,rect.top()+55)
-        sh.setColorAt(0,QColor(255,255,255,13)); sh.setColorAt(1,QColor(255,255,255,0))
-        p.fillPath(path,QBrush(sh)); p.setClipping(False)
-        a=QColor(self._accent); border_a=int(50+(180-50)*self._glow)
-        a.setAlpha(border_a); p.setPen(QPen(a,1.5)); p.drawPath(path)
-        if self._glow>0.05:
-            for ring in range(3):
-                exp=(ring+1)*3
-                hp=QPainterPath()
-                hp.addRoundedRect(QRectF(rect.adjusted(-exp,-exp,exp,exp)),
-                                  self._radius+exp,self._radius+exp)
-                ha=int(28*self._glow/(ring+1))
-                hc=QColor(self._accent.red(),self._accent.green(),self._accent.blue(),ha)
-                p.setPen(QPen(hc,1)); p.setBrush(Qt.NoBrush); p.drawPath(hp)
+    def paintEvent(self, _):
+        p = QPainter(self)
+        p.setRenderHint(QPainter.Antialiasing)
+        rect = self.rect().adjusted(1, 1, -1, -1)
+        path = QPainterPath()
+        path.addRoundedRect(QRectF(rect), self._radius, self._radius)
+        p.fillPath(path, QColor(P["surface"]))
+        p.setPen(QPen(QColor(P["border"]), 1))
+        p.drawPath(path)
         p.end()
 
 class PulseBtn(QPushButton):
-    def __init__(self, text, accent="#2AFFA0", dark_text=True, parent=None):
-        super().__init__(text,parent)
-        self._ac=QColor(accent); self._dt=dark_text
-        self._h=0.0; self._pulse=0.0; self._pd=1; self._press=False
-        self.setCursor(Qt.PointingHandCursor); self.setFixedHeight(48)
-        self.setFont(QFont("Segoe UI",12,QFont.Bold))
-        QTimer(self,timeout=self._tick,interval=16).start()
-
-    def _tick(self):
-        self._pulse+=0.035*self._pd
-        if self._pulse>=1: self._pd=-1
-        if self._pulse<=0: self._pd=1
-        self.update()
-
-    def enterEvent(self,e): self._h=1.0; super().enterEvent(e)
-    def leaveEvent(self,e): self._h=0.0; super().leaveEvent(e)
-    def mousePressEvent(self,e): self._press=True; super().mousePressEvent(e)
-    def mouseReleaseEvent(self,e): self._press=False; super().mouseReleaseEvent(e)
-
-    def paintEvent(self,_):
-        p=QPainter(self); p.setRenderHint(QPainter.Antialiasing)
-        r=self.rect(); path=QPainterPath()
-        path.addRoundedRect(QRectF(r.adjusted(1,1,-1,-1)),13,13)
-        g=QLinearGradient(r.left(),r.top(),r.right(),r.bottom())
-        base=QColor(self._ac)
-        light=base.darker(110) if self._press else base.lighter(int(108+self._h*14+self._pulse*8))
-        g.setColorAt(0,base); g.setColorAt(1,light)
-        p.fillPath(path,QBrush(g))
-        ga=int((0.3+self._pulse*0.2+self._h*0.25)*255*0.4)
-        for ring in range(3):
-            exp=(ring+1)*3; hp=QPainterPath()
-            hp.addRoundedRect(QRectF(r.adjusted(-exp+1,-exp+1,exp-1,exp-1)),13+exp,13+exp)
-            hc=QColor(self._ac.red(),self._ac.green(),self._ac.blue(),max(0,ga//(ring+1)))
-            p.setPen(QPen(hc,1)); p.setBrush(Qt.NoBrush); p.drawPath(hp)
-        p.setPen(QColor("#050310") if self._dt else QColor(P["bright"]))
-        p.setFont(self.font()); p.drawText(r,Qt.AlignCenter,self.text()); p.end()
+    """Primary solid button (Run / task chip style)."""
+    def __init__(self, text, accent=None, dark_text=False, parent=None):
+        super().__init__(text, parent)
+        self.setCursor(Qt.PointingHandCursor)
+        self.setFixedHeight(40)
+        self.setFont(QFont("Segoe UI", 12, QFont.DemiBold))
+        self.setStyleSheet(f"""
+            QPushButton {{
+                background: {P['primary']};
+                color: #FFFFFF;
+                border: none;
+                border-radius: 10px;
+                padding: 0 20px;
+            }}
+            QPushButton:hover {{ background: {P['primary2']}; }}
+            QPushButton:pressed {{ background: #0F2744; }}
+            QPushButton:disabled {{ background: {P['border2']}; color: {P['faint']}; }}
+        """)
 
 class GhostBtn(QPushButton):
-    def __init__(self,text,accent="#2AFFA0",parent=None):
-        super().__init__(text,parent); self._ac=QColor(accent); self._h=0.0
-        self.setCursor(Qt.PointingHandCursor); self.setFixedHeight(48)
-        self.setFont(QFont("Segoe UI",11,QFont.DemiBold))
-        QTimer(self,timeout=self.update,interval=16).start()
-
-    def enterEvent(self,e): self._h=1.0; super().enterEvent(e)
-    def leaveEvent(self,e): self._h=0.0; super().leaveEvent(e)
-
-    def paintEvent(self,_):
-        p=QPainter(self); p.setRenderHint(QPainter.Antialiasing)
-        r=self.rect(); path=QPainterPath()
-        path.addRoundedRect(QRectF(r.adjusted(1,1,-1,-1)),13,13)
-        p.fillPath(path,QColor(self._ac.red(),self._ac.green(),self._ac.blue(),int(self._h*30)))
-        ba=int(70+self._h*150)
-        p.setPen(QPen(QColor(self._ac.red(),self._ac.green(),self._ac.blue(),ba),1.5))
-        p.drawPath(path)
-        tc=QColor(self._ac) if self._h>0.3 else QColor(P["mid"])
-        p.setPen(tc); p.setFont(self.font()); p.drawText(r,Qt.AlignCenter,self.text()); p.end()
+    """Secondary outline button (Stop style)."""
+    def __init__(self, text, accent=None, parent=None):
+        super().__init__(text, parent)
+        self.setCursor(Qt.PointingHandCursor)
+        self.setFixedHeight(40)
+        self.setFont(QFont("Segoe UI", 12, QFont.DemiBold))
+        self.setStyleSheet(f"""
+            QPushButton {{
+                background: {P['surface']};
+                color: {P['text2']};
+                border: 1px solid {P['border2']};
+                border-radius: 10px;
+                padding: 0 18px;
+            }}
+            QPushButton:hover {{
+                background: {P['surface2']};
+                border-color: {P['muted']};
+                color: {P['text']};
+            }}
+            QPushButton:pressed {{ background: {P['border']}; }}
+        """)
 
 class GlowInput(QLineEdit):
-    def __init__(self,placeholder="",parent=None):
-        super().__init__(parent); self.setPlaceholderText(placeholder)
-        self.setFixedHeight(52); self.setFont(QFont("Segoe UI",12))
-        self._focused=False; self._g=0.0
-        QTimer(self,timeout=self._tick,interval=16).start()
-
-    def _tick(self):
-        t=1.0 if self._focused else 0.0
-        self._g+=(t-self._g)*0.1
+    """Clean input field matching the screenshot."""
+    def __init__(self, placeholder="", parent=None):
+        super().__init__(parent)
+        self.setPlaceholderText(placeholder)
+        self.setFixedHeight(44)
+        self.setFont(QFont("Segoe UI", 13))
         self.setStyleSheet(f"""
-            QLineEdit{{background:rgba(14,12,32,{int(185+self._g*40)});
-            border:1.5px solid rgba({int(42+self._g*160)},{int(142+self._g*100)},{int(self._g*60+180)},{int(80+self._g*175)});
-            border-radius:13px;padding:0 18px;color:{P['bright']};font-size:12px;
-            selection-background-color:rgba(42,255,160,80);}}
-            QLineEdit::placeholder{{color:{P['dim']};}}""")
-
-    def focusInEvent(self,e): self._focused=True; super().focusInEvent(e)
-    def focusOutEvent(self,e): self._focused=False; super().focusOutEvent(e)
+            QLineEdit {{
+                background: {P['surface']};
+                border: 1px solid {P['border']};
+                border-radius: 12px;
+                padding: 0 16px;
+                color: {P['text']};
+                selection-background-color: {P['active_bg']};
+            }}
+            QLineEdit:focus {{
+                border: 1.5px solid {P['accent']};
+            }}
+            QLineEdit::placeholder {{ color: {P['faint']}; }}
+        """)
 
 class GlowProgress(QWidget):
-    def __init__(self,parent=None):
-        super().__init__(parent); self.setFixedHeight(7)
-        self._val=0.0; self._target=0.0; self._phase=0.0
-        QTimer(self,timeout=self._tick,interval=16).start()
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFixedHeight(6)
+        self._val = 0.0
+        self._target = 0.0
+        QTimer(self, timeout=self._tick, interval=16).start()
 
-    def set_value(self,v): self._target=v
+    def set_value(self, v):
+        self._target = v
 
     def _tick(self):
-        self._val+=(self._target-self._val)*0.07
-        self._phase+=0.05; self.update()
+        self._val += (self._target - self._val) * 0.08
+        self.update()
 
-    def paintEvent(self,_):
-        p=QPainter(self); p.setRenderHint(QPainter.Antialiasing)
-        w,h=self.width(),self.height()
-        tp=QPainterPath(); tp.addRoundedRect(QRectF(0,0,w,h),h/2,h/2)
-        p.fillPath(tp,QColor(P["ridge"]))
-        fw=w*self._val/100
-        if fw>2:
-            fp=QPainterPath(); fp.addRoundedRect(QRectF(0,0,fw,h),h/2,h/2)
-            g=QLinearGradient(0,0,fw,0)
-            g.setColorAt(0,QColor("#2AFFA0")); g.setColorAt(0.5,QColor("#00E5FF"))
-            g.setColorAt(1,QColor("#A78BFA")); p.fillPath(fp,QBrush(g))
-            sx=fw*(0.5+math.sin(self._phase)*0.5)
-            sg=QRadialGradient(sx,h/2,fw*0.3)
-            sg.setColorAt(0,QColor(255,255,255,55)); sg.setColorAt(1,QColor(255,255,255,0))
-            p.setClipPath(fp); p.fillRect(QRectF(0,0,fw,h),QBrush(sg)); p.setClipping(False)
+    def paintEvent(self, _):
+        p = QPainter(self)
+        p.setRenderHint(QPainter.Antialiasing)
+        w, h = self.width(), self.height()
+        track = QPainterPath()
+        track.addRoundedRect(QRectF(0, 0, w, h), h / 2, h / 2)
+        p.fillPath(track, QColor(P["border"]))
+        fw = w * self._val / 100
+        if fw > 2:
+            fill = QPainterPath()
+            fill.addRoundedRect(QRectF(0, 0, fw, h), h / 2, h / 2)
+            p.fillPath(fill, QColor(P["primary"]))
         p.end()
 
 class ChatBubble(QWidget):
-    def __init__(self, text:str, is_agent:bool, parent=None):
+    def __init__(self, text: str, is_agent: bool, parent=None):
         super().__init__(parent)
         self.setAttribute(Qt.WA_TranslucentBackground)
-        lay = QHBoxLayout(self); lay.setContentsMargins(8,4,8,4)
+        lay = QHBoxLayout(self)
+        lay.setContentsMargins(0, 4, 0, 4)
         bubble = QLabel(text)
         bubble.setWordWrap(True)
-        bubble.setFont(QFont("Segoe UI",12))
+        bubble.setFont(QFont("Segoe UI", 13))
         bubble.setTextInteractionFlags(Qt.TextSelectableByMouse)
-        bubble.setMaximumWidth(680)
-        bubble.setSizePolicy(QSizePolicy.Preferred,QSizePolicy.Minimum)
+        bubble.setMaximumWidth(640)
+        bubble.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
         if is_agent:
-            bubble.setStyleSheet(f"""QLabel{{background:rgba(17,16,40,220);
-                border:1px solid rgba(42,255,160,80);
-                border-radius:16px;border-top-left-radius:4px;
-                padding:12px 16px;color:{P['bright']};line-height:1.6;}}""")
-            lay.addWidget(bubble); lay.addStretch()
+            bubble.setStyleSheet(f"""
+                QLabel {{
+                    background: {P['surface']};
+                    border: 1px solid {P['border']};
+                    border-radius: 14px;
+                    padding: 14px 18px;
+                    color: {P['text']};
+                }}
+            """)
+            lay.addWidget(bubble)
+            lay.addStretch()
         else:
-            bubble.setStyleSheet(f"""QLabel{{background:qlineargradient(x1:0,y1:0,x2:1,y2:1,
-                stop:0 rgba(42,255,160,40),stop:1 rgba(0,229,255,30));
-                border:1px solid rgba(42,255,160,120);
-                border-radius:16px;border-top-right-radius:4px;
-                padding:12px 16px;color:{P['bright']};}}""")
-            lay.addStretch(); lay.addWidget(bubble)
-        eff = QGraphicsOpacityEffect(bubble); bubble.setGraphicsEffect(eff)
-        anim = QPropertyAnimation(eff,b"opacity",self)
-        anim.setDuration(350); anim.setStartValue(0); anim.setEndValue(1)
-        anim.setEasingCurve(QEasingCurve.OutCubic); anim.start()
+            bubble.setStyleSheet(f"""
+                QLabel {{
+                    background: {P['active_bg']};
+                    border: 1px solid #BFDBFE;
+                    border-radius: 14px;
+                    padding: 14px 18px;
+                    color: {P['text']};
+                }}
+            """)
+            lay.addStretch()
+            lay.addWidget(bubble)
+        eff = QGraphicsOpacityEffect(bubble)
+        bubble.setGraphicsEffect(eff)
+        anim = QPropertyAnimation(eff, b"opacity", self)
+        anim.setDuration(280)
+        anim.setStartValue(0)
+        anim.setEndValue(1)
+        anim.setEasingCurve(QEasingCurve.OutCubic)
+        anim.start()
         self._anim = anim
 
 class NavBtn(QWidget):
     clicked = Signal(int)
-    ICONS  = ["💬","📋","🛠","⚙","👤","📖"]
-    LABELS = ["Agent","History","Tools","Settings","Founder","Docs"]
-    COLORS = [P["mint"],P["cyan"],P["amber"],P["violet"],P["rose"],P["sky"]]
+    # Clean icons matching screenshot style
+    ICONS  = ["▶", "🕐", "▦", "⚙", "👤", "📄"]
+    LABELS = ["Agent", "History", "Tools", "Settings", "Founder", "Docs"]
 
-    def __init__(self,idx,parent=None):
-        super().__init__(parent); self._idx=idx
-        self._active=False; self._h=0.0; self._hf=False
-        self.setCursor(Qt.PointingHandCursor); self.setFixedHeight(58)
+    def __init__(self, idx, parent=None):
+        super().__init__(parent)
+        self._idx = idx
+        self._active = False
+        self.setCursor(Qt.PointingHandCursor)
+        self.setFixedHeight(44)
         self.setAttribute(Qt.WA_TranslucentBackground)
-        QTimer(self,timeout=self._tick,interval=16).start()
 
-    def _tick(self):
-        t=1.0 if self._hf else 0.0
-        self._h+=(t-self._h)*0.1; self.update()
+    def set_active(self, v):
+        self._active = v
+        self.update()
 
-    def set_active(self,v): self._active=v; self.update()
-    def enterEvent(self,e): self._hf=True; super().enterEvent(e)
-    def leaveEvent(self,e): self._hf=False; super().leaveEvent(e)
-    def mousePressEvent(self,e): self.clicked.emit(self._idx)
+    def mousePressEvent(self, e):
+        self.clicked.emit(self._idx)
 
-    def paintEvent(self,_):
-        p=QPainter(self); p.setRenderHint(QPainter.Antialiasing)
-        w,h=self.width(),self.height()
-        col=QColor(self.COLORS[self._idx])
-        blend=1.0 if self._active else self._h
-        if blend>0.01:
-            path=QPainterPath()
-            path.addRoundedRect(QRectF(8,5,w-16,h-10),11,11)
-            p.fillPath(path,QColor(col.red(),col.green(),col.blue(),int(blend*(60 if self._active else 35))))
-            if self._active:
-                p.setPen(QPen(QColor(col.red(),col.green(),col.blue(),110),1.5))
-                p.drawPath(path)
+    def paintEvent(self, _):
+        p = QPainter(self)
+        p.setRenderHint(QPainter.Antialiasing)
+        w, h = self.width(), self.height()
         if self._active:
-            bar=QPainterPath(); bar.addRoundedRect(QRectF(0,h*0.2,3,h*0.6),2,2)
-            p.fillPath(bar,col)
-            bg=QRadialGradient(1,h/2,22)
-            bg.setColorAt(0,QColor(col.red(),col.green(),col.blue(),75))
-            bg.setColorAt(1,QColor(col.red(),col.green(),col.blue(),0))
-            p.fillRect(0,0,30,h,QBrush(bg))
-        p.setFont(QFont("Segoe UI",16))
-        p.setPen(col if (self._active or blend>0.3) else QColor(P["mid"]))
-        p.drawText(QRect(14,0,34,h),Qt.AlignVCenter|Qt.AlignLeft,self.ICONS[self._idx])
-        p.setPen(QColor(P["bright"]) if (self._active or blend>0.3) else QColor(P["mid"]))
-        p.setFont(QFont("Segoe UI",11,QFont.Bold if self._active else QFont.Normal))
-        p.drawText(QRect(52,0,w-60,h),Qt.AlignVCenter|Qt.AlignLeft,self.LABELS[self._idx])
+            path = QPainterPath()
+            path.addRoundedRect(QRectF(8, 4, w - 16, h - 8), 10, 10)
+            p.fillPath(path, QColor(P["active_bg"]))
+            # left accent bar
+            bar = QPainterPath()
+            bar.addRoundedRect(QRectF(0, 10, 3, h - 20), 1.5, 1.5)
+            p.fillPath(bar, QColor(P["active"]))
+        # icon + label
+        p.setFont(QFont("Segoe UI", 13))
+        color = QColor(P["active"] if self._active else P["muted"])
+        p.setPen(color)
+        p.drawText(QRect(22, 0, 28, h), Qt.AlignVCenter | Qt.AlignLeft, self.ICONS[self._idx])
+        p.setFont(QFont("Segoe UI", 13, QFont.DemiBold if self._active else QFont.Normal))
+        p.drawText(QRect(52, 0, w - 60, h), Qt.AlignVCenter | Qt.AlignLeft, self.LABELS[self._idx])
         p.end()
-        
+
 class LoginDialog(QDialog):
     """Email/password only, per spec. Appears only when the user clicks
     'Get MCP Link' — never blocks any other part of the app."""
@@ -639,16 +589,16 @@ class LoginDialog(QDialog):
         self._mgr = link_mgr
         self.setWindowTitle("Log in — MCP Link")
         self.setWindowIcon(QIcon(APP_ICON_PATH))
-        self.setFixedSize(360, 260)
-        self.setStyleSheet(f"QDialog{{background:{P['void']};}}")
+        self.setFixedSize(380, 280)
+        self.setStyleSheet(f"QDialog{{background:{P['surface']};}}")
         lay = QVBoxLayout(self); lay.setContentsMargins(28,24,28,24); lay.setSpacing(12)
 
-        title = QLabel("🔗  Get your MCP Link")
-        title.setFont(QFont("Segoe UI",15,QFont.Bold))
-        title.setStyleSheet(f"color:{P['mint']};background:transparent;")
+        title = QLabel("Get your MCP Link")
+        title.setFont(QFont("Segoe UI",16,QFont.Bold))
+        title.setStyleSheet(f"color:{P['text']};background:transparent;")
         sub = QLabel("Login is only needed here — chat and tasks never require it.")
-        sub.setFont(QFont("Segoe UI",9)); sub.setWordWrap(True)
-        sub.setStyleSheet(f"color:{P['mid']};background:transparent;")
+        sub.setFont(QFont("Segoe UI",11)); sub.setWordWrap(True)
+        sub.setStyleSheet(f"color:{P['muted']};background:transparent;")
         lay.addWidget(title); lay.addWidget(sub)
 
         self._email = GlowInput("Email"); lay.addWidget(self._email)
@@ -656,16 +606,16 @@ class LoginDialog(QDialog):
         lay.addWidget(self._pw)
 
         row = QHBoxLayout(); row.setSpacing(10)
-        login_btn = PulseBtn("Log in", P["mint"], True)
-        signup_btn = GhostBtn("Sign up", P["cyan"])
+        login_btn = PulseBtn("Log in")
+        signup_btn = GhostBtn("Sign up")
         login_btn.clicked.connect(self._do_login)
         signup_btn.clicked.connect(self._do_signup)
         row.addWidget(login_btn); row.addWidget(signup_btn)
         lay.addLayout(row)
 
         self._status = QLabel(""); self._status.setWordWrap(True)
-        self._status.setFont(QFont("Segoe UI",9))
-        self._status.setStyleSheet(f"color:{P['rose']};background:transparent;")
+        self._status.setFont(QFont("Segoe UI",10))
+        self._status.setStyleSheet(f"color:{P['log_err']};background:transparent;")
         lay.addWidget(self._status)
 
     def _do_login(self):
@@ -685,78 +635,124 @@ class LoginDialog(QDialog):
 class Sidebar(QWidget):
     page_changed = Signal(int)
 
-    def __init__(self,parent=None):
-        super().__init__(parent); self.setFixedWidth(215)
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFixedWidth(220)
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self._btns=[]
+        self._btns = []
         self._link_mgr = None
         self._build()
 
     def _build(self):
-        lay=QVBoxLayout(self); lay.setContentsMargins(0,0,0,0); lay.setSpacing(0)
+        lay = QVBoxLayout(self)
+        lay.setContentsMargins(0, 0, 0, 0)
+        lay.setSpacing(0)
 
-        lw=QWidget(); lw.setAttribute(Qt.WA_TranslucentBackground); lw.setFixedHeight(86)
-        ll=QVBoxLayout(lw); ll.setContentsMargins(18,20,18,10); ll.setSpacing(3)
-        lg=QLabel("⚙  NPM-AutoCode-AI"); lg.setFont(QFont("Segoe UI",14,QFont.Bold))
-        lg.setStyleSheet(f"color:{P['mint']};background:transparent;")
-        lv=QLabel("v4.0  ·  npmai_agents"); lv.setFont(QFont("Segoe UI",9))
-        lv.setStyleSheet(f"color:{P['dim']};background:transparent;")
-        ll.addWidget(lg); ll.addWidget(lv); lay.addWidget(lw)
+        # ── Logo header (npmai.png + product name) ──
+        header = QWidget()
+        header.setFixedHeight(72)
+        hl = QHBoxLayout(header)
+        hl.setContentsMargins(16, 16, 16, 12)
+        hl.setSpacing(10)
+
+        logo = QLabel()
+        logo.setFixedSize(36, 36)
+        logo.setScaledContents(True)
+        if os.path.exists(APP_ICON_PATH):
+            logo.setPixmap(QIcon(APP_ICON_PATH).pixmap(36, 36))
+        else:
+            logo.setStyleSheet(f"background:{P['primary']};border-radius:8px;")
+            logo.setText("n")
+            logo.setAlignment(Qt.AlignCenter)
+            logo.setStyleSheet(f"background:{P['primary']};color:white;border-radius:8px;font-weight:bold;")
+        hl.addWidget(logo)
+
+        titles = QVBoxLayout()
+        titles.setSpacing(1)
+        name = QLabel("NPM-AutoCode-AI")
+        name.setFont(QFont("Segoe UI", 12, QFont.Bold))
+        name.setStyleSheet(f"color:{P['text']};background:transparent;")
+        ver = QLabel("v3.0 · npmai_agents")
+        ver.setFont(QFont("Segoe UI", 10))
+        ver.setStyleSheet(f"color:{P['muted']};background:transparent;")
+        titles.addWidget(name)
+        titles.addWidget(ver)
+        hl.addLayout(titles)
+        hl.addStretch()
+        lay.addWidget(header)
+
+        self._sep(lay)
+        lay.addSpacing(8)
+
+        # ── Nav buttons ──
+        for i in range(6):
+            b = NavBtn(i)
+            b.set_active(i == 0)
+            b.clicked.connect(self._on_nav)
+            self._btns.append(b)
+            lay.addWidget(b)
+
+        lay.addStretch()
         self._sep(lay)
 
-        self._mcp_lbl=QLabel("  ● MCP Link: not connected")
-        self._mcp_lbl.setFont(QFont("Segoe UI",9))
-        self._mcp_lbl.setStyleSheet(f"color:{P['dim']};background:transparent;padding:6px 0;")
-        lay.addWidget(self._mcp_lbl)
-        self._sep(lay); lay.addSpacing(6)
+        # ── Bottom MCP section ──
+        footer = QWidget()
+        fl = QVBoxLayout(footer)
+        fl.setContentsMargins(14, 12, 14, 16)
+        fl.setSpacing(8)
 
-        nl=QLabel("   NAVIGATION"); nl.setFont(QFont("Segoe UI",8,QFont.Bold))
-        nl.setStyleSheet(f"color:{P['dim']};background:transparent;letter-spacing:3px;")
-        lay.addWidget(nl); lay.addSpacing(2)
+        self._mcp_lbl = QLabel("●  MCP not connected")
+        self._mcp_lbl.setFont(QFont("Segoe UI", 11))
+        self._mcp_lbl.setStyleSheet(f"""
+            color:{P['muted']};
+            background:{P['surface2']};
+            border-radius:8px;
+            padding:8px 12px;
+        """)
+        fl.addWidget(self._mcp_lbl)
 
-        for i in range(6):
-            b=NavBtn(i); b.set_active(i==0)
-            b.clicked.connect(self._on_nav)
-            self._btns.append(b); lay.addWidget(b)
-
-        lay.addStretch(); self._sep(lay)
-
-        fw=QWidget(); fw.setAttribute(Qt.WA_TranslucentBackground)
-        fl=QVBoxLayout(fw); fl.setContentsMargins(12,10,12,16); fl.setSpacing(8)
-
-        self._mcp_btn=QPushButton("🔗  Get MCP Link")
-        self._mcp_btn.setCursor(Qt.PointingHandCursor); self._mcp_btn.setFixedHeight(34)
-        self._mcp_btn.setStyleSheet(self._btn_style())
+        self._mcp_btn = QPushButton("Get MCP link")
+        self._mcp_btn.setCursor(Qt.PointingHandCursor)
+        self._mcp_btn.setFixedHeight(36)
+        self._mcp_btn.setStyleSheet(f"""
+            QPushButton {{
+                background:{P['surface']};
+                border:1px solid {P['border2']};
+                border-radius:8px;
+                color:{P['text2']};
+                font-size:12px;
+                font-family:'Segoe UI';
+            }}
+            QPushButton:hover {{
+                background:{P['surface2']};
+                border-color:{P['muted']};
+                color:{P['text']};
+            }}
+        """)
         self._mcp_btn.clicked.connect(self._get_mcp_link)
         fl.addWidget(self._mcp_btn)
 
-        for lbl,url in [("🐍 PyPI","https://pypi.org/project/npmai"),
-                         ("⭐ GitHub","https://github.com/npmaiecosystem")]:
-            b2=QPushButton(lbl); b2.setCursor(Qt.PointingHandCursor); b2.setFixedHeight(32)
-            b2.setStyleSheet(self._btn_style())
-            import webbrowser
-            b2.clicked.connect(lambda _,u=url: webbrowser.open(u))
-            fl.addWidget(b2)
+        links = QLabel('<a href="https://pypi.org/project/npmai" style="color:#64748B;text-decoration:none;">PyPI</a>  ·  <a href="https://github.com/npmaiecosystem" style="color:#64748B;text-decoration:none;">GitHub</a>')
+        links.setFont(QFont("Segoe UI", 10))
+        links.setOpenExternalLinks(True)
+        links.setAlignment(Qt.AlignCenter)
+        links.setStyleSheet("background:transparent;")
+        fl.addWidget(links)
 
-        eco=QLabel("Powered by NPMAI Ecosystem"); eco.setFont(QFont("Segoe UI",9))
-        eco.setStyleSheet(f"color:{P['dim']};background:transparent;"); eco.setAlignment(Qt.AlignCenter)
-        fl.addWidget(eco); lay.addWidget(fw)
+        lay.addWidget(footer)
 
-    def _btn_style(self):
-        return f"""QPushButton{{background:rgba(42,255,160,10);border:1px solid rgba(42,255,160,35);
-border-radius:9px;color:{P['mid']};font-size:11px;font-family:'Segoe UI';}}
-QPushButton:hover{{background:rgba(42,255,160,22);border-color:rgba(42,255,160,90);color:{P['mint']};}}"""
+    def _sep(self, lay):
+        s = QFrame()
+        s.setFixedHeight(1)
+        s.setStyleSheet(f"background:{P['border']};border:none;")
+        lay.addWidget(s)
 
-    def _sep(self,lay):
-        s=QFrame(); s.setFixedHeight(1)
-        s.setStyleSheet(f"background:{P['ghost']};border:none;"); lay.addWidget(s)
-
-    def _on_nav(self,idx):
-        for i,b in enumerate(self._btns): b.set_active(i==idx)
+    def _on_nav(self, idx):
+        for i, b in enumerate(self._btns):
+            b.set_active(i == idx)
         self.page_changed.emit(idx)
 
     def _get_mcp_link(self):
-        """ import here, not at module load time — mcp_link.py needs supabase """
         try:
             from mcp_link import MCPLinkManager, SupabaseAuthError
         except ImportError as e:
@@ -765,7 +761,9 @@ QPushButton:hover{{background:rgba(42,255,160,22);border-color:rgba(42,255,160,9
             return
 
         if self._link_mgr is None:
-            self._link_mgr = MCPLinkManager(log_cb=lambda s: self._mcp_lbl.setText(f"  ● {s[:28]}"))
+            self._link_mgr = MCPLinkManager(
+                log_cb=lambda s: self._mcp_lbl.setText(f"●  {s[:32]}")
+            )
 
         if not self._link_mgr.is_logged_in:
             dlg = LoginDialog(self._link_mgr, self)
@@ -775,20 +773,25 @@ QPushButton:hover{{background:rgba(42,255,160,22);border-color:rgba(42,255,160,9
         try:
             link = self._link_mgr.get_or_create_link()
             self._link_mgr.start_listener()
-            self._mcp_lbl.setText("  ● MCP Link: connected")
-            self._mcp_lbl.setStyleSheet(f"color:{P['mint']};background:transparent;padding:6px 0;")
+            self._mcp_lbl.setText("●  MCP connected")
+            self._mcp_lbl.setStyleSheet(f"""
+                color:{P['success']};
+                background:{P['success_bg']};
+                border-radius:8px;
+                padding:8px 12px;
+            """)
             QMessageBox.information(self, "Your MCP Link",
-                f"Paste this into Claude/Grok's custom connector settings:\n\n{link}")
+                f"Paste this into Claude or Grok custom connector settings:\n\n{link}")
         except Exception as e:
             QMessageBox.warning(self, "Couldn't get MCP link", str(e))
 
-    def paintEvent(self,_):
-        p=QPainter(self); p.setRenderHint(QPainter.Antialiasing)
-        g=QLinearGradient(0,0,self.width(),0)
-        g.setColorAt(0,QColor(6,4,18,245)); g.setColorAt(1,QColor(9,7,22,215))
-        p.fillRect(self.rect(),QBrush(g))
-        p.setPen(QPen(QColor(P["ghost"]),1))
-        p.drawLine(self.width()-1,0,self.width()-1,self.height()); p.end()
+    def paintEvent(self, _):
+        p = QPainter(self)
+        p.setRenderHint(QPainter.Antialiasing)
+        p.fillRect(self.rect(), QColor(P["surface"]))
+        p.setPen(QPen(QColor(P["border"]), 1))
+        p.drawLine(self.width() - 1, 0, self.width() - 1, self.height())
+        p.end()
 
 class LLMConfigDialog(QDialog):
     """'Configure LLMs' — Part ① sets up credentials/args per provider (only the
@@ -801,7 +804,7 @@ class LLMConfigDialog(QDialog):
         self.setWindowTitle("Configure LLMs")
         self.setWindowIcon(QIcon(APP_ICON_PATH))
         self.resize(640, 720)
-        self.setStyleSheet(f"QDialog{{background:{P['void']};}}")
+        self.setStyleSheet(f"QDialog{{background:{P['surface']};}}")
 
         outer=QVBoxLayout(self); outer.setContentsMargins(0,0,0,0)
         scroll=QScrollArea(); scroll.setWidgetResizable(True)
@@ -809,13 +812,13 @@ class LLMConfigDialog(QDialog):
         page=QWidget(); page.setAttribute(Qt.WA_TranslucentBackground)
         lay=QVBoxLayout(page); lay.setContentsMargins(26,22,26,22); lay.setSpacing(16)
 
-        t=QLabel("🤖  Configure LLMs"); t.setFont(QFont("Segoe UI",17,QFont.Bold))
-        t.setStyleSheet(f"color:{P['mint']};background:transparent;"); lay.addWidget(t)
+        t=QLabel("Configure LLMs"); t.setFont(QFont("Segoe UI",18,QFont.Bold))
+        t.setStyleSheet(f"color:{P['text']};background:transparent;"); lay.addWidget(t)
         sub=QLabel("① Add credentials for any provider you plan to use — only the fields that provider "
                     "actually needs are shown. ② Then assign which provider+model handles each of the 6 "
                     "pipeline stages. Everything is saved locally and reused automatically on every run.")
-        sub.setFont(QFont("Segoe UI",9)); sub.setWordWrap(True)
-        sub.setStyleSheet(f"color:{P['mid']};background:transparent;"); lay.addWidget(sub)
+        sub.setFont(QFont("Segoe UI",12)); sub.setWordWrap(True)
+        sub.setStyleSheet(f"color:{P['muted']};background:transparent;"); lay.addWidget(sub)
 
         h1=QLabel("① Provider Credentials"); h1.setFont(QFont("Segoe UI",13,QFont.Bold))
         h1.setStyleSheet(f"color:{P['bright']};background:transparent;"); lay.addWidget(h1)
@@ -933,197 +936,384 @@ class LLMConfigDialog(QDialog):
 
 
 class AgentPage(QWidget):
-    def __init__(self,parent=None):
+    STAGES = ["Planner", "Tool manager", "Coder", "Auditor", "Verifier"]
+
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self._worker=None; self._killed=[False]
+        self._worker = None
+        self._killed = [False]
+        self._stage_idx = -1
+        self._type_timer = None
+        self._type_text = ""
+        self._type_pos = 0
         self._build()
 
     def _build(self):
-        outer=QVBoxLayout(self); outer.setContentsMargins(0,0,0,0)
-        topbar=QWidget(); topbar.setAttribute(Qt.WA_TranslucentBackground); topbar.setFixedHeight(64)
-        tbl=QHBoxLayout(topbar); tbl.setContentsMargins(36,12,36,12); tbl.setSpacing(12)
-        title=QLabel("NPM-AutoCode-AI"); title.setFont(QFont("Segoe UI",18,QFont.Bold))
-        title.setStyleSheet(f"color:{P['mint']};background:transparent;")
-        sub=QLabel("Runs fully locally · no login required"); sub.setFont(QFont("Segoe UI",10))
-        sub.setStyleSheet(f"color:{P['dim']};background:transparent;")
-        tc=QVBoxLayout(); tc.setSpacing(0); tc.addWidget(title); tc.addWidget(sub)
-        tbl.addLayout(tc); tbl.addStretch()
+        outer = QVBoxLayout(self)
+        outer.setContentsMargins(28, 20, 28, 20)
+        outer.setSpacing(16)
 
-        for badge,col in [("⚡ 1371 Tools",P["mint"]),("🔒 Local-first",P["violet"]),("🤖 Agentic",P["cyan"])]:
-            b=QLabel(f" {badge} "); b.setFont(QFont("Segoe UI",9,QFont.Bold))
-            b.setStyleSheet(f"color:{col};background:rgba(42,255,160,12);border:1px solid rgba(42,255,160,35);border-radius:9px;padding:3px 8px;")
-            tbl.addWidget(b)
+        # Header: title + Ready pill
+        header = QHBoxLayout()
+        title_col = QVBoxLayout()
+        title_col.setSpacing(2)
+        title = QLabel("Agent")
+        title.setFont(QFont("Segoe UI", 22, QFont.Bold))
+        title.setStyleSheet(f"color:{P['text']};background:transparent;")
+        sub = QLabel("Describe a task. It plans, codes, audits, runs and verifies.")
+        sub.setFont(QFont("Segoe UI", 13))
+        sub.setStyleSheet(f"color:{P['muted']};background:transparent;")
+        title_col.addWidget(title)
+        title_col.addWidget(sub)
+        header.addLayout(title_col)
+        header.addStretch()
 
-        llm_cfg_btn=GhostBtn("⚙ Configure LLMs",P["violet"]); llm_cfg_btn.setFixedHeight(30)
-        llm_cfg_btn.clicked.connect(self._open_llm_config)
-        tbl.addWidget(llm_cfg_btn)
+        # Configure LLMs button
+        llm_btn = GhostBtn("Configure LLMs")
+        llm_btn.setFixedHeight(36)
+        llm_btn.clicked.connect(self._open_llm_config)
+        header.addWidget(llm_btn)
 
-        sep=QFrame(); sep.setFixedHeight(1); sep.setStyleSheet(f"background:{P['ghost']};border:none;")
-        outer.addWidget(topbar); outer.addWidget(sep)
-        chat_scroll=QScrollArea(); chat_scroll.setWidgetResizable(True)
-        chat_scroll.setStyleSheet("QScrollArea{border:none;background:transparent;}")
-        chat_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self._chat_container=QWidget(); self._chat_container.setAttribute(Qt.WA_TranslucentBackground)
-        self._chat_layout=QVBoxLayout(self._chat_container)
-        self._chat_layout.setContentsMargins(28,20,28,20); self._chat_layout.setSpacing(12)
-        self._chat_layout.addStretch()
-        chat_scroll.setWidget(self._chat_container)
-        self._chat_scroll=chat_scroll
-        outer.addWidget(chat_scroll,1)
-        bottom=QWidget(); bottom.setAttribute(Qt.WA_TranslucentBackground)
-        bl=QVBoxLayout(bottom); bl.setContentsMargins(28,14,28,20); bl.setSpacing(10)
-        prow=QHBoxLayout(); prow.setSpacing(10)
-        self._status_lbl=QLabel("Ready"); self._status_lbl.setFont(QFont("Segoe UI",10))
-        self._status_lbl.setStyleSheet(f"color:{P['mid']};background:transparent;")
-        self._pct_lbl=QLabel(""); self._pct_lbl.setFont(QFont("Segoe UI",10,QFont.Bold))
-        self._pct_lbl.setStyleSheet(f"color:{P['mint']};background:transparent;")
-        prow.addWidget(self._status_lbl); prow.addStretch(); prow.addWidget(self._pct_lbl)
-        bl.addLayout(prow)
-        self._prog=GlowProgress(); bl.addWidget(self._prog)
-        self._log_box=QTextEdit(); self._log_box.setReadOnly(True)
-        self._log_box.setFont(QFont("Cascadia Code",10))
-        self._log_box.setFixedHeight(140)
-        self._log_box.setStyleSheet(f"""QTextEdit{{background:rgba(4,3,12,190);
-border:1px solid {P['ghost']};border-radius:11px;padding:10px;color:{P['bright']};}}""")
-        self._log_box.setHtml(f'<font color="{P["dim"]}">Execution logs appear here…</font>')
-        bl.addWidget(self._log_box)
-        irow=QHBoxLayout(); irow.setSpacing(10)
-        self._input=GlowInput("Ask anything or describe a task to automate…")
+        self._ready_pill = QLabel("●  Ready")
+        self._ready_pill.setFont(QFont("Segoe UI", 12, QFont.DemiBold))
+        self._ready_pill.setStyleSheet(f"""
+            color:{P['success']};
+            background:{P['success_bg']};
+            border-radius:14px;
+            padding:6px 14px;
+        """)
+        header.addWidget(self._ready_pill)
+        outer.addLayout(header)
+
+        line = QFrame()
+        line.setFixedHeight(2)
+        line.setStyleSheet(f"background:{P['primary']};border:none;")
+        outer.addWidget(line)
+
+        # Progress stepper
+        stepper_row = QHBoxLayout()
+        stepper_row.setSpacing(0)
+        self._stage_labels = []
+        self._stage_dots = []
+        for i, name in enumerate(self.STAGES):
+            col = QVBoxLayout()
+            col.setAlignment(Qt.AlignCenter)
+            col.setSpacing(6)
+            dot = QLabel("○")
+            dot.setFont(QFont("Segoe UI", 16))
+            dot.setAlignment(Qt.AlignCenter)
+            dot.setStyleSheet(f"color:{P['border2']};background:transparent;")
+            lbl = QLabel(name)
+            lbl.setFont(QFont("Segoe UI", 11))
+            lbl.setAlignment(Qt.AlignCenter)
+            lbl.setStyleSheet(f"color:{P['faint']};background:transparent;")
+            col.addWidget(dot)
+            col.addWidget(lbl)
+            self._stage_dots.append(dot)
+            self._stage_labels.append(lbl)
+            stepper_row.addLayout(col, 1)
+            if i < len(self.STAGES) - 1:
+                conn = QFrame()
+                conn.setFixedHeight(2)
+                conn.setStyleSheet(f"background:{P['border']};border:none;margin-top:10px;")
+                stepper_row.addWidget(conn, 1)
+        outer.addLayout(stepper_row)
+        outer.addSpacing(4)
+
+        # Task chip
+        chip_row = QHBoxLayout()
+        chip_row.addStretch()
+        self._task_chip = QLabel("")
+        self._task_chip.setFont(QFont("Segoe UI", 12, QFont.DemiBold))
+        self._task_chip.setStyleSheet(f"""
+            color:white;
+            background:{P['primary']};
+            border-radius:16px;
+            padding:8px 18px;
+        """)
+        self._task_chip.hide()
+        chip_row.addWidget(self._task_chip)
+        outer.addLayout(chip_row)
+
+        # Agent status card
+        self._status_card = QFrame()
+        self._status_card.setStyleSheet(f"""
+            QFrame {{
+                background:{P['surface']};
+                border:1px solid {P['border']};
+                border-radius:14px;
+            }}
+        """)
+        sc_lay = QVBoxLayout(self._status_card)
+        sc_lay.setContentsMargins(18, 14, 18, 14)
+        sc_lay.setSpacing(6)
+        agent_tag = QLabel("Agent")
+        agent_tag.setFont(QFont("Segoe UI", 11))
+        agent_tag.setStyleSheet(f"color:{P['faint']};background:transparent;")
+        self._status_body = QLabel("Ready. Describe a task below.")
+        self._status_body.setFont(QFont("Segoe UI", 14))
+        self._status_body.setWordWrap(True)
+        self._status_body.setStyleSheet(f"color:{P['text']};background:transparent;")
+        self._step_lbl = QLabel("")
+        self._step_lbl.setFont(QFont("Segoe UI", 11))
+        self._step_lbl.setStyleSheet(f"color:{P['muted']};background:transparent;")
+        sc_lay.addWidget(agent_tag)
+        sc_lay.addWidget(self._status_body)
+        sc_lay.addWidget(self._step_lbl)
+        outer.addWidget(self._status_card)
+
+        # Execution log
+        self._log_box = QTextEdit()
+        self._log_box.setReadOnly(True)
+        self._log_box.setFont(QFont("Cascadia Code", 11))
+        self._log_box.setMinimumHeight(180)
+        self._log_box.setStyleSheet(f"""
+            QTextEdit {{
+                background:{P['log_bg']};
+                border:none;
+                border-radius:12px;
+                padding:14px;
+                color:{P['log_text']};
+            }}
+        """)
+        self._log_box.setHtml('<span style="color:#64748B">Execution log</span>')
+        outer.addWidget(self._log_box, 1)
+
+        # Input row
+        irow = QHBoxLayout()
+        irow.setSpacing(10)
+        self._input = GlowInput("Describe a task in plain English")
         self._input.returnPressed.connect(self._send)
-        self._run_btn=PulseBtn("▶  Run",P["mint"]); self._run_btn.setFixedWidth(100)
+        self._kill_btn = GhostBtn("Stop")
+        self._kill_btn.setFixedWidth(80)
+        self._kill_btn.clicked.connect(self._kill)
+        self._kill_btn.setEnabled(False)
+        self._run_btn = PulseBtn("Run")
+        self._run_btn.setFixedWidth(90)
         self._run_btn.clicked.connect(self._send)
-        self._kill_btn=GhostBtn("■ Kill",P["rose"]); self._kill_btn.setFixedWidth(90)
-        self._kill_btn.clicked.connect(self._kill); self._kill_btn.setEnabled(False)
-        self._voice_btn=GhostBtn("🎤",P["sky"]); self._voice_btn.setFixedWidth(60)
-        self._voice_btn.clicked.connect(self._voice_input)
-        irow.addWidget(self._input); irow.addWidget(self._run_btn)
-        irow.addWidget(self._kill_btn); irow.addWidget(self._voice_btn)
-        bl.addLayout(irow)
-        chips=QHBoxLayout(); chips.setSpacing(8)
-        self._chip_tasks=[
-            ("📁 Rename files","Rename all files in Downloads adding today's date prefix"),
-            ("🌐 Scrape web","Scrape top 20 headlines from https://news.ycombinator.com save to news.xlsx on Desktop"),
-            ("⭐ GitHub issue","Create a GitHub issue titled 'test' in my repo"),
-            ("☁ AWS S3","List all objects in my S3 bucket"),
-            ("🔒 Zip files","Find all PDFs in Documents sort by date zip into archive.zip on Desktop"),
-            ("🖼 Resize imgs","Resize all images in Desktop/Photos folder to 800x600"),
-        ]
-        for label,task in self._chip_tasks:
-            c=QPushButton(label); c.setCursor(Qt.PointingHandCursor); c.setFixedHeight(30)
-            c.setStyleSheet(f"""QPushButton{{background:rgba(42,255,160,10);
-border:1px solid rgba(42,255,160,38);border-radius:9px;
-color:rgba(42,255,160,180);font-size:10px;padding:0 12px;}}
-QPushButton:hover{{background:rgba(42,255,160,22);border-color:rgba(42,255,160,100);color:{P['mint']};}}""")
-            c.clicked.connect(lambda _,t=task: self._input.setText(t))
-            chips.addWidget(c)
-        chips.addStretch(); bl.addLayout(chips)
-        sep2=QFrame(); sep2.setFixedHeight(1); sep2.setStyleSheet(f"background:{P['ghost']};border:none;")
-        outer.addWidget(sep2); outer.addWidget(bottom)
+        irow.addWidget(self._input, 1)
+        irow.addWidget(self._kill_btn)
+        irow.addWidget(self._run_btn)
+        outer.addLayout(irow)
+
+        # Hidden helpers kept for worker signals
+        self._prog = GlowProgress()
+        self._prog.hide()
+        self._pct_lbl = QLabel("")
+        self._pct_lbl.hide()
+        self._status_lbl = QLabel("Ready")
+        self._status_lbl.hide()
+
+    def _set_stage(self, idx: int):
+        self._stage_idx = idx
+        for i, (dot, lbl) in enumerate(zip(self._stage_dots, self._stage_labels)):
+            if i < idx:
+                dot.setText("✓")
+                dot.setStyleSheet(f"color:{P['primary']};background:transparent;")
+                lbl.setStyleSheet(f"color:{P['primary']};background:transparent;")
+            elif i == idx:
+                dot.setText("◉")
+                dot.setStyleSheet(f"color:{P['primary']};background:transparent;")
+                lbl.setStyleSheet(f"color:{P['primary']};background:transparent;font-weight:600;")
+            else:
+                dot.setText("○")
+                dot.setStyleSheet(f"color:{P['border2']};background:transparent;")
+                lbl.setStyleSheet(f"color:{P['faint']};background:transparent;")
+
+    def _type_status(self, text: str):
+        if self._type_timer:
+            self._type_timer.stop()
+        self._type_text = text
+        self._type_pos = 0
+        self._status_body.setText("")
+        self._type_timer = QTimer(self)
+        self._type_timer.timeout.connect(self._type_tick)
+        self._type_timer.start(18)
+
+    def _type_tick(self):
+        self._type_pos += 1
+        if self._type_pos >= len(self._type_text):
+            self._status_body.setText(self._type_text)
+            self._type_timer.stop()
+        else:
+            self._status_body.setText(self._type_text[:self._type_pos] + "▋")
 
     def _open_llm_config(self):
-        dlg=LLMConfigDialog(self)
+        dlg = LLMConfigDialog(self)
         dlg.exec()
 
-    def _add_bubble(self, text:str, is_agent:bool):
-        b=ChatBubble(text, is_agent)
-        self._chat_layout.insertWidget(self._chat_layout.count()-1, b)
-        QTimer.singleShot(50, lambda: self._chat_scroll.verticalScrollBar().setValue(
-            self._chat_scroll.verticalScrollBar().maximum()))
+    def _add_bubble(self, text: str, is_agent: bool):
+        if is_agent:
+            self._type_status(text)
 
-    def _log(self, html:str):
+    def _log(self, html: str):
         self._log_box.append(html)
         self._log_box.verticalScrollBar().setValue(self._log_box.verticalScrollBar().maximum())
+        low = html.lower()
+        if "planner" in low:
+            self._set_stage(0)
+        elif "tool" in low and "manager" in low:
+            self._set_stage(1)
+        elif "coder" in low or "writing" in low:
+            self._set_stage(2)
+        elif "auditor" in low or "audit" in low:
+            self._set_stage(3)
+        elif "verifier" in low or "verify" in low:
+            self._set_stage(4)
 
     def _voice_input(self):
-        """If you are working with voice input kindly read the documentation of npmai_agents and this code uses
-        npmai_agents version 1.0.2, npmai_agents change frequently although not syntax but it will be better to read
-        before making any change."""
-        """ old VoiceTool.listen(): SpeechAITool.transcribe_realtime """
         from npmai_agents.Tools_security_ai import SpeechAITool
         r = SpeechAITool.transcribe_realtime(duration=5)
         if r.success and r.data:
-            self._input.setText(r.data.get("text",""))
+            self._input.setText(r.data.get("text", ""))
 
     def _kill(self):
-        if self._worker: self._worker.kill()
+        if self._worker:
+            self._worker.kill()
         self._kill_btn.setEnabled(False)
-        self._run_btn.setEnabled(True); self._run_btn.setText("▶  Run")
+        self._run_btn.setEnabled(True)
+        self._run_btn.setText("Run")
+        self._ready_pill.setText("●  Ready")
+        self._ready_pill.setStyleSheet(f"""
+            color:{P['success']};background:{P['success_bg']};
+            border-radius:14px;padding:6px 14px;
+        """)
 
     def _send(self):
-        task=self._input.text().strip()
-        if not task: return
+        task = self._input.text().strip()
+        if not task:
+            return
         self._input.clear()
-        self._add_bubble(task, False)
-        self._run_btn.setEnabled(False); self._run_btn.setText("⏳")
+        self._task_chip.setText(task[:60] + ("…" if len(task) > 60 else ""))
+        self._task_chip.show()
+        self._type_status("Planning your task…")
+        self._step_lbl.setText("")
+        self._set_stage(0)
+        self._run_btn.setEnabled(False)
+        self._run_btn.setText("…")
         self._kill_btn.setEnabled(True)
+        self._ready_pill.setText("●  Running")
+        self._ready_pill.setStyleSheet("""
+            color:#B45309;background:#FFFBEB;
+            border-radius:14px;padding:6px 14px;
+        """)
         self._prog.set_value(3)
         self._log_box.clear()
-        self._worker=AgentWorker(task)
+        self._log_box.setHtml('<span style="color:#64748B">Execution log</span>')
+        self._worker = AgentWorker(task)
         self._worker.log_sig.connect(self._log)
         self._worker.progress_sig.connect(self._prog.set_value)
-        self._worker.progress_sig.connect(lambda v: self._pct_lbl.setText(f"{v}%"))
-        self._worker.status_sig.connect(lambda s: self._status_lbl.setText(s))
+        self._worker.status_sig.connect(lambda s: self._step_lbl.setText(s))
         self._worker.bubble_sig.connect(self._add_bubble)
         self._worker.done_sig.connect(self._done)
         self._worker.start()
 
-    def _done(self, ok:bool, msg:str):
-        self._run_btn.setEnabled(True); self._run_btn.setText("▶  Run")
+    def _done(self, ok: bool, msg: str):
+        self._run_btn.setEnabled(True)
+        self._run_btn.setText("Run")
         self._kill_btn.setEnabled(False)
-        self._status_lbl.setText("Done ✓" if ok else "Failed")
+        if ok:
+            self._set_stage(5)
+            self._type_status(msg if msg else "Task completed successfully.")
+            self._ready_pill.setText("●  Ready")
+            self._ready_pill.setStyleSheet(f"""
+                color:{P['success']};background:{P['success_bg']};
+                border-radius:14px;padding:6px 14px;
+            """)
+        else:
+            self._type_status(msg if msg else "Task failed.")
+            self._ready_pill.setText("●  Failed")
+            self._ready_pill.setStyleSheet("""
+                color:#B91C1C;background:#FEF2F2;
+                border-radius:14px;padding:6px 14px;
+            """)
 
 
 class HistoryPage(QWidget):
-    def __init__(self,parent=None):
-        super().__init__(parent); self.setAttribute(Qt.WA_TranslucentBackground); self._build()
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self._build()
 
     def _build(self):
-        outer=QVBoxLayout(self); outer.setContentsMargins(0,0,0,0)
-        scroll=QScrollArea(); scroll.setWidgetResizable(True)
+        outer = QVBoxLayout(self)
+        outer.setContentsMargins(0, 0, 0, 0)
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
         scroll.setStyleSheet("QScrollArea{border:none;background:transparent;}")
-        page=QWidget(); page.setAttribute(Qt.WA_TranslucentBackground)
-        self._lay=QVBoxLayout(page); self._lay.setContentsMargins(36,36,36,36); self._lay.setSpacing(10)
-        header=QHBoxLayout()
-        t=QLabel("📋  Task History"); t.setFont(QFont("Segoe UI",20,QFont.Bold))
-        t.setStyleSheet(f"color:{P['cyan']};background:transparent;")
-        refresh=GhostBtn("↺ Refresh",P["cyan"]); refresh.setFixedSize(110,36)
+        page = QWidget()
+        page.setAttribute(Qt.WA_TranslucentBackground)
+        self._lay = QVBoxLayout(page)
+        self._lay.setContentsMargins(36, 36, 36, 36)
+        self._lay.setSpacing(12)
+
+        header = QHBoxLayout()
+        t = QLabel("Task History")
+        t.setFont(QFont("Segoe UI", 22, QFont.Bold))
+        t.setStyleSheet(f"color:{P['text']};background:transparent;")
+        refresh = GhostBtn("Refresh")
+        refresh.setFixedSize(100, 36)
         refresh.clicked.connect(self.load)
-        header.addWidget(t); header.addStretch(); header.addWidget(refresh)
+        header.addWidget(t)
+        header.addStretch()
+        header.addWidget(refresh)
         self._lay.addLayout(header)
-        sep=QFrame(); sep.setFixedHeight(1); sep.setStyleSheet(f"background:{P['ghost']};border:none;")
-        self._lay.addWidget(sep); self._lay.addSpacing(10)
-        self._items_layout=QVBoxLayout(); self._lay.addLayout(self._items_layout)
+
+        sep = QFrame()
+        sep.setFixedHeight(1)
+        sep.setStyleSheet(f"background:{P['border']};border:none;")
+        self._lay.addWidget(sep)
+        self._lay.addSpacing(8)
+
+        self._items_layout = QVBoxLayout()
+        self._items_layout.setSpacing(8)
+        self._lay.addLayout(self._items_layout)
         self._lay.addStretch()
-        scroll.setWidget(page); outer.addWidget(scroll)
+        scroll.setWidget(page)
+        outer.addWidget(scroll)
         self.load()
 
     def load(self):
         while self._items_layout.count():
-            item=self._items_layout.takeAt(0)
-            if item.widget(): item.widget().deleteLater()
-        history=AgentBrain.load_task_history()
+            item = self._items_layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+        history = AgentBrain.load_task_history()
         if not history:
-            lbl=QLabel("No tasks run yet. Go to Agent tab and run your first task!")
-            lbl.setFont(QFont("Segoe UI",12)); lbl.setStyleSheet(f"color:{P['mid']};background:transparent;")
-            self._items_layout.addWidget(lbl); return
+            lbl = QLabel("No tasks run yet. Go to Agent tab and run your first task.")
+            lbl.setFont(QFont("Segoe UI", 13))
+            lbl.setStyleSheet(f"color:{P['muted']};background:transparent;")
+            self._items_layout.addWidget(lbl)
+            return
         for entry in history:
-            row=GlowCard(accent=P["mint"] if entry["success"] else P["rose"],radius=14,alpha=190)
-            row.setFixedHeight(70)
-            rl=QHBoxLayout(row); rl.setContentsMargins(20,12,20,12); rl.setSpacing(14)
-            dot=QLabel("✓" if entry["success"] else "✗")
-            dot.setFont(QFont("Segoe UI",14,QFont.Bold))
-            dot.setStyleSheet(f"color:{P['mint'] if entry['success'] else P['rose']};background:transparent;")
-            dot.setFixedWidth(22)
-            tc=QVBoxLayout(); tc.setSpacing(2)
-            task_lbl=QLabel(entry["task"][:80]+("…" if len(entry["task"])>80 else ""))
-            task_lbl.setFont(QFont("Segoe UI",11))
-            task_lbl.setStyleSheet(f"color:{P['bright']};background:transparent;")
-            time_lbl=QLabel(entry["time"][:19].replace("T"," "))
-            time_lbl.setFont(QFont("Segoe UI",9))
-            time_lbl.setStyleSheet(f"color:{P['dim']};background:transparent;")
-            tc.addWidget(task_lbl); tc.addWidget(time_lbl)
-            rl.addWidget(dot); rl.addLayout(tc); rl.addStretch()
+            row = GlowCard(radius=12)
+            row.setFixedHeight(68)
+            rl = QHBoxLayout(row)
+            rl.setContentsMargins(18, 12, 18, 12)
+            rl.setSpacing(14)
+            ok = entry.get("success", False)
+            badge = QLabel("✓" if ok else "✗")
+            badge.setFont(QFont("Segoe UI", 14, QFont.Bold))
+            badge.setFixedSize(28, 28)
+            badge.setAlignment(Qt.AlignCenter)
+            if ok:
+                badge.setStyleSheet(f"color:{P['success']};background:{P['success_bg']};border-radius:14px;")
+            else:
+                badge.setStyleSheet("color:#B91C1C;background:#FEF2F2;border-radius:14px;")
+            tc = QVBoxLayout()
+            tc.setSpacing(2)
+            task_lbl = QLabel(entry["task"][:90] + ("…" if len(entry["task"]) > 90 else ""))
+            task_lbl.setFont(QFont("Segoe UI", 13))
+            task_lbl.setStyleSheet(f"color:{P['text']};background:transparent;")
+            time_lbl = QLabel(entry.get("time", "")[:19].replace("T", " "))
+            time_lbl.setFont(QFont("Segoe UI", 11))
+            time_lbl.setStyleSheet(f"color:{P['muted']};background:transparent;")
+            tc.addWidget(task_lbl)
+            tc.addWidget(time_lbl)
+            rl.addWidget(badge)
+            rl.addLayout(tc)
+            rl.addStretch()
             self._items_layout.addWidget(row)
 
 
@@ -1138,54 +1328,76 @@ def _discover_real_tools():
 
 
 class ToolsPage(QWidget):
-    def __init__(self,parent=None):
-        super().__init__(parent); self.setAttribute(Qt.WA_TranslucentBackground); self._build()
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self._build()
 
     def _build(self):
-        outer=QVBoxLayout(self); outer.setContentsMargins(0,0,0,0)
-        scroll=QScrollArea(); scroll.setWidgetResizable(True)
+        outer = QVBoxLayout(self)
+        outer.setContentsMargins(0, 0, 0, 0)
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
         scroll.setStyleSheet("QScrollArea{border:none;background:transparent;}")
-        page=QWidget(); page.setAttribute(Qt.WA_TranslucentBackground)
-        lay=QVBoxLayout(page); lay.setContentsMargins(36,36,36,36); lay.setSpacing(20)
+        page = QWidget()
+        page.setAttribute(Qt.WA_TranslucentBackground)
+        lay = QVBoxLayout(page)
+        lay.setContentsMargins(36, 36, 36, 36)
+        lay.setSpacing(16)
 
         tools = _discover_real_tools()
-        t=QLabel(f"🛠  Tool Registry — {len(tools)} Integrated Tools")
-        t.setFont(QFont("Segoe UI",20,QFont.Bold))
-        t.setStyleSheet(f"color:{P['amber']};background:transparent;")
+        t = QLabel(f"Tool Registry — {len(tools)} Integrated Tools")
+        t.setFont(QFont("Segoe UI", 22, QFont.Bold))
+        t.setStyleSheet(f"color:{P['text']};background:transparent;")
         lay.addWidget(t)
-        desc=QLabel("Read directly from npmai_agents — always matches what's actually installed. "
-                     "All tools are available to the agent automatically; just describe your task.")
-        desc.setFont(QFont("Segoe UI",11)); desc.setWordWrap(True)
-        desc.setStyleSheet(f"color:{P['mid']};background:transparent;")
-        lay.addWidget(desc)
-        sep=QFrame(); sep.setFixedHeight(1); sep.setStyleSheet(f"background:{P['ghost']};border:none;")
-        lay.addWidget(sep); lay.addSpacing(6)
 
-        cols_palette = [P["mint"],P["cyan"],P["violet"],P["amber"],P["sky"],P["rose"]]
+        desc = QLabel(
+            "Read directly from npmai_agents — always matches what's installed. "
+            "All tools are available to the agent automatically; just describe your task."
+        )
+        desc.setFont(QFont("Segoe UI", 13))
+        desc.setWordWrap(True)
+        desc.setStyleSheet(f"color:{P['muted']};background:transparent;")
+        lay.addWidget(desc)
+
+        sep = QFrame()
+        sep.setFixedHeight(1)
+        sep.setStyleSheet(f"background:{P['border']};border:none;")
+        lay.addWidget(sep)
+        lay.addSpacing(6)
+
         grid_cols = 2
         grid_row = None
         for i, (tool_name, cls_name, description) in enumerate(tools):
             if i % grid_cols == 0:
-                grid_row = QHBoxLayout(); grid_row.setSpacing(16); lay.addLayout(grid_row)
-            col = cols_palette[i % len(cols_palette)]
-            card=GlowCard(accent=col,radius=16,alpha=195); card.setFixedHeight(108)
-            cl=QHBoxLayout(card); cl.setContentsMargins(20,16,20,16); cl.setSpacing(14)
-            cv=QVBoxLayout(); cv.setSpacing(4)
-            n=QLabel(cls_name); n.setFont(QFont("Segoe UI",13,QFont.Bold))
-            n.setStyleSheet(f"color:{P['bright']};background:transparent;")
-            c2=QLabel(tool_name); c2.setFont(QFont("Cascadia Code",9))
-            c2.setStyleSheet(f"color:{col};background:transparent;")
-            d=QLabel(description[:140]+("…" if len(description)>140 else ""))
-            d.setFont(QFont("Segoe UI",10)); d.setWordWrap(True)
-            d.setStyleSheet(f"color:{P['mid']};background:transparent;")
-            cv.addWidget(n); cv.addWidget(c2); cv.addWidget(d)
-            cl.addLayout(cv)
+                grid_row = QHBoxLayout()
+                grid_row.setSpacing(14)
+                lay.addLayout(grid_row)
+            card = GlowCard(radius=12)
+            card.setFixedHeight(100)
+            cl = QVBoxLayout(card)
+            cl.setContentsMargins(18, 14, 18, 14)
+            cl.setSpacing(4)
+            n = QLabel(cls_name)
+            n.setFont(QFont("Segoe UI", 13, QFont.Bold))
+            n.setStyleSheet(f"color:{P['text']};background:transparent;")
+            c2 = QLabel(tool_name)
+            c2.setFont(QFont("Cascadia Code", 10))
+            c2.setStyleSheet(f"color:{P['primary2']};background:transparent;")
+            d = QLabel(description[:130] + ("…" if len(description) > 130 else ""))
+            d.setFont(QFont("Segoe UI", 11))
+            d.setWordWrap(True)
+            d.setStyleSheet(f"color:{P['muted']};background:transparent;")
+            cl.addWidget(n)
+            cl.addWidget(c2)
+            cl.addWidget(d)
             grid_row.addWidget(card)
         if len(tools) % grid_cols != 0 and grid_row is not None:
             grid_row.addStretch()
 
         lay.addStretch()
-        scroll.setWidget(page); outer.addWidget(scroll)
+        scroll.setWidget(page)
+        outer.addWidget(scroll)
 
 
 class CredKeyValueDialog(QDialog):
@@ -1198,7 +1410,7 @@ class CredKeyValueDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle(title.replace("🔑","").strip() or "Credential Group")
         self.setMinimumWidth(440)
-        self.setStyleSheet(f"QDialog{{background:{P['void']};}}")
+        self.setStyleSheet(f"QDialog{{background:{P['surface']};}}")
         self._row_widgets = []
 
         if os.path.exists(APP_ICON_PATH):
@@ -1274,24 +1486,24 @@ class SettingsPage(QWidget):
     def __init__(self,parent=None):
         super().__init__(parent); self.setAttribute(Qt.WA_TranslucentBackground); self._build()
 
-    def _section(self, lay, title, fields, cred_key, accent):
-        card=GlowCard(accent=accent,radius=18,alpha=200)
-        cl=QVBoxLayout(card); cl.setContentsMargins(28,22,28,22); cl.setSpacing(14)
-        h=QLabel(title); h.setFont(QFont("Segoe UI",13,QFont.Bold))
-        h.setStyleSheet(f"color:{P['bright']};background:transparent;"); cl.addWidget(h)
-        sep=QFrame(); sep.setFixedHeight(1); sep.setStyleSheet(f"background:{P['ghost']};border:none;")
+    def _section(self, lay, title, fields, cred_key, accent=None):
+        card=GlowCard(radius=12)
+        cl=QVBoxLayout(card); cl.setContentsMargins(24,20,24,20); cl.setSpacing(12)
+        h=QLabel(title); h.setFont(QFont("Segoe UI",14,QFont.Bold))
+        h.setStyleSheet(f"color:{P['text']};background:transparent;"); cl.addWidget(h)
+        sep=QFrame(); sep.setFixedHeight(1); sep.setStyleSheet(f"background:{P['border']};border:none;")
         cl.addWidget(sep)
         inputs={}
         for field_key,label,placeholder,is_pw in fields:
-            lbl=QLabel(label); lbl.setFont(QFont("Segoe UI",10))
-            lbl.setStyleSheet(f"color:{P['mid']};background:transparent;"); cl.addWidget(lbl)
+            lbl=QLabel(label); lbl.setFont(QFont("Segoe UI",11))
+            lbl.setStyleSheet(f"color:{P['muted']};background:transparent;"); cl.addWidget(lbl)
             inp=GlowInput(placeholder)
             if is_pw: inp.setEchoMode(QLineEdit.Password)
             existing=CredStore.load(cred_key).get(field_key,"")
             if existing: inp.setText("●"*8 if is_pw else existing)
             inputs[field_key]=inp; cl.addWidget(inp)
-        save_btn=PulseBtn(f"💾  Save {title.split()[0]} Credentials",accent,True)
-        save_btn.setFixedHeight(42)
+        save_btn=PulseBtn(f"Save {title.split()[0]} Credentials")
+        save_btn.setFixedHeight(40)
         def _save(ck=cred_key,inp_ref=inputs):
             data={}
             for k,w in inp_ref.items():
@@ -1309,30 +1521,54 @@ class SettingsPage(QWidget):
         scroll.setStyleSheet("QScrollArea{border:none;background:transparent;}")
         page=QWidget(); page.setAttribute(Qt.WA_TranslucentBackground)
         lay=QVBoxLayout(page); lay.setContentsMargins(36,36,36,36); lay.setSpacing(20)
-        t=QLabel("⚙  Settings & Credentials"); t.setFont(QFont("Segoe UI",20,QFont.Bold))
-        t.setStyleSheet(f"color:{P['violet']};background:transparent;"); lay.addWidget(t)
+        t=QLabel("Settings & Credentials"); t.setFont(QFont("Segoe UI",22,QFont.Bold))
+        t.setStyleSheet(f"color:{P['text']};background:transparent;"); lay.addWidget(t)
         sub=QLabel("All credentials are encrypted with a machine-specific key (CredStore) and stored "
                     "locally. Never sent anywhere. No login needed for anything on this page.")
-        sub.setFont(QFont("Segoe UI",10)); sub.setWordWrap(True)
-        sub.setStyleSheet(f"color:{P['mid']};background:transparent;"); lay.addWidget(sub)
-        sep=QFrame(); sep.setFixedHeight(1); sep.setStyleSheet(f"background:{P['ghost']};border:none;")
+        sub.setFont(QFont("Segoe UI",13)); sub.setWordWrap(True)
+        sub.setStyleSheet(f"color:{P['muted']};background:transparent;"); lay.addWidget(sub)
+        sep=QFrame(); sep.setFixedHeight(1); sep.setStyleSheet(f"background:{P['border']};border:none;")
         lay.addWidget(sep); lay.addSpacing(6)
 
-        ws_card=GlowCard(accent=P["cyan"],radius=16,alpha=195)
-        wl=QHBoxLayout(ws_card); wl.setContentsMargins(24,16,24,16); wl.setSpacing(16)
+        ws_card=GlowCard(radius=12)
+        wl=QHBoxLayout(ws_card); wl.setContentsMargins(22,16,22,16); wl.setSpacing(16)
         wl_v=QVBoxLayout(); wl_v.setSpacing(4)
-        wl_t=QLabel("🖥  Workspace Scanner"); wl_t.setFont(QFont("Segoe UI",13,QFont.Bold))
-        wl_t.setStyleSheet(f"color:{P['bright']};background:transparent;")
+        wl_t=QLabel("Workspace Scanner"); wl_t.setFont(QFont("Segoe UI",14,QFont.Bold))
+        wl_t.setStyleSheet(f"color:{P['text']};background:transparent;")
         wl_d=QLabel("Scans your Desktop, Downloads, Documents, Pictures, Videos, Music — agent uses this to understand your file system")
-        wl_d.setFont(QFont("Segoe UI",10)); wl_d.setWordWrap(True)
-        wl_d.setStyleSheet(f"color:{P['mid']};background:transparent;")
+        wl_d.setFont(QFont("Segoe UI",12)); wl_d.setWordWrap(True)
+        wl_d.setStyleSheet(f"color:{P['muted']};background:transparent;")
         wl_v.addWidget(wl_t); wl_v.addWidget(wl_d)
-        scan_btn=PulseBtn("🔍  Scan Now",P["cyan"],True); scan_btn.setFixedSize(130,38)
+        scan_btn=PulseBtn("Scan Now"); scan_btn.setFixedSize(120,38)
         def _scan():
             ws=Workspace(); ws.scan()
             QMessageBox.information(self,"Scanned","Workspace scanned successfully!")
         scan_btn.clicked.connect(_scan); wl.addLayout(wl_v); wl.addStretch(); wl.addWidget(scan_btn)
         lay.addWidget(ws_card)
+
+        # Configure LLMs entry
+        llm_card = GlowCard(radius=12)
+        ll = QHBoxLayout(llm_card)
+        ll.setContentsMargins(22, 16, 22, 16)
+        ll.setSpacing(16)
+        ll_v = QVBoxLayout()
+        ll_v.setSpacing(4)
+        ll_t = QLabel("Configure LLMs")
+        ll_t.setFont(QFont("Segoe UI", 14, QFont.Bold))
+        ll_t.setStyleSheet(f"color:{P['text']};background:transparent;")
+        ll_d = QLabel("Assign which provider + model handles each pipeline stage (Planner, Tool Manager, Coder, Auditor, Verifier, Chatter). Credentials are saved locally.")
+        ll_d.setFont(QFont("Segoe UI", 12))
+        ll_d.setWordWrap(True)
+        ll_d.setStyleSheet(f"color:{P['muted']};background:transparent;")
+        ll_v.addWidget(ll_t)
+        ll_v.addWidget(ll_d)
+        llm_open = PulseBtn("Open")
+        llm_open.setFixedSize(100, 38)
+        llm_open.clicked.connect(lambda: LLMConfigDialog(self).exec())
+        ll.addLayout(ll_v)
+        ll.addStretch()
+        ll.addWidget(llm_open)
+        lay.addWidget(llm_card)
 
         # ── Credential sections — cred_key + fields verified against source ──
         self._section(lay,"⭐ GitHub",[
@@ -1458,34 +1694,118 @@ class SettingsPage(QWidget):
 
 
 class FounderPage(QWidget):
-    def __init__(self,parent=None):
-        super().__init__(parent); self.setAttribute(Qt.WA_TranslucentBackground); self._build()
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self._build()
 
     def _build(self):
-        outer=QVBoxLayout(self); outer.setContentsMargins(0,0,0,0)
-        scroll=QScrollArea(); scroll.setWidgetResizable(True)
+        outer = QVBoxLayout(self)
+        outer.setContentsMargins(0, 0, 0, 0)
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
         scroll.setStyleSheet("QScrollArea{border:none;background:transparent;}")
-        page=QWidget(); page.setAttribute(Qt.WA_TranslucentBackground)
-        lay=QVBoxLayout(page); lay.setContentsMargins(36,36,36,36); lay.setSpacing(20)
+        page = QWidget()
+        page.setAttribute(Qt.WA_TranslucentBackground)
+        lay = QVBoxLayout(page)
+        lay.setContentsMargins(36, 36, 36, 36)
+        lay.setSpacing(20)
 
         import webbrowser
-        t=QLabel("👤  The Founder"); t.setFont(QFont("Segoe UI",20,QFont.Bold))
-        t.setStyleSheet(f"color:{P['violet']};background:transparent;"); lay.addWidget(t)
-        hero=GlowCard(accent=P["violet"],radius=22,alpha=210)
-        hl=QVBoxLayout(hero); hl.setContentsMargins(32,28,32,28); hl.setSpacing(14)
-        name=QLabel("Sonu Kumar  🇮🇳"); name.setFont(QFont("Segoe UI",22,QFont.Bold))
-        name.setStyleSheet(f"color:{P['bright']};background:transparent;"); hl.addWidget(name)
-        tag=QLabel("Founder · NPMAI ECOSYSTEM · Bihar Viral Boy")
-        tag.setFont(QFont("Segoe UI",12)); tag.setStyleSheet(f"color:{P['violet']};background:transparent;")
+        t = QLabel("The Founder")
+        t.setFont(QFont("Segoe UI", 22, QFont.Bold))
+        t.setStyleSheet(f"color:{P['text']};background:transparent;")
+        lay.addWidget(t)
+
+        hero = GlowCard(radius=16)
+        hl = QVBoxLayout(hero)
+        hl.setContentsMargins(28, 24, 28, 24)
+        hl.setSpacing(10)
+
+        name = QLabel("Sonu Kumar  🇮🇳")
+        name.setFont(QFont("Segoe UI", 22, QFont.Bold))
+        name.setStyleSheet(f"color:{P['text']};background:transparent;")
+        hl.addWidget(name)
+
+        tag = QLabel("Founder · NPMAI ECOSYSTEM · Bihar Viral Boy · TEDx Speaker")
+        tag.setFont(QFont("Segoe UI", 13))
+        tag.setStyleSheet(f"color:{P['primary2']};background:transparent;")
         hl.addWidget(tag)
-        links=QHBoxLayout(); links.setSpacing(10)
-        for lbl2,url in [("⭐ GitHub","https://github.com/sonuramashishnpm"),
-                          ("🐍 PyPI","https://pypi.org/project/npmai")]:
-            b2=QPushButton(lbl2); b2.setCursor(Qt.PointingHandCursor); b2.setFixedHeight(32)
-            b2.setStyleSheet(f"QPushButton{{background:rgba(167,139,250,10);border:1px solid rgba(167,139,250,40);border-radius:9px;color:{P['mid']};font-size:11px;padding:0 12px;}}QPushButton:hover{{background:rgba(167,139,250,25);border-color:rgba(167,139,250,110);color:{P['bright']};}}")
-            b2.clicked.connect(lambda _,u=url: webbrowser.open(u)); links.addWidget(b2)
-        links.addStretch(); hl.addLayout(links); lay.addWidget(hero)
-        lay.addStretch(); scroll.setWidget(page); outer.addWidget(scroll)
+
+        bio = QLabel(
+            "Age 15 · Bihar, India · Based in Kota, Rajasthan\n"
+            "Self-taught AI developer. No CS degree. Built the entire NPMAI ecosystem on free cloud infrastructure.\n"
+            "Student at Allen Career Institute & Disha Delphi Public School (100% scholarship since 2022).\n\n"
+            "Age 9 — started teaching nursery kids while in 4th grade.\n"
+            "Age 11 — \"Bihar Viral Boy\": challenged the Chief Minister on education & liquor ban; went viral nationally.\n"
+            "Age 13 — one of India's youngest TEDx speakers (rural education & tech divide).\n"
+            "Age 13–15 — founded NPMAI ECOSYSTEM. 10 research papers spanning AI, chemistry, mathematics & constitutional law."
+        )
+        bio.setFont(QFont("Segoe UI", 12))
+        bio.setWordWrap(True)
+        bio.setStyleSheet(f"color:{P['text2']};background:transparent;line-height:1.5;")
+        hl.addWidget(bio)
+
+        stats = QHBoxLayout()
+        stats.setSpacing(12)
+        for val, label in [
+            ("4M+", "npmai downloads"),
+            ("900K+", "npmai_agents"),
+            ("440K+", "followers"),
+            ("10", "research papers"),
+            ("TEDx", "Speaker at 13"),
+        ]:
+            box = QFrame()
+            box.setStyleSheet(f"background:{P['surface2']};border-radius:10px;padding:8px;")
+            bl = QVBoxLayout(box)
+            bl.setContentsMargins(12, 8, 12, 8)
+            bl.setSpacing(2)
+            v = QLabel(val)
+            v.setFont(QFont("Segoe UI", 16, QFont.Bold))
+            v.setStyleSheet(f"color:{P['primary']};background:transparent;")
+            v.setAlignment(Qt.AlignCenter)
+            l = QLabel(label)
+            l.setFont(QFont("Segoe UI", 10))
+            l.setStyleSheet(f"color:{P['muted']};background:transparent;")
+            l.setAlignment(Qt.AlignCenter)
+            bl.addWidget(v)
+            bl.addWidget(l)
+            stats.addWidget(box)
+        hl.addLayout(stats)
+
+        links = QHBoxLayout()
+        links.setSpacing(10)
+        for lbl2, url in [
+            ("GitHub", "https://github.com/sonuramashishnpm"),
+            ("PyPI", "https://pypi.org/project/npmai"),
+            ("Website", "https://npmai.netlify.app"),
+        ]:
+            b2 = QPushButton(lbl2)
+            b2.setCursor(Qt.PointingHandCursor)
+            b2.setFixedHeight(34)
+            b2.setStyleSheet(f"""
+                QPushButton {{
+                    background:{P['surface']};
+                    border:1px solid {P['border2']};
+                    border-radius:8px;
+                    color:{P['text2']};
+                    font-size:12px;
+                    padding:0 14px;
+                }}
+                QPushButton:hover {{
+                    background:{P['active_bg']};
+                    border-color:{P['accent']};
+                    color:{P['active']};
+                }}
+            """)
+            b2.clicked.connect(lambda _, u=url: webbrowser.open(u))
+            links.addWidget(b2)
+        links.addStretch()
+        hl.addLayout(links)
+        lay.addWidget(hero)
+        lay.addStretch()
+        scroll.setWidget(page)
+        outer.addWidget(scroll)
 
 
 class DocsPage(QWidget):
@@ -1498,19 +1818,19 @@ class DocsPage(QWidget):
         h=QHBoxLayout()
         ic=QLabel(icon); ic.setFont(QFont("Segoe UI",16)); ic.setStyleSheet("background:transparent;"); ic.setFixedWidth(28)
         tt=QLabel(title); tt.setFont(QFont("Segoe UI",13,QFont.Bold))
-        tt.setStyleSheet(f"color:{P['bright']};background:transparent;")
+        tt.setStyleSheet(f"color:{P['text']};background:transparent;")
         h.addWidget(ic); h.addWidget(tt); h.addStretch(); cl.addLayout(h)
-        sep=QFrame(); sep.setFixedHeight(1); sep.setStyleSheet(f"background:{P['ghost']};border:none;")
+        sep=QFrame(); sep.setFixedHeight(1); sep.setStyleSheet(f"background:{P['border']};border:none;")
         cl.addWidget(sep)
         for it,ib in items:
             row=QHBoxLayout(); row.setSpacing(12)
             dot=QLabel("▸"); dot.setFont(QFont("Segoe UI",11,QFont.Bold))
-            dot.setStyleSheet(f"color:{col};background:transparent;"); dot.setFixedWidth(16); dot.setAlignment(Qt.AlignTop)
+            dot.setStyleSheet(f"color:{P['primary']};background:transparent;"); dot.setFixedWidth(16); dot.setAlignment(Qt.AlignTop)
             cv=QVBoxLayout(); cv.setSpacing(1)
             it_l=QLabel(it); it_l.setFont(QFont("Segoe UI",11,QFont.Bold))
-            it_l.setStyleSheet(f"color:{P['bright']};background:transparent;")
+            it_l.setStyleSheet(f"color:{P['text']};background:transparent;")
             ib_l=QLabel(ib); ib_l.setFont(QFont("Segoe UI",11)); ib_l.setWordWrap(True)
-            ib_l.setStyleSheet(f"color:{P['mid']};background:transparent;")
+            ib_l.setStyleSheet(f"color:{P['muted']};background:transparent;")
             cv.addWidget(it_l); cv.addWidget(ib_l)
             row.addWidget(dot); row.addLayout(cv); cl.addLayout(row)
         lay.addWidget(card)
@@ -1522,17 +1842,29 @@ class DocsPage(QWidget):
         page=QWidget(); page.setAttribute(Qt.WA_TranslucentBackground)
         lay=QVBoxLayout(page); lay.setContentsMargins(36,36,36,36); lay.setSpacing(20)
 
-        t=QLabel("📖  Documentation"); t.setFont(QFont("Segoe UI",20,QFont.Bold))
-        t.setStyleSheet(f"color:{P['sky']};background:transparent;"); lay.addWidget(t)
-        sep=QFrame(); sep.setFixedHeight(1); sep.setStyleSheet(f"background:{P['ghost']};border:none;")
+        t=QLabel("Documentation"); t.setFont(QFont("Segoe UI",22,QFont.Bold))
+        t.setStyleSheet(f"color:{P['text']};background:transparent;"); lay.addWidget(t)
+        sep=QFrame(); sep.setFixedHeight(1); sep.setStyleSheet(f"background:{P['border']};border:none;")
         lay.addWidget(sep); lay.addSpacing(4)
 
-        self._sec(lay,"🚀","Getting Started",P["mint"],[
+        self._sec(lay,"🚀","Getting Started",P["primary"],[
             ("Install","pip install npmai_agents, then run this app."),
             ("First scan","Go to Settings and click 'Scan Now' — agent learns your folder structure."),
             ("Add credentials","Add GitHub/Notion/Stripe/AWS/SMTP creds in Settings. Encrypted locally."),
             ("Type a task","In the Agent tab, describe any task in plain English and press Run. No login needed."),
         ])
+
+        self._sec(lay,"🔗","MCP Architecture — Control your PC from Grok or Claude",P["primary"],[
+            ("What is MCP?","NPM-AutoCode-AI hosts its own MCP endpoint. Link it once, paste the link into Claude or Grok connector settings, and the LLM you already talk to becomes the brain — while this app is the hands that execute on your machine."),
+            ("01 · Get your link","Click 'Get MCP link' in the sidebar. Log in once — that is the only time you need an account. Everything else in the app stays account-free."),
+            ("02 · Paste into connector","Drop the link into Claude (claude.com) or Grok (grok.com) custom connector settings. From then on just talk to your normal LLM chat."),
+            ("03 · Ask for anything","'Clear my Downloads folder', 'email my team the report' — the LLM detects it needs a real action and calls into your link automatically."),
+            ("04 · Audited before it runs","Every generated script passes an Auditor review plus a separate safety check before it is ever sent to your desktop."),
+            ("05 · Runs on your machine","Execution happens locally — your files, your credentials, your machine. The MCP server only relays code and results."),
+            ("06 · Verified, not just exit code","A Verifier role checks the actual output against the task — not only whether the script ran without crashing."),
+            ("Learn more","Full architecture diagrams and live demo: https://npmcodeai.netlify.app"),
+        ])
+
         self._sec(lay,"🤖","How the Agent Works (Standalone)",P["cyan"],[
             ("Detect intent","Local heuristic decides: conversation, or a task to execute?"),
             ("Plan","Planner LLM breaks the task into atomic steps."),
@@ -1633,14 +1965,14 @@ class AppWindow(QWidget):
 if __name__=="__main__":
     app=QApplication(sys.argv); app.setStyle("Fusion")
     pal=QPalette()
-    pal.setColor(QPalette.Window,           QColor(P["void"]))
-    pal.setColor(QPalette.WindowText,       QColor(P["bright"]))
-    pal.setColor(QPalette.Base,             QColor(P["deep"]))
-    pal.setColor(QPalette.AlternateBase,    QColor(P["panel"]))
-    pal.setColor(QPalette.Text,             QColor(P["bright"]))
-    pal.setColor(QPalette.Button,           QColor(P["lift"]))
-    pal.setColor(QPalette.ButtonText,       QColor(P["bright"]))
-    pal.setColor(QPalette.Highlight,        QColor(P["mint"]))
-    pal.setColor(QPalette.HighlightedText,  QColor("#050310"))
+    pal.setColor(QPalette.Window,           QColor(P["bg"]))
+    pal.setColor(QPalette.WindowText,       QColor(P["text"]))
+    pal.setColor(QPalette.Base,             QColor(P["surface"]))
+    pal.setColor(QPalette.AlternateBase,    QColor(P["surface2"]))
+    pal.setColor(QPalette.Text,             QColor(P["text"]))
+    pal.setColor(QPalette.Button,           QColor(P["surface"]))
+    pal.setColor(QPalette.ButtonText,       QColor(P["text"]))
+    pal.setColor(QPalette.Highlight,        QColor(P["primary"]))
+    pal.setColor(QPalette.HighlightedText,  QColor("#FFFFFF"))
     app.setPalette(pal)
     win=AppWindow(); win.show(); sys.exit(app.exec())
